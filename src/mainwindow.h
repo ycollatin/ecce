@@ -65,6 +65,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout;
         QTabWidget *tabWidget;
         QWidget *tabLexique;
+        QVBoxLayout *verticalLayout_4;
         QHBoxLayout *horizontalLayout_3;
         QVBoxLayout *verticalLayout_2;
         QHBoxLayout *horizontalLayout;
@@ -73,12 +74,16 @@ class MainWindow : public QMainWindow
         QSpacerItem *verticalSpacer_2;
         QVBoxLayout *verticalLayout_3;
         QFormLayout *formLayout;
+        QLabel *labelGrq;
+        QLineEdit *lineEditGrq;
         QLabel *labelModele;
         QComboBox *comboModeles;
         QLabel *labelR2;
         QLineEdit *lineSupin;
         QLabel *labelSupin;
         QLineEdit *lineEdit_3;
+        QLineEdit *lineEditTr;
+        QLabel* labelTr;
         QTextEdit *textEditFlexion;
         QWidget *tabModeles;
         QVBoxLayout *verticalLayout_8;
@@ -110,6 +115,9 @@ class MainWindow : public QMainWindow
         void connecte();
         void peuple();
 
+    private slots:
+        void edLem(QString l);
+        void edLem();
 };
 
 #endif

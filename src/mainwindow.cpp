@@ -32,9 +32,11 @@ MainWindow::MainWindow()
     verticalLayout->setContentsMargins(11, 11, 11, 11);
     tabWidget = new QTabWidget(centralWidget);
     tabLexique = new QWidget();
-    horizontalLayout_3 = new QHBoxLayout(tabLexique);
+    verticalLayout_4 = new QVBoxLayout(tabLexique);
+    verticalLayout_4->setSpacing(6);
+    verticalLayout_4->setContentsMargins(11, 11, 11, 11);
+    horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
-    horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
     verticalLayout_2 = new QVBoxLayout();
     verticalLayout_2->setSpacing(6);
     horizontalLayout = new QHBoxLayout();
@@ -53,13 +55,11 @@ MainWindow::MainWindow()
 
     horizontalLayout->addWidget(lineEditLemme);
 
-
     verticalLayout_2->addLayout(horizontalLayout);
 
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     verticalLayout_2->addItem(verticalSpacer_2);
-
 
     horizontalLayout_3->addLayout(verticalLayout_2);
 
@@ -67,39 +67,59 @@ MainWindow::MainWindow()
     verticalLayout_3->setSpacing(6);
     formLayout = new QFormLayout();
     formLayout->setSpacing(6);
-    labelModele = new QLabel(tabLexique);
+    formLayout->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    labelGrq = new QLabel(tabLexique);
 
-    formLayout->setWidget(0, QFormLayout::LabelRole, labelModele);
+    formLayout->setWidget(0, QFormLayout::LabelRole, labelGrq);
+
+    lineEditGrq = new QLineEdit(tabLexique);
+
+    formLayout->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
+
+    lineEditTr = new QLineEdit(tabLexique);
+    formLayout->setWidget(4, QFormLayout::FieldRole, lineEditTr);
+
+    labelTr = new QLabel(tabLexique);
+    formLayout->setWidget(4, QFormLayout::LabelRole, labelTr);
+
+    labelModele = new QLabel(tabLexique);
+    labelModele->setLayoutDirection(Qt::LeftToRight);
+    labelModele->setScaledContents(false);
+    labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+    formLayout->setWidget(1, QFormLayout::LabelRole, labelModele);
 
     comboModeles = new QComboBox(tabLexique);
 
-    formLayout->setWidget(0, QFormLayout::FieldRole, comboModeles);
+    formLayout->setWidget(1, QFormLayout::FieldRole, comboModeles);
 
     labelR2 = new QLabel(tabLexique);
+    labelR2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-    formLayout->setWidget(1, QFormLayout::LabelRole, labelR2);
+    formLayout->setWidget(2, QFormLayout::LabelRole, labelR2);
 
     lineSupin = new QLineEdit(tabLexique);
 
-    formLayout->setWidget(1, QFormLayout::FieldRole, lineSupin);
+    formLayout->setWidget(2, QFormLayout::FieldRole, lineSupin);
 
     labelSupin = new QLabel(tabLexique);
+    labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-    formLayout->setWidget(2, QFormLayout::LabelRole, labelSupin);
+    formLayout->setWidget(3, QFormLayout::LabelRole, labelSupin);
 
     lineEdit_3 = new QLineEdit(tabLexique);
 
-    formLayout->setWidget(2, QFormLayout::FieldRole, lineEdit_3);
-
-    textEditFlexion = new QTextEdit(tabLexique);
-
-    formLayout->setWidget(3, QFormLayout::FieldRole, textEditFlexion);
-
+    formLayout->setWidget(3, QFormLayout::FieldRole, lineEdit_3);
 
     verticalLayout_3->addLayout(formLayout);
 
+    textEditFlexion = new QTextEdit(tabLexique);
+
+    verticalLayout_3->addWidget(textEditFlexion);
 
     horizontalLayout_3->addLayout(verticalLayout_3);
+
+    verticalLayout_4->addLayout(horizontalLayout_3);
 
     tabWidget->addTab(tabLexique, QString());
     tabModeles = new QWidget();
@@ -137,7 +157,6 @@ MainWindow::MainWindow()
 
     verticalLayout_5->addItem(verticalSpacer);
 
-
     horizontalLayout_2->addLayout(verticalLayout_5);
 
     lineEdit = new QLineEdit(tabModeles);
@@ -148,13 +167,11 @@ MainWindow::MainWindow()
 
     horizontalLayout_2->addWidget(listView_2);
 
-
     verticalLayout_7->addLayout(horizontalLayout_2);
 
     textEditFlexion_2 = new QTextEdit(tabModeles);
 
     verticalLayout_7->addWidget(textEditFlexion_2);
-
 
     verticalLayout_8->addLayout(verticalLayout_7);
 
@@ -186,14 +203,21 @@ MainWindow::MainWindow()
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
 
+    tabWidget->setCurrentIndex(0);
+
+    QMetaObject::connectSlotsByName(this);
+
+    setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "quantit\303\251", Q_NULLPTR));
     actionCharger->setText(QApplication::translate("MainWindow", "Charger", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
+    labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     labelR2->setText(QApplication::translate("MainWindow", "g\303\251nitif", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "supin", Q_NULLPTR));
+    labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique), QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
     pushButton->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
     pushButton_2->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
@@ -217,18 +241,37 @@ MainWindow::~MainWindow()
 void MainWindow::connecte()
 {
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
-	//connect(lineEditLemme, SIGNAL(textChanged, this, 
+    connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
+    connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
+}
+
+void MainWindow::edLem(QString l)
+{
+    qDebug()<<"edLem(l)"<<l;
+    Lemme * lemme = lemcore->lemme(l);
+    if (lemme != 0)
+    {
+        lineEditGrq->setText(lemme->grq());
+    }
+}
+
+void MainWindow::edLem()
+{
+    edLem(lineEditLemme->text()); 
 }
 
 void MainWindow::peuple()
 {
+    // lemmes
     lemcore = new LemCore(this);
     litems.append(lemcore->cles());
 	completeur = new QCompleter(litems);
     completeur->setMaxVisibleItems(litems.count());
     QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
+    //completeur->setCompletionMode(QCompleter::PopupCompletion);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
     lineEditLemme->setCompleter(completeur);
+    // modèles
 }
 
