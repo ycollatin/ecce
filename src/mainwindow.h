@@ -45,11 +45,18 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include <QStringListModel>
+#include <QCompleter>
 #include <lemCore.h>
 
 class MainWindow : public QMainWindow
 {
+
+    Q_OBJECT
+
+    public:
+        MainWindow();
+        ~MainWindow();
+
     private:
         QAction *actionQuant;
         QAction *actionCharger;
@@ -58,13 +65,12 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout;
         QTabWidget *tabWidget;
         QWidget *tabLexique;
-        QVBoxLayout *verticalLayout_4;
         QHBoxLayout *horizontalLayout_3;
         QVBoxLayout *verticalLayout_2;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
-        QListView *listViewLemmes;
+        QSpacerItem *verticalSpacer_2;
         QVBoxLayout *verticalLayout_3;
         QFormLayout *formLayout;
         QLabel *labelModele;
@@ -97,13 +103,13 @@ class MainWindow : public QMainWindow
         QToolBar *mainToolBar;
         QStatusBar *statusBar;
 
-        QStringListModel* modele;
-        LemCore* lemcore;
+        LemCore*          lemcore;
+        QStringList       litems;
+        QCompleter*       completeur;
 
-    public:
-        MainWindow();
-        ~MainWindow();
+        void connecte();
         void peuple();
+
 };
 
 #endif
