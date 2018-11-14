@@ -1308,3 +1308,8 @@ void LemCore::lireHyphen(QString fichierHyphen)
     }
 }
 
+QStringList LemCore::lModeles()
+{
+    return _modeles.keys();
+}
+

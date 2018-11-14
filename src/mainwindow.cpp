@@ -86,12 +86,10 @@ MainWindow::MainWindow()
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout->setWidget(1, QFormLayout::LabelRole, labelModele);
 
-    comboModeles = new QComboBox(tabLexique);
-
-    formLayout->setWidget(1, QFormLayout::FieldRole, comboModeles);
+    lineEditModeles = new QLineEdit(tabLexique);
+    formLayout->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
 
     labelR2 = new QLabel(tabLexique);
     labelR2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
@@ -247,7 +245,6 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
-    qDebug()<<"edLem(l)"<<l;
     Lemme * lemme = lemcore->lemme(l);
     if (lemme != 0)
     {
@@ -262,16 +259,22 @@ void MainWindow::edLem()
 
 void MainWindow::peuple()
 {
-    // lemmes
     lemcore = new LemCore(this);
+    // lemmes
     litems.append(lemcore->cles());
 	completeur = new QCompleter(litems);
     completeur->setMaxVisibleItems(litems.count());
     QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
-    //completeur->setCompletionMode(QCompleter::PopupCompletion);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
     lineEditLemme->setCompleter(completeur);
     // modèles
+    lmodeles.append(lemcore->lModeles());
+    completeurM = new  QCompleter(lmodeles);
+    completeurM->setMaxVisibleItems(litems.count());
+    QStringListModel* modeleM = new QStringListModel(lmodeles, completeurM);
+    completeurM->setModel(modeleM);
+    completeur->setCompletionMode(QCompleter::PopupCompletion);
+    lineEditModeles->setCompleter(completeurM);
 }
 

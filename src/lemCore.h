@@ -133,6 +133,7 @@ class LemCore : public QObject
     QStringList            lignesFichier(QString nf);
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
+    QStringList            lModeles();
     Modele*                modele(QString m);
     QString                morpho(int i);
     QMap<QString, QString> suffixes;

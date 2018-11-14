@@ -77,7 +77,8 @@ class MainWindow : public QMainWindow
         QLabel *labelGrq;
         QLineEdit *lineEditGrq;
         QLabel *labelModele;
-        QComboBox *comboModeles;
+        //QComboBox *comboModeles;
+        QLineEdit* lineEditModeles;
         QLabel *labelR2;
         QLineEdit *lineSupin;
         QLabel *labelSupin;
@@ -111,6 +112,8 @@ class MainWindow : public QMainWindow
         LemCore*          lemcore;
         QStringList       litems;
         QCompleter*       completeur;
+        QStringList       lmodeles;
+        QCompleter*       completeurM;
 
         void connecte();
         void peuple();
