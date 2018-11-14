@@ -38,6 +38,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTextEdit>
@@ -60,18 +61,21 @@ class MainWindow : public QMainWindow
     private:
         QAction *actionQuant;
         QAction *actionCharger;
+        QAction *actionDiff;
         QAction *actionQuitter;
         QWidget *centralWidget;
         QVBoxLayout *verticalLayout;
         QTabWidget *tabWidget;
         QWidget *tabLexique;
-        QVBoxLayout *verticalLayout_4;
-        QHBoxLayout *horizontalLayout_lex;
-        QVBoxLayout *verticalLayout_2;
+        QVBoxLayout *verticalLayout_3;
+        QSplitter *splitter;
+        QWidget *widget;
+        QVBoxLayout *verticalLayout_G;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
         QSpacerItem *verticalSpacer_2;
+        QWidget *widget1;
         QVBoxLayout *verticalLayout_D;
         QFormLayout *formLayout_L;
         QLabel *labelGrq;
@@ -82,13 +86,16 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditInfectum;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
-        QLineEdit *lineSupin;
         QLabel *labelSupin;
+        QLineEdit *lineSupin;
+        QLabel* labelTr;
         QLineEdit *lineEditTr;
         QLabel *labelMorpho;
         QLineEdit *lineMorpho;
-        QLabel* labelTr;
         QTextEdit *textEditFlexion;
+        QHBoxLayout *horizontalLayout_3;
+        QPushButton *boutonEnr;
+        QPushButton *boutonSuppr;
         QWidget *tabModeles;
         QVBoxLayout *verticalLayout_8;
         QVBoxLayout *verticalLayout_7;
