@@ -984,7 +984,11 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
  * \brief cherche dans la liste des lemmes le lemme
  *        dont la clé est l, et retourne le résultat.
  */
-Lemme *LemCore::lemme(QString l) { return _lemmes.value(l); }
+Lemme *LemCore::lemme(QString l)
+{
+    return _lemmes.value(l, 0);
+}
+
 /**
  * \fn QStringList LemCore::lemmes (MapLem lm)
  * \brief renvoie la liste des graphies des lemmes
