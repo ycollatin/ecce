@@ -35,8 +35,8 @@ MainWindow::MainWindow()
     verticalLayout_4 = new QVBoxLayout(tabLexique);
     verticalLayout_4->setSpacing(6);
     verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-    horizontalLayout_3 = new QHBoxLayout();
-    horizontalLayout_3->setSpacing(6);
+    horizontalLayout_lex = new QHBoxLayout();
+    horizontalLayout_lex->setSpacing(6);
     verticalLayout_2 = new QVBoxLayout();
     verticalLayout_2->setSpacing(6);
     horizontalLayout = new QHBoxLayout();
@@ -61,63 +61,65 @@ MainWindow::MainWindow()
 
     verticalLayout_2->addItem(verticalSpacer_2);
 
-    horizontalLayout_3->addLayout(verticalLayout_2);
+    horizontalLayout_lex->addLayout(verticalLayout_2);
 
-    verticalLayout_3 = new QVBoxLayout();
-    verticalLayout_3->setSpacing(6);
-    formLayout = new QFormLayout();
-    formLayout->setSpacing(6);
-    formLayout->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    verticalLayout_D = new QVBoxLayout();
+    verticalLayout_D->setSpacing(6);
+    formLayout_L = new QFormLayout();
+    formLayout_L->setSpacing(6);
+    formLayout_L->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     labelGrq = new QLabel(tabLexique);
 
-    formLayout->setWidget(0, QFormLayout::LabelRole, labelGrq);
+    formLayout_L->setWidget(0, QFormLayout::LabelRole, labelGrq);
 
     lineEditGrq = new QLineEdit(tabLexique);
-
-    formLayout->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
+    formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
 
     lineEditTr = new QLineEdit(tabLexique);
-    formLayout->setWidget(4, QFormLayout::FieldRole, lineEditTr);
-
+    formLayout_L->setWidget(6, QFormLayout::FieldRole, lineEditTr);
     labelTr = new QLabel(tabLexique);
-    formLayout->setWidget(4, QFormLayout::LabelRole, labelTr);
+    formLayout_L->setWidget(6, QFormLayout::LabelRole, labelTr);
+
+    labelMorpho = new QLabel(tabLexique);
+    formLayout_L->setWidget(5, QFormLayout::LabelRole, labelMorpho);
+    lineMorpho = new QLineEdit(tabLexique);
+    formLayout_L->setWidget(5, QFormLayout::FieldRole, lineMorpho);
 
     labelModele = new QLabel(tabLexique);
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-    formLayout->setWidget(1, QFormLayout::LabelRole, labelModele);
+    formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
 
     lineEditModeles = new QLineEdit(tabLexique);
-    formLayout->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
+    formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
 
-    labelR2 = new QLabel(tabLexique);
-    labelR2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    labelInfectum = new QLabel(tabLexique);
+    //labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
+    lineEditInfectum = new QLineEdit(tabLexique);
+    formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
 
-    formLayout->setWidget(2, QFormLayout::LabelRole, labelR2);
+    labelPerfectum = new QLabel(tabLexique);
+    formLayout_L->setWidget(3, QFormLayout::LabelRole, labelPerfectum);
+    lineEditPerfectum = new QLineEdit(tabLexique);
+    formLayout_L->setWidget(3, QFormLayout::FieldRole, lineEditPerfectum);
 
     lineSupin = new QLineEdit(tabLexique);
-
-    formLayout->setWidget(2, QFormLayout::FieldRole, lineSupin);
-
+    formLayout_L->setWidget(4, QFormLayout::FieldRole, lineSupin);
     labelSupin = new QLabel(tabLexique);
-    labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    //labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    formLayout_L->setWidget(4, QFormLayout::LabelRole, labelSupin);
 
-    formLayout->setWidget(3, QFormLayout::LabelRole, labelSupin);
-
-    lineEdit_3 = new QLineEdit(tabLexique);
-
-    formLayout->setWidget(3, QFormLayout::FieldRole, lineEdit_3);
-
-    verticalLayout_3->addLayout(formLayout);
+    verticalLayout_D->addLayout(formLayout_L);
 
     textEditFlexion = new QTextEdit(tabLexique);
 
-    verticalLayout_3->addWidget(textEditFlexion);
+    verticalLayout_D->addWidget(textEditFlexion);
 
-    horizontalLayout_3->addLayout(verticalLayout_3);
+    horizontalLayout_lex->addLayout(verticalLayout_D);
 
-    verticalLayout_4->addLayout(horizontalLayout_3);
+    verticalLayout_4->addLayout(horizontalLayout_lex);
 
     tabWidget->addTab(tabLexique, QString());
     tabModeles = new QWidget();
@@ -203,7 +205,7 @@ MainWindow::MainWindow()
 
     tabWidget->setCurrentIndex(0);
 
-    QMetaObject::connectSlotsByName(this);
+    //QMetaObject::connectSlotsByName(this);
 
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "quantit\303\251", Q_NULLPTR));
@@ -213,8 +215,10 @@ MainWindow::MainWindow()
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
-    labelR2->setText(QApplication::translate("MainWindow", "g\303\251nitif", Q_NULLPTR));
-    labelSupin->setText(QApplication::translate("MainWindow", "supin", Q_NULLPTR));
+    labelInfectum->setText(QApplication::translate("MainWindow", "rad. infectum", Q_NULLPTR));
+    labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
+    labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
+    labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique), QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
     pushButton->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
@@ -245,10 +249,79 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
-    Lemme * lemme = lemcore->lemme(l);
+    lemme = lemcore->lemme(l);
     if (lemme != 0)
     {
+        qDebug()<<"lemme"<<lemme->grq()<<lemme->nbRadicaux()<<"radicaux";
         lineEditGrq->setText(lemme->grq());
+        lineEditModeles->setText(lemme->grModele());
+        lineMorpho->setText(lemme->indMorph());
+        lineEditTr->setText(lemme->traduction("fr"));
+        // vider les lignes
+        labelInfectum->hide();
+        lineEditInfectum->hide();
+        labelPerfectum->hide();
+        lineEditPerfectum->hide();
+        labelSupin->hide();
+        lineSupin->hide();
+        // radicaux
+        for (int i=0;i<lemme->nbRadicaux();++i)
+        {
+            QList<Radical*> lr = lemme->radical(i);
+            qDebug()<<"   i="<<i<<","<<lr.count()<<"variante(s)";
+            // les peupler
+            QStringList lgrq;
+            int numrad = -1;
+            if (!lr.isEmpty()) numrad = lr.at(0)->numRad();
+            for (int j=0;j<lr.count();++j)
+            {
+                Radical* r = lr.at(j);
+                lgrq.append(r->grq());
+            }
+            QString grq = lgrq.join(',');
+            switch(numrad)
+            {
+                case 0:
+                    {
+                        qDebug()<<"   0"<<grq;
+                        // verbes, infectum
+                        lineEditInfectum->setText(grq);
+                        labelInfectum->show();
+                        lineEditInfectum->show();
+                        break;
+                    }
+                case 1:
+                    {
+                        qDebug()<<"   1"<<grq;
+                        if (QString("vw").contains(lemme->pos()))
+                            labelPerfectum->setText("rad. perfectum");
+                        else
+                        {
+                            // adverbes ?
+                            labelPerfectum->setText("rad. génitif");
+                        }
+                        labelPerfectum->show();
+                        lineEditPerfectum->setText(grq);
+                        lineEditPerfectum->show();
+                        break;
+                    }
+                case 2:
+                    {
+                        qDebug()<<"   2"<<grq;
+                        break;
+                    }
+                case 3:
+                    {
+                        qDebug()<<"   3"<<grq;
+                        break;
+                    }
+                default:
+                    {
+                        qDebug()<<"   "<<numrad<<grq;
+                        break;
+                    }
+            }
+        }
     }
 }
 
@@ -276,5 +349,6 @@ void MainWindow::peuple()
     completeurM->setModel(modeleM);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
     lineEditModeles->setCompleter(completeurM);
+
 }
 
