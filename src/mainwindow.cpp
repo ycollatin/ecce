@@ -208,7 +208,7 @@ MainWindow::MainWindow()
     //QMetaObject::connectSlotsByName(this);
 
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-    actionQuant->setText(QApplication::translate("MainWindow", "quantit\303\251", Q_NULLPTR));
+    actionQuant->setText(QApplication::translate("MainWindow", "aăā", Q_NULLPTR));
     actionCharger->setText(QApplication::translate("MainWindow", "Charger", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
@@ -230,6 +230,19 @@ MainWindow::MainWindow()
 
     tabWidget->setCurrentIndex(0);
 
+    // liste des lignes demandant des quantités
+    lignes
+        << lineEditGrq
+        << lineEditModeles
+        << lineEditInfectum
+        << lineEditPerfectum  
+        << lineSupin;
+    aaa << "aăā"
+        << "eĕē"
+        << "iĭī"
+        << "oŏō"
+        << "uŭū"
+        << "yyy";
     peuple();
     connecte();
 }
@@ -245,6 +258,7 @@ void MainWindow::connecte()
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
+    connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
 }
 
 void MainWindow::edLem(QString l)
@@ -350,5 +364,41 @@ void MainWindow::peuple()
     completeur->setCompletionMode(QCompleter::PopupCompletion);
     lineEditModeles->setCompleter(completeurM);
 
+}
+
+void MainWindow::rotQ()
+{
+    for (int i=0;i<lignes.count();++i)
+    {
+        if (lignes.at(i)->hasFocus())
+        {
+            QString texte = lignes.at(i)->text();
+            if (texte.isEmpty()) return;
+            QChar der = texte.at(texte.length()-1);
+            for (int j=0;j<aaa.count();++j)
+            {
+                QString vvv = aaa.at(j);
+                int p = vvv.indexOf(der);
+                switch (p)
+                {
+                    case 0:
+                    case 1:
+                        p++;
+                        break;
+                    case 2:
+                        p = 0;
+                    default: break;
+                }
+                if (p > -1)
+                {
+                    texte.chop(1);
+                    texte.append(vvv.at(p));
+                    lignes.at(i)->setText(texte);
+                    return;
+                }
+            }
+            break;
+        }
+    }
 }
 

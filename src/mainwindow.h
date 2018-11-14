@@ -118,6 +118,8 @@ class MainWindow : public QMainWindow
         Lemme*            lemme = 0;
         QStringList       lmodeles;
         QCompleter*       completeurM;
+        QList<QLineEdit*> lignes;
+        QStringList       aaa;
 
         void connecte();
         void peuple();
@@ -125,6 +127,7 @@ class MainWindow : public QMainWindow
     private slots:
         void edLem(QString l);
         void edLem();
+        void rotQ();
 };
 
 #endif
