@@ -437,6 +437,11 @@ void Lemme::clearOcc()
     _nbOcc = 1;
 }
 
+int Lemme::nbRadicaux()
+{
+    return _radicaux.count();
+}
+
 /**
  * \fn int Lemme::nh()
  * \brief Renvoie le numéro d'homonymie du lemme.

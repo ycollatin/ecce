@@ -99,6 +99,7 @@ class Lemme : public QObject
     Modele*             modele();
     int                 nbOcc() const;    // Retourne le nombre d'occurrences du lemme
     void                clearOcc(); // Efface       "           "            "
+    int                 nbRadicaux();
     int                 nh();
     int                 origin();
     QString static      oteNh(QString g, int& nh);
