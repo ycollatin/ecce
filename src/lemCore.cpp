@@ -1173,6 +1173,11 @@ QString LemCore::morpho(int m)
     return _morphos[l].at(m - 1);
 }
 
+void LemCore::remplaceLemme(Lemme* l)
+{
+    _lemmes[l->cle()] = l;
+}
+
 QString LemCore::cas(int m)
 {
     QString l = "fr"; // La langue sélectionnée

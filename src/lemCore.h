@@ -136,6 +136,7 @@ class LemCore : public QObject
     QStringList            lModeles();
     Modele*                modele(QString m);
     QString                morpho(int i);
+    void                   remplaceLemme(Lemme* l);
     QMap<QString, QString> suffixes;
     QString                variable(QString v);
 
