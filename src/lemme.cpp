@@ -88,7 +88,8 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     //   0 | 1  | 2   | 3 |     4                | 5
     _lemmatiseur = qobject_cast<LemCore *>(parent);
     QStringList eclats = linea.split('|');
-    QStringList lg = eclats.at(0).split('=');
+    _champ0 = eclats.at(0);
+    QStringList lg = _champ0.split('=');
     _cle = Ch::atone(Ch::deramise(lg.at(0)));
     _grd = oteNh(lg.at(0), _nh);
     if (lg.count() == 1)
@@ -251,6 +252,11 @@ QString Lemme::ambrogio()
     }
     ss << "</table>";
     return retour;
+}
+
+QString Lemme::champ0()
+{
+    return _champ0;
 }
 
 /**
