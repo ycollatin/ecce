@@ -137,7 +137,6 @@ class MainWindow : public QMainWindow
 
     private slots:
         void edLem(QString l);
-        void edLem();
         void enr();
         void rotQ();
 };

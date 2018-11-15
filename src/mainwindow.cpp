@@ -192,7 +192,7 @@ MainWindow::MainWindow()
     tabWidget->setCurrentIndex(0);
 
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-    actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
+    actionQuant->setText(QApplication::translate("MainWindow","aăā (Ctrl+W)", Q_NULLPTR));
     actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
     actionCopier->setText(QApplication::translate("MainWindow", "Copier un jeu de données", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
@@ -237,7 +237,6 @@ MainWindow::MainWindow()
     listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
     listeLemmesLa.sort();
     listeLemmesFr.sort();
-    qDebug()<<listeLemmesLa.count()<<listeLemmesFr.count();
 }
 
 
@@ -250,7 +249,8 @@ void MainWindow::connecte()
 {
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
-    connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
+    //connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
+    connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
 }
@@ -260,7 +260,6 @@ void MainWindow::edLem(QString l)
     lemme = lemcore->lemme(l);
     if (lemme != 0)
     {
-        //lineEditGrq->setText(lemme->grq());
         lineEditGrq->setText(lemme->champ0());
         lineEditModeles->setText(lemme->grModele());
         lineMorpho->setText(lemme->indMorph());
@@ -336,19 +335,8 @@ void MainWindow::edLem(QString l)
     }
 }
 
-void MainWindow::edLem()
-{
-    edLem(lineEditLemme->text()); 
-}
-
 void MainWindow::enr()
 {
-    qDebug()<<ligneLa();
-    qDebug()<<"virgō=vīrgō|miles|vīrgĭn||ginis, f.|317";
-    //qDebug()<<ligneFr();
-    qDebug()<<"clé"<<lemme->cle()<<lemcore->lemme(lemme->cle())->cle();
-
-    // générer la ligne à modifier/changer
     if (lemme != 0) lemcore->remplaceLemme(lemme);
 }
 
@@ -360,8 +348,6 @@ QString MainWindow::ligneLa()
     QChar d = Ch::der(lineEditLemme->text());
     QString grq = lineEditGrq->text();
     if (d.isDigit()) grq.append(d);
-    //causa=cāusa,cāussa|uita|||ae, f.|3408
-    //     1              2
     QString ret = GabaritLa
         .arg(grq)
         .arg(lineEditModeles->text())
@@ -390,6 +376,8 @@ void MainWindow::peuple()
     QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
+    //completeur->setCompletionMode(QCompleter::InlineCompletion);
+    //completeur->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     lineEditLemme->setCompleter(completeur);
     // modèles
     lmodeles.append(lemcore->lModeles());
@@ -409,7 +397,6 @@ void MainWindow::rotQ()
         {
             QString texte = lignes.at(i)->text();
             if (texte.isEmpty()) return;
-            //QChar car = texte.at(texte.length()-1);
             int cp = lignes.at(i)->cursorPosition()-1;
             QChar car = texte.at(cp);
             for (int j=0;j<aaa.count();++j)
@@ -428,8 +415,6 @@ void MainWindow::rotQ()
                 }
                 if (p > -1)
                 {
-                    //texte.chop(1);
-                    //texte.append(vvv.at(p));
                     texte[cp] = vvv.at(p);
                     lignes.at(i)->setText(texte);
                     lignes.at(i)->setCursorPosition(cp+1);
