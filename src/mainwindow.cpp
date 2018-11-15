@@ -19,19 +19,26 @@
  * © Yves Ouvrard, 2009 - 2016
  */
 
+/*
+                        FIXME
+    Un champ de trop dans la ligne de lemme générée
+    le '=' n'est pas respecté dans cette ligne.
+   
+                        TODO
+    générer la ligne de traduction
+    rendre plus ergonomique le bouton de quantités
+
+ */
+
 #include "mainwindow.h"
 
 MainWindow::MainWindow()
 {
     actionQuant = new QAction(this);
-    actionCharger = new QAction(this);
+    actionCopier = new QAction(this);
     actionDiff = new QAction(this);
     actionQuitter = new QAction(this);
 
-    actionQuant = new QAction(this);
-    actionCharger = new QAction(this);
-    actionQuitter = new QAction(this);
-    actionDiff = new QAction(this);
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
     verticalLayout->setSpacing(6);
@@ -57,20 +64,12 @@ MainWindow::MainWindow()
     sizePolicy.setHeightForWidth(labelLemme->sizePolicy().hasHeightForWidth());
     labelLemme->setSizePolicy(sizePolicy);
     labelLemme->setMaximumSize(QSize(16777215, 50));
-
     horizontalLayout->addWidget(labelLemme);
-
     lineEditLemme = new QLineEdit(widget);
-
     horizontalLayout->addWidget(lineEditLemme);
-
-
     verticalLayout_G->addLayout(horizontalLayout);
-
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
     verticalLayout_G->addItem(verticalSpacer_2);
-
     splitter->addWidget(widget);
     widget1 = new QWidget(splitter);
     verticalLayout_D = new QVBoxLayout(widget1);
@@ -81,92 +80,56 @@ MainWindow::MainWindow()
     formLayout_L->setSpacing(6);
     formLayout_L->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     labelGrq = new QLabel(widget1);
-
     formLayout_L->setWidget(0, QFormLayout::LabelRole, labelGrq);
-
     lineEditGrq = new QLineEdit(widget1);
-
     formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
-
     labelModele = new QLabel(widget1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
-
     lineEditModeles = new QLineEdit(widget1);
-
     formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
-
     labelInfectum = new QLabel(widget1);
     labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
-
     lineEditInfectum = new QLineEdit(widget1);
-
     formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
 
     labelPerfectum = new QLabel(widget1);
-
     formLayout_L->setWidget(3, QFormLayout::LabelRole, labelPerfectum);
-
     lineEditPerfectum = new QLineEdit(widget1);
-
     formLayout_L->setWidget(3, QFormLayout::FieldRole, lineEditPerfectum);
 
     labelSupin = new QLabel(widget1);
     labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout_L->setWidget(4, QFormLayout::LabelRole, labelSupin);
-
     lineSupin = new QLineEdit(widget1);
-
     formLayout_L->setWidget(4, QFormLayout::FieldRole, lineSupin);
 
     labelTr = new QLabel(widget1);
-
     formLayout_L->setWidget(6, QFormLayout::LabelRole, labelTr);
-
     lineEditTr = new QLineEdit(widget1);
-
     formLayout_L->setWidget(6, QFormLayout::FieldRole, lineEditTr);
-
     labelMorpho = new QLabel(widget1);
-
     formLayout_L->setWidget(5, QFormLayout::LabelRole, labelMorpho);
-
     lineMorpho = new QLineEdit(widget1);
-
     formLayout_L->setWidget(5, QFormLayout::FieldRole, lineMorpho);
-
-
     verticalLayout_D->addLayout(formLayout_L);
-
     textEditFlexion = new QTextEdit(widget1);
-
     verticalLayout_D->addWidget(textEditFlexion);
-
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
     boutonEnr = new QPushButton(widget1);
-
     horizontalLayout_3->addWidget(boutonEnr);
-
     boutonSuppr = new QPushButton(widget1);
-
     horizontalLayout_3->addWidget(boutonSuppr);
-
-
     verticalLayout_D->addLayout(horizontalLayout_3);
-
     splitter->addWidget(widget1);
-
     verticalLayout_3->addWidget(splitter);
-
     tabWidget->addTab(tabLexique, QString());
     tabModeles = new QWidget();
+
     verticalLayout_8 = new QVBoxLayout(tabModeles);
     verticalLayout_8->setSpacing(6);
     verticalLayout_8->setContentsMargins(11, 11, 11, 11);
@@ -177,52 +140,29 @@ MainWindow::MainWindow()
     verticalLayout_6 = new QVBoxLayout();
     verticalLayout_6->setSpacing(6);
     comboModele = new QComboBox(tabModeles);
-
     verticalLayout_6->addWidget(comboModele);
-
     listView = new QListView(tabModeles);
-
     verticalLayout_6->addWidget(listView);
-
-
     horizontalLayout_2->addLayout(verticalLayout_6);
-
     verticalLayout_5 = new QVBoxLayout();
     verticalLayout_5->setSpacing(6);
     pushButton = new QPushButton(tabModeles);
-
     verticalLayout_5->addWidget(pushButton);
-
     pushButton_2 = new QPushButton(tabModeles);
-
     verticalLayout_5->addWidget(pushButton_2);
-
     verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
     verticalLayout_5->addItem(verticalSpacer);
-
-
     horizontalLayout_2->addLayout(verticalLayout_5);
-
     lineEdit = new QLineEdit(tabModeles);
-
     horizontalLayout_2->addWidget(lineEdit);
-
     listView_2 = new QListView(tabModeles);
-
     horizontalLayout_2->addWidget(listView_2);
-
-
     verticalLayout_7->addLayout(horizontalLayout_2);
-
     textEditFlexion_2 = new QTextEdit(tabModeles);
-
     verticalLayout_7->addWidget(textEditFlexion_2);
-
-
     verticalLayout_8->addLayout(verticalLayout_7);
-
     tabWidget->addTab(tabModeles, QString());
+
     varGraph = new QWidget();
     comboBox_2 = new QComboBox(varGraph);
     comboBox_2->setGeometry(QRect(50, 30, 72, 22));
@@ -231,10 +171,9 @@ MainWindow::MainWindow()
     comboBox_3 = new QComboBox(tab);
     comboBox_3->setGeometry(QRect(50, 60, 72, 22));
     tabWidget->addTab(tab, QString());
-
     verticalLayout->addWidget(tabWidget);
-
     setCentralWidget(centralWidget);
+
     menuBar = new QMenuBar(this);
     menuBar->setGeometry(QRect(0, 0, 1067, 19));
     menuFichier = new QMenu(menuBar);
@@ -243,10 +182,9 @@ MainWindow::MainWindow()
     addToolBar(Qt::TopToolBarArea, mainToolBar);
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
-
     menuBar->addAction(menuFichier->menuAction());
     menuFichier->addSeparator();
-    menuFichier->addAction(actionCharger);
+    menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
@@ -254,8 +192,9 @@ MainWindow::MainWindow()
     tabWidget->setCurrentIndex(0);
 
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-    actionQuant->setText(QApplication::translate("MainWindow", "quantit\303\251", Q_NULLPTR));
-    actionCharger->setText(QApplication::translate("MainWindow", "Charger", Q_NULLPTR));
+    actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
+    actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
+    actionCopier->setText(QApplication::translate("MainWindow", "Copier un jeu de données", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
@@ -290,9 +229,15 @@ MainWindow::MainWindow()
         << "iĭī"
         << "oŏō"
         << "uŭū"
-        << "yyy";
+        << "yўȳ";
     peuple();
     connecte();
+
+    listeLemmesLa = lemcore->lignesFichier("data/lemmes.la");
+    listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
+    listeLemmesLa.sort();
+    listeLemmesFr.sort();
+    qDebug()<<listeLemmesLa.count()<<listeLemmesFr.count();
 }
 
 
@@ -307,6 +252,7 @@ void MainWindow::connecte()
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
+    connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
 }
 
 void MainWindow::edLem(QString l)
@@ -314,8 +260,8 @@ void MainWindow::edLem(QString l)
     lemme = lemcore->lemme(l);
     if (lemme != 0)
     {
-        qDebug()<<"lemme"<<lemme->grq()<<lemme->nbRadicaux()<<"radicaux";
-        lineEditGrq->setText(lemme->grq());
+        //lineEditGrq->setText(lemme->grq());
+        lineEditGrq->setText(lemme->champ0());
         lineEditModeles->setText(lemme->grModele());
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
@@ -330,7 +276,6 @@ void MainWindow::edLem(QString l)
         for (int i=0;i<lemme->nbRadicaux();++i)
         {
             QList<Radical*> lr = lemme->radical(i);
-            qDebug()<<"   i="<<i<<","<<lr.count()<<"variante(s)";
             // les peupler
             QStringList lgrq;
             int numrad = -1;
@@ -345,7 +290,6 @@ void MainWindow::edLem(QString l)
             {
                 case 0:
                     {
-                        qDebug()<<"   0"<<grq;
                         // verbes, infectum
                         lineEditInfectum->setText(grq);
                         labelInfectum->show();
@@ -354,9 +298,9 @@ void MainWindow::edLem(QString l)
                     }
                 case 1:
                     {
-                        qDebug()<<"   1"<<grq;
                         if (QString("vw").contains(lemme->pos()))
                             labelPerfectum->setText("rad. perfectum");
+
                         else
                         {
                             // adverbes ?
@@ -369,7 +313,12 @@ void MainWindow::edLem(QString l)
                     }
                 case 2:
                     {
-                        qDebug()<<"   2"<<grq;
+                        if (QString("vw").contains(lemme->pos()))
+                        {
+                            labelSupin->show();
+                            lineSupin->show();
+                            lineSupin->setText(grq);
+                        }
                         break;
                     }
                 case 3:
@@ -392,6 +341,45 @@ void MainWindow::edLem()
     edLem(lineEditLemme->text()); 
 }
 
+void MainWindow::enr()
+{
+    qDebug()<<ligneLa();
+    qDebug()<<"virgō=vīrgō|miles|vīrgĭn||ginis, f.|317";
+    //qDebug()<<ligneFr();
+    qDebug()<<"clé"<<lemme->cle()<<lemcore->lemme(lemme->cle())->cle();
+
+    // générer la ligne à modifier/changer
+    if (lemme != 0) lemcore->remplaceLemme(lemme);
+}
+
+QString MainWindow::ligneLa()
+{
+    QString GabaritLa = "%1|%2|%3|%4|%5|%6|%7";
+    // construire la clé en ajoutant le n° d'homonymie + grq
+    // en cas de nouveau lemme, l'utilisateur ajoute ce n°
+    QChar d = Ch::der(lineEditLemme->text());
+    QString grq = lineEditGrq->text();
+    if (d.isDigit()) grq.append(d);
+    //causa=cāusa,cāussa|uita|||ae, f.|3408
+    //     1              2
+    QString ret = GabaritLa
+        .arg(grq)
+        .arg(lineEditModeles->text())
+        //.arg(lineEditInfectum->text())
+        .arg(lineEditPerfectum->text())
+        .arg(lineSupin->text())
+        .arg(lineMorpho->text())
+        .arg(lemme->nbOcc());
+    return ret;
+}
+
+QString MainWindow::ligneFr()
+{
+    return QString("%1|%2")
+        .arg(lineEditLemme->text())
+        .arg(lineEditTr->text());
+}
+
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
@@ -411,7 +399,6 @@ void MainWindow::peuple()
     completeurM->setModel(modeleM);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
     lineEditModeles->setCompleter(completeurM);
-
 }
 
 void MainWindow::rotQ()
@@ -422,11 +409,13 @@ void MainWindow::rotQ()
         {
             QString texte = lignes.at(i)->text();
             if (texte.isEmpty()) return;
-            QChar der = texte.at(texte.length()-1);
+            //QChar car = texte.at(texte.length()-1);
+            int cp = lignes.at(i)->cursorPosition()-1;
+            QChar car = texte.at(cp);
             for (int j=0;j<aaa.count();++j)
             {
                 QString vvv = aaa.at(j);
-                int p = vvv.indexOf(der);
+                int p = vvv.indexOf(car);
                 switch (p)
                 {
                     case 0:
@@ -439,9 +428,11 @@ void MainWindow::rotQ()
                 }
                 if (p > -1)
                 {
-                    texte.chop(1);
-                    texte.append(vvv.at(p));
+                    //texte.chop(1);
+                    //texte.append(vvv.at(p));
+                    texte[cp] = vvv.at(p);
                     lignes.at(i)->setText(texte);
+                    lignes.at(i)->setCursorPosition(cp+1);
                     return;
                 }
             }

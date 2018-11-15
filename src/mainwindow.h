@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow
 
     private:
         QAction *actionQuant;
-        QAction *actionCharger;
+        QAction *actionCopier;
         QAction *actionDiff;
         QAction *actionQuitter;
         QWidget *centralWidget;
@@ -128,12 +128,17 @@ class MainWindow : public QMainWindow
         QList<QLineEdit*> lignes;
         QStringList       aaa;
 
-        void connecte();
-        void peuple();
+        QString     ligneLa();
+        QString     ligneFr();
+        QStringList listeLemmesLa;
+        QStringList listeLemmesFr;
+        void    connecte();
+        void    peuple();
 
     private slots:
         void edLem(QString l);
         void edLem();
+        void enr();
         void rotQ();
 };
 
