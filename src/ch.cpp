@@ -172,6 +172,12 @@ QString Ch::deAccent(QString c)
     return c;
 }
 
+QChar Ch::der(QString s)
+{
+    if (s.isEmpty()) return '\0';
+    return s.at(s.count()-1);
+}
+
 /**
  * \fn QString Ch::deramise(QString r)
  * \brief retourne une graphie non-ramiste
