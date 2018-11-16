@@ -1173,9 +1173,10 @@ QString LemCore::morpho(int m)
     return _morphos[l].at(m - 1);
 }
 
-void LemCore::remplaceLemme(Lemme* l)
+void LemCore::remplaceLemme(Lemme* l, Lemme* nl)
 {
-    _lemmes[l->cle()] = l;
+    _lemmes[l->cle()] = nl;
+    delete l;
 }
 
 QString LemCore::cas(int m)
