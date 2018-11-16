@@ -103,12 +103,6 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     _hyphen = "";
     _origin = origin;
     _nbOcc = 1; // Tous les lemmes doivent avoir été rencontrés une fois
-    // contrôle de format. la liste doit avoir 6 items
-    if (eclats.count() < 6)
-    {
-        qDebug() << "Ligne mal formée : "<<_gr<<"dernier champ"<<eclats.last()<< linea;
-        //return;
-    }
     // lecture des radicaux, champs 2 et 3
     for (int i = 2; i < 4; ++i)
         if (!eclats.at(i).isEmpty())
@@ -226,7 +220,6 @@ void Lemme::ajRadical(int i, Radical *r)
 void Lemme::ajTrad(QString t, QString l)
 {
 //    if (_traduction.contains(l) && _traduction[l] != "")
-//        qDebug() << _grq << t << l << _traduction[l];
     _traduction[l] = t;
 }
 
@@ -554,7 +547,6 @@ QString Lemme::traduction(QString l)
  */
 bool Lemme::operator<(const Lemme &l) const
 {
-    //qDebug()<<"operator<"<<_gr;
     return _nbOcc < l.nbOcc();
     //return _gr < l.gr();
 }
