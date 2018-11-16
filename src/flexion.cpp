@@ -185,10 +185,14 @@ QString Flexion::tabNom()
     QTextStream fl(&ret);
     fl << "<hr/><a name=\"" << _lemme->cle() << "\"></a>";
     fl << entete;
-    fl << lina << _lemmatiseur->motsClefs(0) << linb << _lemmatiseur->nombre(0) << linb << _lemmatiseur->nombre(1) << linc;
+    fl << lina << _lemmatiseur->motsClefs(0) << linb 
+        << _lemmatiseur->nombre(0) << linb 
+        << _lemmatiseur->nombre(1) << linc;
     for (int i = 1; i < 7; ++i)
+    {
         fl << lina << _lemmatiseur->cas(i - 1) << linb << forme(i)
             << linb << forme(i + 6) << linc;
+    }
     fl << queue;
     return ret;
 }
