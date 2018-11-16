@@ -349,8 +349,9 @@ void MainWindow::enr()
     int i=0;
     while (i<listeLemmesLa.count())
     {
-        QString l = listeLemmesLa.at(i);
-        if (lem->champ0() == l.section('|',0,0))
+        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
+        QString cle = Ch::atone(Ch::deramise(l));
+        if (lem->cle() == cle)
         {
             listeLemmesLa[i] = ligneLa();
             // enregistrer
