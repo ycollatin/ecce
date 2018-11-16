@@ -79,7 +79,7 @@ int Radical::numRad() { return _numero; }
 
 /**
  * \fn Lemme::Lemme (QString linea, QObject *parent)
- * \brief Constructeur de la classe Lemme à partire de la
+ * \brief Constructeur de la classe Lemme à partir de la
  *        ligne linea. *parent est le lemmatiseur (classe Lemmat).
  */
 Lemme::Lemme(const QString linea, const int origin, QObject *parent)
