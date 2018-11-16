@@ -21,12 +21,11 @@
 
 /*
                         FIXME
-    Un champ de trop dans la ligne de lemme générée
-    le '=' n'est pas respecté dans cette ligne.
    
                         TODO
-    Chemin absolu des données A et B 
-    Créer, supprimer une ligne
+                       
+    - Chemin absolu des données A et B 
+    - Créer, supprimer une ligne
 
  */
 
@@ -236,8 +235,8 @@ MainWindow::MainWindow()
 
     listeLemmesLa = lemcore->lignesFichier("data/lemmes.la");
     listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
-    listeLemmesLa.sort();
-    listeLemmesFr.sort();
+    //listeLemmesLa.sort();
+    //listeLemmesFr.sort();
 }
 
 
@@ -330,12 +329,10 @@ void MainWindow::edLem(QString l)
                     }
                 case 3:
                     {
-                        qDebug()<<"   3"<<grq;
                         break;
                     }
                 default:
                     {
-                        qDebug()<<"   "<<numrad<<grq;
                         break;
                     }
             }
@@ -346,6 +343,50 @@ void MainWindow::edLem(QString l)
 void MainWindow::enr()
 {
     if (lemme != 0) lemcore->remplaceLemme(lemme, nLemme);
+    QString lc = lineEditLemme->text();
+    Lemme* lem = lemcore->lemme(lc);
+    QString tr = lem->traduction("fr");
+    int i=0;
+    while (i<listeLemmesLa.count())
+    {
+        QString l = listeLemmesLa.at(i);
+        if (lem->champ0() == l.section('|',0,0))
+        {
+            listeLemmesLa[i] = ligneLa();
+            // enregistrer
+            QFile f("data/lemmes.la");
+            f.remove();
+            f.open(QFile::WriteOnly);
+            QTextStream flux(&f);
+            for (int j=0;j<listeLemmesLa.count();++j)
+                flux << listeLemmesLa.at(j)<<'\n';
+            f.close();
+            break;
+        }
+        ++i;
+    }
+    QString ltr = lineEditTr->text();
+    i = 0;
+    while(i<listeLemmesFr.count())
+    {
+        QString l = listeLemmesFr.at(i).section(':',0,0);
+        if (l == lc && ltr != tr)
+        {
+            listeLemmesFr[i] = QString("%1:%2")
+                .arg(l)
+                .arg(ltr);
+            // enregistrer
+            QFile f("data/lemmes.fr");
+            f.remove();
+            f.open(QFile::WriteOnly);
+            QTextStream flux(&f);
+            for (int j=0;j<listeLemmesFr.count();++j)
+                flux << listeLemmesFr.at(j)+'\n';
+            f.close();
+            break;
+        }
+        ++i;
+    }
 }
 
 QString MainWindow::ligneLa()
