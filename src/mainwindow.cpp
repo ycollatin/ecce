@@ -25,8 +25,8 @@
     le '=' n'est pas respecté dans cette ligne.
    
                         TODO
-    générer la ligne de traduction
-    rendre plus ergonomique le bouton de quantités
+    Chemin absolu des données A et B 
+    Créer, supprimer une ligne
 
  */
 
@@ -232,6 +232,7 @@ MainWindow::MainWindow()
         << "yўȳ";
     peuple();
     connecte();
+    flexion = new Flexion(lemcore);
 
     listeLemmesLa = lemcore->lignesFichier("data/lemmes.la");
     listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
@@ -243,16 +244,22 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
     delete lemcore;
+    delete flexion;
 }
 
 void MainWindow::connecte()
 {
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
-    //connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(edLem()));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
+    // màj de la flexion
+    connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(lineEditModeles, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(lineEditInfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
 }
 
 void MainWindow::edLem(QString l)
@@ -260,6 +267,7 @@ void MainWindow::edLem(QString l)
     lemme = lemcore->lemme(l);
     if (lemme != 0)
     {
+        textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
         lineEditModeles->setText(lemme->grModele());
         lineMorpho->setText(lemme->indMorph());
@@ -337,12 +345,12 @@ void MainWindow::edLem(QString l)
 
 void MainWindow::enr()
 {
-    if (lemme != 0) lemcore->remplaceLemme(lemme);
+    if (lemme != 0) lemcore->remplaceLemme(lemme, nLemme);
 }
 
 QString MainWindow::ligneLa()
 {
-    QString GabaritLa = "%1|%2|%3|%4|%5|%6|%7";
+    QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     // construire la clé en ajoutant le n° d'homonymie + grq
     // en cas de nouveau lemme, l'utilisateur ajoute ce n°
     QChar d = Ch::der(lineEditLemme->text());
@@ -356,6 +364,9 @@ QString MainWindow::ligneLa()
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(lemme->nbOcc());
+    delete nLemme;
+    nLemme = new Lemme(ret, 0, lemcore);
+    textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
 }
 

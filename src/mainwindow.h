@@ -47,6 +47,8 @@
 #include <QtWidgets/QWidget>
 
 #include <QCompleter>
+
+#include <flexion.h>
 #include <lemCore.h>
 
 class MainWindow : public QMainWindow
@@ -119,16 +121,17 @@ class MainWindow : public QMainWindow
         QToolBar *mainToolBar;
         QStatusBar *statusBar;
 
-        LemCore*          lemcore;
-        QStringList       litems;
+        QStringList       aaa;
         QCompleter*       completeur;
+        QCompleter*       completeurM;
+        Flexion*          flexion;
+        LemCore*          lemcore;
+        QList<QLineEdit*> lignes;
+        QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
-        QCompleter*       completeurM;
-        QList<QLineEdit*> lignes;
-        QStringList       aaa;
+        Lemme*            nLemme = 0;
 
-        QString     ligneLa();
         QString     ligneFr();
         QStringList listeLemmesLa;
         QStringList listeLemmesFr;
@@ -136,9 +139,10 @@ class MainWindow : public QMainWindow
         void    peuple();
 
     private slots:
-        void edLem(QString l);
-        void enr();
-        void rotQ();
+        void    edLem(QString l);
+        void    enr();
+        QString ligneLa();
+        void    rotQ();
 };
 
 #endif
