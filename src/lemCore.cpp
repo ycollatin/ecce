@@ -42,7 +42,6 @@
  */
 LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 {
-    qDebug()<<"LemCore";
     if (resDir == "")
         _resDir = qApp->applicationDirPath() + "/data/";
     else if (resDir.endsWith("/")) _resDir = resDir;
@@ -80,7 +79,6 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values()) {
         QString t = l->traduction("fr");
-        if (t == "") qDebug() << l->cle() << "non traduit.";
     }
 #endif
 }
@@ -127,7 +125,6 @@ void LemCore::lisTags(bool tout)
         _tagTot[eclats[0].mid(0,1)] += eclats[1].toInt();
         ++i;
     }
-    //  qDebug() << _tagOcc.size() << _tagTot.size();
     if (tout)
     {
         l.clear();
@@ -139,7 +136,6 @@ void LemCore::lisTags(bool tout)
             _trigram.insert(eclats[0],eclats[1].toInt());
             ++i;
         }
-        //  qDebug() << _trigram.size();
     }
 }
 
@@ -168,7 +164,6 @@ QString LemCore::tag(Lemme *l, int m)
     // Il faut encore traiter le cas des pos multiples
     QString lp = l->pos();
     if ((lp.size() > 0) && !lp[0].isLetter()) lp = "";
-//    qDebug() << lp << lp.size();
     QString lTags = "";
     QString morph = morpho(m);
     while (lp.size() > 0)
@@ -208,8 +203,6 @@ QString LemCore::tag(Lemme *l, int m)
                 p = p.arg(" ").arg(" ");
                 lTags.append(p);
             }
-            //if (!_tagOcc.contains(p.mid(0,3)))
-            //   qDebug() << l->cle() << morph << p << " : Tag non trouvé !";
         }
     }
     return lTags;
@@ -249,9 +242,7 @@ int LemCore::fraction(QString listTags)
                 fr = _tagOcc[t] * 1024 / _tagTot[t.mid(0,1)];
             else fr = 1024;
             if (fr == 0) fr = 1;
-            //  qDebug() << _tagOcc[t] << _tagTot[t.mid(0,1)] << fr;
         }
-        //else qDebug() << t << " : Tag non trouvé !";
         if (frFin < fr) frFin = fr; // Si j'ai reçu une liste de tags, je garde la fraction la plus grande.
     }
     if (frFin == 0) return 1024;
@@ -333,8 +324,6 @@ void LemCore::lisMorphos(QString lang)
     {
         l = lignes.at(i);
         if (l.startsWith("! --- ")) break;
-        if (i+1 != l.section(':',0,0).toInt())
-            qDebug() <<i<<"Fichier morphos." << lang << ", erreur dans la ligne "<<l;
         else morphos.append(l.section(':',1,1));
         ++i;
     }
@@ -851,7 +840,6 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     if ((etape > 3) || (etape <0)) // Condition terminale
     {
         mm = lemmatise(f);
-//        qDebug() << f << etape;
         if (debPhr && f.at(0).isUpper())
         {
             QString nf = f.toLower();
@@ -1038,8 +1026,6 @@ void LemCore::lisFichierLexique(QString filepath)
     foreach (QString lin, lignes)
     {
         Lemme *l = new Lemme(lin, orig, this);
-        //if (_lemmes.contains(l->cle()))
-        //    qDebug() << lin << " existe déjà";
         _lemmes.insert(l->cle(), l);
     }
 }
@@ -1062,7 +1048,6 @@ void LemCore::lisExtension()
 //    if (_nbrLoaded) foreach(Lemme *l, _lemmes.values())
   //      l->clearOcc();
     // Si les nombres d'occurrences ont été chargés, je dois les ré-initialiser.
-    //qDebug() << "lecture extension";
     lisFichierLexique(_resDir + "lem_ext.la");
 //    lisNombres();
 }
@@ -1116,9 +1101,6 @@ void LemCore::lisTraductions(bool base, bool extension)
         rep = QDir(_resDir, "lem_ext.*");
     }
     QStringList ltr = rep.entryList();
-#ifdef VERIF_TRAD
-    qDebug() << ltr;
-#endif
     if (base) {
         ltr.removeOne("lemmes.la");  // n'est pas un fichier de traductions
     }
@@ -1142,11 +1124,6 @@ void LemCore::lisTraductions(bool base, bool extension)
         {
             Lemme *l = lemme(Ch::deramise(lin.section(':', 0, 0)));
             if (l != 0) l->ajTrad(lin.section(':', 1), suff);
-#ifdef DEBOG
-            else
-                qDebug() << nfl << "traduction, erreur dans la ligne" << lin
-                         << " clé" << Ch::deramise(lin.section(':', 0, 0));
-#endif
         }
     }
 }
@@ -1300,20 +1277,10 @@ void LemCore::lireHyphen(QString fichierHyphen)
         foreach (QString linea, lignes)
         {
             QStringList ecl = linea.split('|');
-#ifdef DEBOG
-            if (ecl.count() != 2)
-            {
-                qDebug () << "ligne mal formée" << linea;
-                continue;
-            }
-#endif
             ecl[1].replace('-',Ch::separSyll);
             Lemme *l = lemme(Ch::deramise(ecl[0]));
             if (l!=NULL)
                 l->setHyphen(ecl[1]);
-#ifdef DEBOG
-            else qDebug () << linea << "erreur lireHyphen";
-#endif
         }
     }
 }
