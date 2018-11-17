@@ -26,6 +26,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
@@ -83,11 +84,13 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout_D;
         QFormLayout *formLayout_L;
         QLabel *labelGrq;
+        QHBoxLayout *horizontalLayout_grq;
         QLineEdit *lineEditGrq;
+        QCheckBox *checkBox;
         QLabel *labelModele;
         QLineEdit* lineEditModeles;
-        QLabel *labelInfectum;
-        QLineEdit *lineEditInfectum;
+        //QLabel *labelInfectum;
+        //QLineEdit *lineEditInfectum;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
         QLabel *labelSupin;

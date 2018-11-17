@@ -21,17 +21,16 @@
 
 /*
                         FIXME
-    amoveo,abmoveo échec d'édition
-    Affranius, échech d'insertion
+    lacrima donne le tableau de lacta
    
                         TODO
                        
+    - aj. Christophorus, Elicona, Ganimedis, 
     - Chemin absolu des données A et B 
     - Créer, supprimer une ligne
     - initialisation d'un module
     - analyser la version médiévale de C11
-
- */
+*/
 
 #include "mainwindow.h"
 
@@ -83,8 +82,14 @@ MainWindow::MainWindow()
     formLayout_L->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     labelGrq = new QLabel(frame1);
     formLayout_L->setWidget(0, QFormLayout::LabelRole, labelGrq);
+    horizontalLayout_grq = new QHBoxLayout();
     lineEditGrq = new QLineEdit(frame1);
-    formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
+    horizontalLayout_grq->addWidget(lineEditGrq);
+    //formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
+    checkBox = new QCheckBox(frame1);
+    horizontalLayout_grq->addWidget(checkBox);
+    formLayout_L->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
+
     labelModele = new QLabel(frame1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
@@ -92,30 +97,31 @@ MainWindow::MainWindow()
     formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
     lineEditModeles = new QLineEdit(frame1);
     formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
-    labelInfectum = new QLabel(frame1);
-    labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-    formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
-    lineEditInfectum = new QLineEdit(frame1);
-    formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
+    //labelInfectum = new QLabel(frame1);
+    //labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+    //formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
+    //lineEditInfectum = new QLineEdit(frame1);
+    //formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
     labelPerfectum = new QLabel(frame1);
-    formLayout_L->setWidget(3, QFormLayout::LabelRole, labelPerfectum);
+    formLayout_L->setWidget(2, QFormLayout::LabelRole, labelPerfectum);
     lineEditPerfectum = new QLineEdit(frame1);
-    formLayout_L->setWidget(3, QFormLayout::FieldRole, lineEditPerfectum);
+    formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditPerfectum);
     labelSupin = new QLabel(frame1);
     labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-    formLayout_L->setWidget(4, QFormLayout::LabelRole, labelSupin);
+    formLayout_L->setWidget(3, QFormLayout::LabelRole, labelSupin);
     lineSupin = new QLineEdit(frame1);
-    formLayout_L->setWidget(4, QFormLayout::FieldRole, lineSupin);
+    formLayout_L->setWidget(3, QFormLayout::FieldRole, lineSupin);
     labelTr = new QLabel(frame1);
-    formLayout_L->setWidget(6, QFormLayout::LabelRole, labelTr);
+    formLayout_L->setWidget(4, QFormLayout::LabelRole, labelTr);
     lineEditTr = new QLineEdit(frame1);
-    formLayout_L->setWidget(6, QFormLayout::FieldRole, lineEditTr);
+    formLayout_L->setWidget(4, QFormLayout::FieldRole, lineEditTr);
     labelMorpho = new QLabel(frame1);
     formLayout_L->setWidget(5, QFormLayout::LabelRole, labelMorpho);
     lineMorpho = new QLineEdit(frame1);
     formLayout_L->setWidget(5, QFormLayout::FieldRole, lineMorpho);
     verticalLayout_D->addLayout(formLayout_L);
     textEditFlexion = new QTextEdit(frame1);
+    textEditFlexion->setReadOnly(true);
     verticalLayout_D->addWidget(textEditFlexion);
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
@@ -196,8 +202,9 @@ MainWindow::MainWindow()
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
+    checkBox->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
-    labelInfectum->setText(QApplication::translate("MainWindow", "rad. infectum", Q_NULLPTR));
+    //labelInfectum->setText(QApplication::translate("MainWindow", "rad. infectum", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
@@ -217,7 +224,7 @@ MainWindow::MainWindow()
     lignes
         << lineEditGrq
         << lineEditModeles
-        << lineEditInfectum
+        //<< lineEditInfectum
         << lineEditPerfectum  
         << lineSupin;
     aaa << "aăā"
@@ -255,16 +262,14 @@ void MainWindow::connecte()
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditModeles, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
-    connect(lineEditInfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    //connect(lineEditInfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
 }
 
 void MainWindow::edLem(QString l)
 {
-    qDebug()<<"edLem"<<l;
     lemme = lemcore->lemme(l);
-    qDebug()<<"lemme:"<<lemme;
     if (lemme != 0)
     {
         textEditFlexion->setText(flexion->tableau(lemme));
@@ -273,8 +278,8 @@ void MainWindow::edLem(QString l)
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
         // vider les lignes
-        labelInfectum->hide();
-        lineEditInfectum->hide();
+        //labelInfectum->hide();
+        //lineEditInfectum->hide();
         labelPerfectum->hide();
         lineEditPerfectum->hide();
         labelSupin->hide();
@@ -298,9 +303,9 @@ void MainWindow::edLem(QString l)
                 case 0:
                     {
                         // verbes, infectum
-                        lineEditInfectum->setText(grq);
-                        labelInfectum->show();
-                        lineEditInfectum->show();
+                        //lineEditInfectum->setText(grq);
+                        //labelInfectum->show();
+                        //lineEditInfectum->show();
                         break;
                     }
                 case 1:
@@ -343,7 +348,11 @@ void MainWindow::edLem(QString l)
 
 void MainWindow::enr()
 {
-    if (lemme != 0) lemcore->remplaceLemme(lemme, nLemme);
+    if (lemme != 0 && nLemme != 0)
+    {
+        lemcore->remplaceLemme(lemme, nLemme);
+        lemme = nLemme;
+    }
     QString lc = lineEditLemme->text();
     Lemme* lem = lemcore->lemme(lc);
     if (lem == 0)
@@ -397,15 +406,15 @@ void MainWindow::enr()
 
 QString MainWindow::ligneLa()
 {
-    if (lemme == 0) return "";
-    QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     // construire la clé en ajoutant le n° d'homonymie + grq
     // en cas de nouveau lemme, l'utilisateur ajoute ce n°
-    QChar d = Ch::der(lineEditLemme->text());
     QString grq = lineEditGrq->text();
+    if (grq.isEmpty()) return "";
+    QChar d = Ch::der(grq);
     if (d.isDigit()) grq.append(d);
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
+    QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     QString ret = GabaritLa
         .arg(grq)
         .arg(lineEditModeles->text())
@@ -414,7 +423,7 @@ QString MainWindow::ligneLa()
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    delete nLemme;
+    //delete nLemme;
     nLemme = new Lemme(ret, 0, lemcore);
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
