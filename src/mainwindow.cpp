@@ -21,11 +21,15 @@
 
 /*
                         FIXME
+    amoveo,abmoveo échec d'édition
+    Affranius, échech d'insertion
    
                         TODO
                        
     - Chemin absolu des données A et B 
     - Créer, supprimer une ligne
+    - initialisation d'un module
+    - analyser la version médiévale de C11
 
  */
 
@@ -40,23 +44,21 @@ MainWindow::MainWindow()
 
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
-    verticalLayout->setSpacing(6);
-    verticalLayout->setContentsMargins(11, 11, 11, 11);
     tabWidget = new QTabWidget(centralWidget);
+
     tabLexique = new QWidget();
-    verticalLayout_3 = new QVBoxLayout(tabLexique);
-    verticalLayout_3->setSpacing(6);
-    verticalLayout_3->setContentsMargins(11, 11, 11, 11);
+    verticalLayout_Lex = new QVBoxLayout(tabLexique);
     splitter = new QSplitter(tabLexique);
     splitter->setOrientation(Qt::Horizontal);
-    widget = new QWidget(splitter);
-    verticalLayout_G = new QVBoxLayout(widget);
+    frame = new QFrame(splitter);
+    frame->setFrameShape(QFrame::Box);
+    verticalLayout_G = new QVBoxLayout(frame);
     verticalLayout_G->setSpacing(6);
     verticalLayout_G->setContentsMargins(11, 11, 11, 11);
     verticalLayout_G->setContentsMargins(0, 0, 0, 0);
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
-    labelLemme = new QLabel(widget);
+    labelLemme = new QLabel(frame);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
@@ -64,71 +66,68 @@ MainWindow::MainWindow()
     labelLemme->setSizePolicy(sizePolicy);
     labelLemme->setMaximumSize(QSize(16777215, 50));
     horizontalLayout->addWidget(labelLemme);
-    lineEditLemme = new QLineEdit(widget);
+    lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
     verticalLayout_G->addLayout(horizontalLayout);
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_G->addItem(verticalSpacer_2);
-    splitter->addWidget(widget);
-    widget1 = new QWidget(splitter);
-    verticalLayout_D = new QVBoxLayout(widget1);
+    splitter->addWidget(frame);
+    frame1 = new QFrame(splitter);
+    frame1->setFrameShape(QFrame::Box);
+    verticalLayout_D = new QVBoxLayout(frame1);
     verticalLayout_D->setSpacing(6);
     verticalLayout_D->setContentsMargins(11, 11, 11, 11);
     verticalLayout_D->setContentsMargins(0, 0, 0, 0);
     formLayout_L = new QFormLayout();
     formLayout_L->setSpacing(6);
     formLayout_L->setLabelAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-    labelGrq = new QLabel(widget1);
+    labelGrq = new QLabel(frame1);
     formLayout_L->setWidget(0, QFormLayout::LabelRole, labelGrq);
-    lineEditGrq = new QLineEdit(widget1);
+    lineEditGrq = new QLineEdit(frame1);
     formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
-    labelModele = new QLabel(widget1);
+    labelModele = new QLabel(frame1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
-    lineEditModeles = new QLineEdit(widget1);
+    lineEditModeles = new QLineEdit(frame1);
     formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
-    labelInfectum = new QLabel(widget1);
+    labelInfectum = new QLabel(frame1);
     labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
-    lineEditInfectum = new QLineEdit(widget1);
+    lineEditInfectum = new QLineEdit(frame1);
     formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
-
-    labelPerfectum = new QLabel(widget1);
+    labelPerfectum = new QLabel(frame1);
     formLayout_L->setWidget(3, QFormLayout::LabelRole, labelPerfectum);
-    lineEditPerfectum = new QLineEdit(widget1);
+    lineEditPerfectum = new QLineEdit(frame1);
     formLayout_L->setWidget(3, QFormLayout::FieldRole, lineEditPerfectum);
-
-    labelSupin = new QLabel(widget1);
+    labelSupin = new QLabel(frame1);
     labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout_L->setWidget(4, QFormLayout::LabelRole, labelSupin);
-    lineSupin = new QLineEdit(widget1);
+    lineSupin = new QLineEdit(frame1);
     formLayout_L->setWidget(4, QFormLayout::FieldRole, lineSupin);
-
-    labelTr = new QLabel(widget1);
+    labelTr = new QLabel(frame1);
     formLayout_L->setWidget(6, QFormLayout::LabelRole, labelTr);
-    lineEditTr = new QLineEdit(widget1);
+    lineEditTr = new QLineEdit(frame1);
     formLayout_L->setWidget(6, QFormLayout::FieldRole, lineEditTr);
-    labelMorpho = new QLabel(widget1);
+    labelMorpho = new QLabel(frame1);
     formLayout_L->setWidget(5, QFormLayout::LabelRole, labelMorpho);
-    lineMorpho = new QLineEdit(widget1);
+    lineMorpho = new QLineEdit(frame1);
     formLayout_L->setWidget(5, QFormLayout::FieldRole, lineMorpho);
     verticalLayout_D->addLayout(formLayout_L);
-    textEditFlexion = new QTextEdit(widget1);
+    textEditFlexion = new QTextEdit(frame1);
     verticalLayout_D->addWidget(textEditFlexion);
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
-    boutonEnr = new QPushButton(widget1);
+    boutonEnr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonEnr);
-    boutonSuppr = new QPushButton(widget1);
+    boutonSuppr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonSuppr);
     verticalLayout_D->addLayout(horizontalLayout_3);
-    splitter->addWidget(widget1);
-    verticalLayout_3->addWidget(splitter);
+    splitter->addWidget(frame1);
+    verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
     tabModeles = new QWidget();
-
     verticalLayout_8 = new QVBoxLayout(tabModeles);
     verticalLayout_8->setSpacing(6);
     verticalLayout_8->setContentsMargins(11, 11, 11, 11);
@@ -161,15 +160,14 @@ MainWindow::MainWindow()
     verticalLayout_7->addWidget(textEditFlexion_2);
     verticalLayout_8->addLayout(verticalLayout_7);
     tabWidget->addTab(tabModeles, QString());
-
     varGraph = new QWidget();
     comboBox_2 = new QComboBox(varGraph);
     comboBox_2->setGeometry(QRect(50, 30, 72, 22));
     tabWidget->addTab(varGraph, QString());
-    tab = new QWidget();
-    comboBox_3 = new QComboBox(tab);
+    tabVarGraph = new QWidget();
+    comboBox_3 = new QComboBox(tabVarGraph);
     comboBox_3->setGeometry(QRect(50, 60, 72, 22));
-    tabWidget->addTab(tab, QString());
+    tabWidget->addTab(tabVarGraph, QString());
     verticalLayout->addWidget(tabWidget);
     setCentralWidget(centralWidget);
 
@@ -187,10 +185,9 @@ MainWindow::MainWindow()
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
-
     tabWidget->setCurrentIndex(0);
-
-    setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+    
+    setWindowTitle(QApplication::translate("MainWindow", "Collatinus, données", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow","aăā (Ctrl+W)", Q_NULLPTR));
     actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
     actionCopier->setText(QApplication::translate("MainWindow", "Copier un jeu de données", Q_NULLPTR));
@@ -212,7 +209,7 @@ MainWindow::MainWindow()
     pushButton_2->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabModeles), QApplication::translate("MainWindow", "Mod\303\250les", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(varGraph), QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
-    tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
+    tabWidget->setTabText(tabWidget->indexOf(tabVarGraph), QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
     menuFichier->setTitle(QApplication::translate("MainWindow", "Fichier", Q_NULLPTR));
     tabWidget->setCurrentIndex(0);
 
@@ -228,22 +225,24 @@ MainWindow::MainWindow()
         << "iĭī"
         << "oŏō"
         << "uŭū"
-        << "yўȳ";
+        << "yўȳ"
+        << "AĂĀ"
+        << "EĔĒ"
+        << "IĬĪ"
+        << "OŎŌ"
+        << "UŬŪ"
+        << "YЎȲ";
     peuple();
     connecte();
     flexion = new Flexion(lemcore);
 
     listeLemmesLa = lemcore->lignesFichier("data/lemmes.la");
     listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
-    //listeLemmesLa.sort();
-    //listeLemmesFr.sort();
 }
 
 
 MainWindow::~MainWindow()
 {
-    delete lemcore;
-    delete flexion;
 }
 
 void MainWindow::connecte()
@@ -263,7 +262,9 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
+    qDebug()<<"edLem"<<l;
     lemme = lemcore->lemme(l);
+    qDebug()<<"lemme:"<<lemme;
     if (lemme != 0)
     {
         textEditFlexion->setText(flexion->tableau(lemme));
@@ -345,6 +346,10 @@ void MainWindow::enr()
     if (lemme != 0) lemcore->remplaceLemme(lemme, nLemme);
     QString lc = lineEditLemme->text();
     Lemme* lem = lemcore->lemme(lc);
+    if (lem == 0)
+    {
+        qDebug()<<"écrire l'insersion d'un nouveau lemme";
+    }
     QString tr = lem->traduction("fr");
     int i=0;
     while (i<listeLemmesLa.count())
@@ -392,12 +397,15 @@ void MainWindow::enr()
 
 QString MainWindow::ligneLa()
 {
+    if (lemme == 0) return "";
     QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     // construire la clé en ajoutant le n° d'homonymie + grq
     // en cas de nouveau lemme, l'utilisateur ajoute ce n°
     QChar d = Ch::der(lineEditLemme->text());
     QString grq = lineEditGrq->text();
     if (d.isDigit()) grq.append(d);
+    int nbOcc = 1;
+    if (lemme != 0) nbOcc = lemme->nbOcc();
     QString ret = GabaritLa
         .arg(grq)
         .arg(lineEditModeles->text())
@@ -405,7 +413,7 @@ QString MainWindow::ligneLa()
         .arg(lineEditPerfectum->text())
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
-        .arg(lemme->nbOcc());
+        .arg(nbOcc);
     delete nLemme;
     nLemme = new Lemme(ret, 0, lemcore);
     textEditFlexion->setText(flexion->tableau(nLemme));

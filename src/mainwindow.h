@@ -28,6 +28,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFormLayout>
+#include <QtWidgets/QFrame>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -65,19 +66,20 @@ class MainWindow : public QMainWindow
         QAction *actionCopier;
         QAction *actionDiff;
         QAction *actionQuitter;
+
         QWidget *centralWidget;
         QVBoxLayout *verticalLayout;
         QTabWidget *tabWidget;
         QWidget *tabLexique;
-        QVBoxLayout *verticalLayout_3;
+        QVBoxLayout *verticalLayout_Lex;
         QSplitter *splitter;
-        QWidget *widget;
+        QFrame *frame;
         QVBoxLayout *verticalLayout_G;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
         QSpacerItem *verticalSpacer_2;
-        QWidget *widget1;
+        QFrame *frame1;
         QVBoxLayout *verticalLayout_D;
         QFormLayout *formLayout_L;
         QLabel *labelGrq;
@@ -114,7 +116,7 @@ class MainWindow : public QMainWindow
         QTextEdit *textEditFlexion_2;
         QWidget *varGraph;
         QComboBox *comboBox_2;
-        QWidget *tab;
+        QWidget *tabVarGraph;
         QComboBox *comboBox_3;
         QMenuBar *menuBar;
         QMenu *menuFichier;
