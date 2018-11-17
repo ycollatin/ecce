@@ -1152,8 +1152,12 @@ QString LemCore::morpho(int m)
 
 void LemCore::remplaceLemme(Lemme* l, Lemme* nl)
 {
+    if (l == 0 || nl == 0)
+    {
+        std::cerr << qPrintable("remplaceLemme, objet nul");
+        return;
+    }
     _lemmes[l->cle()] = nl;
-    delete l;
 }
 
 QString LemCore::cas(int m)
