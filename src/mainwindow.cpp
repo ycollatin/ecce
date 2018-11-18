@@ -263,7 +263,6 @@ void MainWindow::connecte()
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditModeles, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
-    //connect(lineEditInfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
 }
@@ -374,7 +373,6 @@ void MainWindow::enr()
         completeur->setModel(&modele);
     }
     if (nLemme == 0) return;
-    qDebug()<<"nl"<<nl<<"nlemme"<<nLemme->humain();
     if (lemme != 0 && nLemme != 0)
     {
         lemcore->remplaceLemme(lemme, nLemme);
@@ -426,67 +424,6 @@ void MainWindow::enr()
         ++i;
     }
 }
-
-/*
-void MainWindow::enr()
-{
-    if (lemme != 0 && nLemme != 0)
-    {
-        lemcore->remplaceLemme(lemme, nLemme);
-        lemme = nLemme;
-    }
-    QString lc = lineEditLemme->text();
-    Lemme* lem = lemcore->lemme(lc);
-    if (lem == 0)
-    {
-        QString l = ligneLa();
-        lem = nLemme;
-    }
-    QString tr = lem->traduction("fr");
-    int i=0;
-    while (i<listeLemmesLa.count())
-    {
-        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
-        QString cle = Ch::atone(Ch::deramise(l));
-        if (lem->cle() == cle)
-        {
-            listeLemmesLa[i] = ligneLa();
-            // enregistrer
-            QFile f("data/lemmes.la");
-            f.remove();
-            f.open(QFile::WriteOnly);
-            QTextStream flux(&f);
-            for (int j=0;j<listeLemmesLa.count();++j)
-                flux << listeLemmesLa.at(j)<<'\n';
-            f.close();
-            break;
-        }
-        ++i;
-    }
-    QString ltr = lineEditTr->text();
-    i = 0;
-    while(i<listeLemmesFr.count())
-    {
-        QString l = listeLemmesFr.at(i).section(':',0,0);
-        if (l == lc && ltr != tr)
-        {
-            listeLemmesFr[i] = QString("%1:%2")
-                .arg(l)
-                .arg(ltr);
-            // enregistrer
-            QFile f("data/lemmes.fr");
-            f.remove();
-            f.open(QFile::WriteOnly);
-            QTextStream flux(&f);
-            for (int j=0;j<listeLemmesFr.count();++j)
-                flux << listeLemmesFr.at(j)+'\n';
-            f.close();
-            break;
-        }
-        ++i;
-    }
-}
-*/
 
 QString MainWindow::ligneLa()
 {
