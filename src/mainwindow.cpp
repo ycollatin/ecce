@@ -21,11 +21,11 @@
 
 /*
                         FIXME
-    lacrima donne le tableau de lacta
    
                         TODO
                        
     - aj. Elicona, Ganimedis, 
+    - rendre le combo modele plus ergonomique
     - Chemin absolu des données A et B 
     - Créer, supprimer une ligne
     - initialisation d'un module
@@ -85,7 +85,6 @@ MainWindow::MainWindow()
     horizontalLayout_grq = new QHBoxLayout();
     lineEditGrq = new QLineEdit(frame1);
     horizontalLayout_grq->addWidget(lineEditGrq);
-    //formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
     checkBoxVb = new QCheckBox(frame1);
     horizontalLayout_grq->addWidget(checkBoxVb);
     formLayout_L->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
@@ -95,13 +94,10 @@ MainWindow::MainWindow()
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
-    lineEditModeles = new QLineEdit(frame1);
-    formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
-    //labelInfectum = new QLabel(frame1);
-    //labelInfectum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-    //formLayout_L->setWidget(2, QFormLayout::LabelRole, labelInfectum);
-    //lineEditInfectum = new QLineEdit(frame1);
-    //formLayout_L->setWidget(2, QFormLayout::FieldRole, lineEditInfectum);
+    //lineEditModeles = new QLineEdit(frame1);
+    //formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
+    comboBoxModele = new QComboBox(frame1);
+    formLayout_L->setWidget(1, QFormLayout::FieldRole, comboBoxModele);
     labelPerfectum = new QLabel(frame1);
     formLayout_L->setWidget(2, QFormLayout::LabelRole, labelPerfectum);
     lineEditPerfectum = new QLineEdit(frame1);
@@ -133,6 +129,7 @@ MainWindow::MainWindow()
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
+
     tabModeles = new QWidget();
     verticalLayout_8 = new QVBoxLayout(tabModeles);
     verticalLayout_8->setSpacing(6);
@@ -166,6 +163,7 @@ MainWindow::MainWindow()
     verticalLayout_7->addWidget(textEditFlexion_2);
     verticalLayout_8->addLayout(verticalLayout_7);
     tabWidget->addTab(tabModeles, QString());
+
     varGraph = new QWidget();
     comboBox_2 = new QComboBox(varGraph);
     comboBox_2->setGeometry(QRect(50, 30, 72, 22));
@@ -175,6 +173,7 @@ MainWindow::MainWindow()
     comboBox_3->setGeometry(QRect(50, 60, 72, 22));
     tabWidget->addTab(tabVarGraph, QString());
     verticalLayout->addWidget(tabWidget);
+
     setCentralWidget(centralWidget);
 
     menuBar = new QMenuBar(this);
@@ -223,7 +222,6 @@ MainWindow::MainWindow()
     // liste des lignes demandant des quantités
     lignes
         << lineEditGrq
-        << lineEditModeles
         //<< lineEditInfectum
         << lineEditPerfectum  
         << lineSupin;
@@ -262,7 +260,7 @@ void MainWindow::connecte()
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
-    connect(lineEditModeles, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
 }
@@ -275,7 +273,7 @@ void MainWindow::edLem(QString l)
     {
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
-        lineEditModeles->setText(lemme->grModele());
+        comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
         // vider les lignes
@@ -425,10 +423,11 @@ void MainWindow::enr()
     }
 }
 
-QString MainWindow::ligneLa()
+QString MainWindow::ligneLa(QString modl)
 {
     // construire la clé en ajoutant le n° d'homonymie + grq
     // en cas de nouveau lemme, l'utilisateur ajoute ce n°
+    if (modl.isEmpty()) modl = comboBoxModele->currentText();
     QString grq = lineEditGrq->text();
     if (grq.isEmpty()) return "";
     QChar d = Ch::der(grq);
@@ -438,8 +437,8 @@ QString MainWindow::ligneLa()
     QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     QString ret = GabaritLa
         .arg(grq)
-        .arg(lineEditModeles->text())
-        //.arg(lineEditInfectum->text())
+        //.arg(comboBoxModele->currentText())
+        .arg(modl)
         .arg(lineEditPerfectum->text())
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
@@ -493,12 +492,15 @@ void MainWindow::peuple()
     lineEditLemme->setCompleter(completeur);
     // modèles
     lmodeles.append(lemcore->lModeles());
+    comboBoxModele->addItems(lmodeles);
+    /*
     completeurM = new  QCompleter(lmodeles);
-    completeurM->setMaxVisibleItems(litems.count());
+    completeurM->setMaxVisibleItems(lmodeles.count());
     QStringListModel* modeleM = new QStringListModel(lmodeles, completeurM);
     completeurM->setModel(modeleM);
     completeur->setCompletionMode(QCompleter::PopupCompletion);
-    lineEditModeles->setCompleter(completeurM);
+    comboBoxModele->setCompleter(completeurM);
+    */
 }
 
 void MainWindow::rotQ()

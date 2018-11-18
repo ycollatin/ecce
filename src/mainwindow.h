@@ -88,9 +88,8 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditGrq;
         QCheckBox *checkBoxVb;
         QLabel *labelModele;
-        QLineEdit* lineEditModeles;
-        //QLabel *labelInfectum;
-        //QLineEdit *lineEditInfectum;
+        //QLineEdit* lineEditModeles;
+        QComboBox* comboBoxModele;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
         QLabel *labelSupin;
@@ -147,7 +146,7 @@ class MainWindow : public QMainWindow
     private slots:
         void    edLem(QString l);
         void    enr();
-        QString ligneLa();
+        QString ligneLa(QString modl="");
         void    lignesVisibles(bool v);
         void    rotQ();
 };
