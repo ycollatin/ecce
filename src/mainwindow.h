@@ -86,7 +86,7 @@ class MainWindow : public QMainWindow
         QLabel *labelGrq;
         QHBoxLayout *horizontalLayout_grq;
         QLineEdit *lineEditGrq;
-        QCheckBox *checkBox;
+        QCheckBox *checkBoxVb;
         QLabel *labelModele;
         QLineEdit* lineEditModeles;
         //QLabel *labelInfectum;
@@ -135,6 +135,7 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
+        QStringListModel  modele;
         Lemme*            nLemme = 0;
 
         QString     ligneFr();
@@ -147,6 +148,7 @@ class MainWindow : public QMainWindow
         void    edLem(QString l);
         void    enr();
         QString ligneLa();
+        void    lignesVisibles(bool v);
         void    rotQ();
 };
 

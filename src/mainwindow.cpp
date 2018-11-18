@@ -25,7 +25,7 @@
    
                         TODO
                        
-    - aj. Christophorus, Elicona, Ganimedis, 
+    - aj. Elicona, Ganimedis, 
     - Chemin absolu des données A et B 
     - Créer, supprimer une ligne
     - initialisation d'un module
@@ -86,8 +86,8 @@ MainWindow::MainWindow()
     lineEditGrq = new QLineEdit(frame1);
     horizontalLayout_grq->addWidget(lineEditGrq);
     //formLayout_L->setWidget(0, QFormLayout::FieldRole, lineEditGrq);
-    checkBox = new QCheckBox(frame1);
-    horizontalLayout_grq->addWidget(checkBox);
+    checkBoxVb = new QCheckBox(frame1);
+    horizontalLayout_grq->addWidget(checkBoxVb);
     formLayout_L->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
 
     labelModele = new QLabel(frame1);
@@ -202,7 +202,7 @@ MainWindow::MainWindow()
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
-    checkBox->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
+    checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     //labelInfectum->setText(QApplication::translate("MainWindow", "rad. infectum", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
@@ -255,6 +255,7 @@ MainWindow::~MainWindow()
 void MainWindow::connecte()
 {
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
@@ -270,6 +271,7 @@ void MainWindow::connecte()
 void MainWindow::edLem(QString l)
 {
     lemme = lemcore->lemme(l);
+    QString lelt = lineEditLemme->text();
     if (lemme != 0)
     {
         textEditFlexion->setText(flexion->tableau(lemme));
@@ -344,8 +346,88 @@ void MainWindow::edLem(QString l)
             }
         }
     }
+    else if (!lelt.isEmpty())
+    {
+        checkBoxVb->setChecked(lelt.endsWith("o")
+                               || lelt.endsWith("or"));
+    }
 }
 
+void MainWindow::enr()
+{
+    // radicaux et morphologie
+    QString lc = lineEditLemme->text();
+    QString nl = ligneLa();
+    Lemme* lem = lemcore->lemme(lc);
+    if (lem == 0)
+    {
+        lem = nLemme;
+        lem->setCle(lc);
+        // ajouter le lemme à la map _lemmes
+        lemcore->ajLemme(lem);
+        // màj des clés et des lignes à enregistrer
+        listeLemmesLa.append(nl);
+        // màj du compléteur
+        litems.append(lc);
+        qSort(litems.begin(), litems.end(), Ch::sort_i);
+        modele.setStringList(litems);
+        completeur->setModel(&modele);
+    }
+    if (nLemme == 0) return;
+    qDebug()<<"nl"<<nl<<"nlemme"<<nLemme->humain();
+    if (lemme != 0 && nLemme != 0)
+    {
+        lemcore->remplaceLemme(lemme, nLemme);
+        lemme = nLemme;
+    }
+    QString tr = lem->traduction("fr");
+    int i=0;
+    // enregistrement dans lemmes.la
+    while (i<listeLemmesLa.count())
+    {
+        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
+        QString cle = Ch::atone(Ch::deramise(l));
+        if (lem->cle() == cle)
+        {
+            listeLemmesLa[i] = nl;
+            // enregistrer
+            QFile f("data/lemmes.la");
+            f.remove();
+            f.open(QFile::WriteOnly);
+            QTextStream flux(&f);
+            for (int j=0;j<listeLemmesLa.count();++j)
+                flux << listeLemmesLa.at(j)<<'\n';
+            f.close();
+            break;
+        }
+        ++i;
+    }
+    // traductions
+    QString ltr = lineEditTr->text();
+    i = 0;
+    while(i<listeLemmesFr.count())
+    {
+        QString l = listeLemmesFr.at(i).section(':',0,0);
+        if (l == lc && ltr != tr)
+        {
+            listeLemmesFr[i] = QString("%1:%2")
+                .arg(l)
+                .arg(ltr);
+            // enregistrer
+            QFile f("data/lemmes.fr");
+            f.remove();
+            f.open(QFile::WriteOnly);
+            QTextStream flux(&f);
+            for (int j=0;j<listeLemmesFr.count();++j)
+                flux << listeLemmesFr.at(j)+'\n';
+            f.close();
+            break;
+        }
+        ++i;
+    }
+}
+
+/*
 void MainWindow::enr()
 {
     if (lemme != 0 && nLemme != 0)
@@ -357,7 +439,8 @@ void MainWindow::enr()
     Lemme* lem = lemcore->lemme(lc);
     if (lem == 0)
     {
-        qDebug()<<"écrire l'insersion d'un nouveau lemme";
+        QString l = ligneLa();
+        lem = nLemme;
     }
     QString tr = lem->traduction("fr");
     int i=0;
@@ -403,6 +486,7 @@ void MainWindow::enr()
         ++i;
     }
 }
+*/
 
 QString MainWindow::ligneLa()
 {
@@ -429,6 +513,22 @@ QString MainWindow::ligneLa()
     return ret;
 }
 
+void MainWindow::lignesVisibles(bool v)
+{
+    if (v)
+    {
+        labelPerfectum->setText("rad. perfectum");
+        labelSupin->show();
+        lineSupin->show();
+    }
+    else
+    {
+        labelPerfectum->setText("rad. génitif");
+        labelSupin->hide();
+        lineSupin->hide();
+    }
+}
+
 QString MainWindow::ligneFr()
 {
     return QString("%1|%2")
@@ -441,13 +541,18 @@ void MainWindow::peuple()
     lemcore = new LemCore(this);
     // lemmes
     litems.append(lemcore->cles());
-	completeur = new QCompleter(litems);
+	//completeur = new QCompleter(litems);
+	completeur = new QCompleter;
+    modele.setStringList(litems);
+    completeur->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+    completeur->setModel(&modele);
     completeur->setMaxVisibleItems(litems.count());
     QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
-    completeur->setCompletionMode(QCompleter::PopupCompletion);
-    //completeur->setCompletionMode(QCompleter::InlineCompletion);
-    //completeur->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+    // completeur->setCompletionRole(Qt::AscendingOrder);
+    // completeur->setCompletionMode(QCompleter::PopupCompletion);
+    // completeur->setCompletionMode(QCompleter::InlineCompletion);
+    // completeur->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     lineEditLemme->setCompleter(completeur);
     // modèles
     lmodeles.append(lemcore->lModeles());
