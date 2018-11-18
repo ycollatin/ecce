@@ -109,9 +109,8 @@ class LemCore : public QObject
 
    public:
     LemCore(QObject *parent = 0, QString resDir="");
-    bool                   estAbr(QString m);
-    // Pour remplacer Ch::abrev.contains(m) avec la liste des abréviations chargées.
     void                   ajDesinence(Desinence *d);
+    void                   ajLemme(Lemme* l);
     void                   ajModele(Modele *m);
     void                   ajRadicaux(Lemme *l);
     QString                assim(QString a);
@@ -121,6 +120,8 @@ class LemCore : public QObject
     static QString         deramise(QString r);
     QString                desassim(QString a);
     QString                desassimq(QString a);
+    bool                   estAbr(QString m);
+    // Pour remplacer Ch::abrev.contains(m) avec la liste des abréviations chargées.
     static bool            estRomain(QString f);
     bool                   inv(Lemme *l, const MapLem ml);
     MapLem                 lemmatise(QString f);  // lemmatise une forme

@@ -441,6 +441,11 @@ void LemCore::ajContractions()
     }
 }
 
+void LemCore::ajLemme(Lemme* l)
+{
+    _lemmes.insert(l->cle(), l);
+}
+
 int LemCore::aRomano(QString f)
 {
     if (f.size () == 0) return 0;
