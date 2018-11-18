@@ -110,6 +110,7 @@ class Lemme : public QObject
         QString             pos();
         QList<Radical*>     radical(int r);
         bool                renvoi();
+        void                setCle(QString c);
         void                setHyphen (QString h);
         QString             traduction(QString l);
         inline bool operator<(const Lemme &l) const;

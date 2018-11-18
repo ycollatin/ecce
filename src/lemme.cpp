@@ -509,7 +509,16 @@ QList<Radical *> Lemme::radical(int r)
  *        alternative renvoyant à une autre entrée
  *        du lexique.
  */
-bool Lemme::renvoi() { return _indMorph.contains("cf. "); }
+bool Lemme::renvoi()
+{
+    return _indMorph.contains("cf. ");
+}
+
+void Lemme::setCle(QString c)
+{
+    _cle = c;
+}
+
 /**
  * \fn QString Lemme::traduction(QString l)
  * \brief Renvoie la traduction du lemme dans la langue
