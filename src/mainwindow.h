@@ -88,8 +88,9 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditGrq;
         QCheckBox *checkBoxVb;
         QLabel *labelModele;
-        //QLineEdit* lineEditModeles;
         QComboBox* comboBoxModele;
+        QPushButton *bHomon;
+        QPushButton *bSuppr;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
         QLabel *labelSupin;

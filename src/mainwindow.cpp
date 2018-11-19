@@ -24,10 +24,11 @@
    
                         TODO
                        
+    - saisi en entier, 'Christophorus' n'affiche pas la bonne flexion.                            
     - aj. Elicona, Ganimedis, 
+    - bouton supprimer une ligne
     - rendre le combo modele plus ergonomique
     - Chemin absolu des données A et B 
-    - Créer, supprimer une ligne
     - initialisation d'un module
     - analyser la version médiévale de C11
 */
@@ -67,6 +68,12 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
+
+    bHomon = new QPushButton(frame);
+    horizontalLayout->addWidget(bHomon);
+    bSuppr = new QPushButton(frame);
+    horizontalLayout->addWidget(bSuppr);
+
     verticalLayout_G->addLayout(horizontalLayout);
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_G->addItem(verticalSpacer_2);
@@ -94,8 +101,6 @@ MainWindow::MainWindow()
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout_L->setWidget(1, QFormLayout::LabelRole, labelModele);
-    //lineEditModeles = new QLineEdit(frame1);
-    //formLayout_L->setWidget(1, QFormLayout::FieldRole, lineEditModeles);
     comboBoxModele = new QComboBox(frame1);
     formLayout_L->setWidget(1, QFormLayout::FieldRole, comboBoxModele);
     labelPerfectum = new QLabel(frame1);
@@ -203,11 +208,12 @@ MainWindow::MainWindow()
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
-    //labelInfectum->setText(QApplication::translate("MainWindow", "rad. infectum", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
     labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
+    bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
+    bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
     boutonEnr->setText(QApplication::translate("MainWindow", "Enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique), QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
