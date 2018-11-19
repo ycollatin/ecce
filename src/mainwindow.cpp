@@ -24,7 +24,7 @@
    
                         TODO
                        
-    - saisi en entier, 'Christophorus' n'affiche pas la bonne flexion.                            
+    - insersion de traduction 1 ligne trop bas
     - aj. Elicona, Ganimedis, 
     - bouton supprimer une ligne
     - rendre le combo modele plus ergonomique
@@ -68,12 +68,10 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
-
     bHomon = new QPushButton(frame);
     horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
-
     verticalLayout_G->addLayout(horizontalLayout);
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_G->addItem(verticalSpacer_2);
@@ -121,9 +119,6 @@ MainWindow::MainWindow()
     lineMorpho = new QLineEdit(frame1);
     formLayout_L->setWidget(5, QFormLayout::FieldRole, lineMorpho);
     verticalLayout_D->addLayout(formLayout_L);
-    textEditFlexion = new QTextEdit(frame1);
-    textEditFlexion->setReadOnly(true);
-    verticalLayout_D->addWidget(textEditFlexion);
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
     boutonEnr = new QPushButton(frame1);
@@ -131,6 +126,18 @@ MainWindow::MainWindow()
     boutonSuppr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonSuppr);
     verticalLayout_D->addLayout(horizontalLayout_3);
+    textEditFlexion = new QTextEdit(frame1);
+    textEditFlexion->setReadOnly(true);
+    verticalLayout_D->addWidget(textEditFlexion);
+    /*
+    horizontalLayout_3 = new QHBoxLayout();
+    horizontalLayout_3->setSpacing(6);
+    boutonEnr = new QPushButton(frame1);
+    horizontalLayout_3->addWidget(boutonEnr);
+    boutonSuppr = new QPushButton(frame1);
+    horizontalLayout_3->addWidget(boutonSuppr);
+    verticalLayout_D->addLayout(horizontalLayout_3);
+    */
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
@@ -266,6 +273,7 @@ void MainWindow::connecte()
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    connect(lineEditGrq, SIGNAL(textChanged(QString)), comboBoxModele, SLOT(show()));
     connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
@@ -273,12 +281,12 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
-    lemme = lemcore->lemme(l);
-    QString lelt = lineEditLemme->text();
-    if (lemme != 0)
+    if (litems.contains(l))
     {
+        lemme = lemcore->lemme(l);
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
+        comboBoxModele->show();
         comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
@@ -349,10 +357,20 @@ void MainWindow::edLem(QString l)
             }
         }
     }
-    else if (!lelt.isEmpty())
+    else
     {
-        checkBoxVb->setChecked(lelt.endsWith("o")
-                               || lelt.endsWith("or"));
+        // effacer les lignes
+        lineEditGrq->clear();
+        lineEditPerfectum->clear();
+        lineSupin->clear();
+        lineMorpho->clear();
+        lineEditTr->clear();
+        textEditFlexion->clear();
+        comboBoxModele->hide();
+        //comboBoxModele->setCurrentIndex(-1);
+        // case à cocher verbe
+        checkBoxVb->setChecked(l.endsWith("o")
+                               || l.endsWith("or"));
     }
 }
 
@@ -360,6 +378,7 @@ void MainWindow::enr()
 {
     // radicaux et morphologie
     QString lc = lineEditLemme->text();
+    qDebug()<<"lc"<<lc;
     QString nl = ligneLa();
     Lemme* lem = lemcore->lemme(lc);
     if (lem == 0)
@@ -410,11 +429,28 @@ void MainWindow::enr()
     while(i<listeLemmesFr.count())
     {
         QString l = listeLemmesFr.at(i).section(':',0,0);
-        if (l == lc && ltr != tr)
+        QString lcl = lc.toLower();
+        qDebug()<<"l"<<l<<"lcl"<<lcl;
+        if (l >= lcl)
         {
-            listeLemmesFr[i] = QString("%1:%2")
-                .arg(l)
-                .arg(ltr);
+            qDebug()<<"l >= lc";
+            if (l == lc && ltr != tr)
+            {
+                qDebug()<<"==";
+                listeLemmesFr[i] = QString("%1:%2")
+                    .arg(l)
+                    .arg(ltr);
+            }
+            else if (l > lcl)
+            {
+                qDebug()<<">";
+                qDebug()<<i<<l<<"plus grand que"<<lcl<<", insert";
+                if (i > 0) --i;
+                listeLemmesFr.insert(i, QString("%1:%2")
+                                     .arg(lc)
+                                     .arg(ltr));
+                qDebug()<<"vérif"<<listeLemmesFr.at(i);
+            }
             // enregistrer
             QFile f("data/lemmes.fr");
             f.remove();
@@ -426,6 +462,7 @@ void MainWindow::enr()
             break;
         }
         ++i;
+        qDebug()<<"++i"<<i;
     }
 }
 
@@ -443,13 +480,11 @@ QString MainWindow::ligneLa(QString modl)
     QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     QString ret = GabaritLa
         .arg(grq)
-        //.arg(comboBoxModele->currentText())
         .arg(modl)
         .arg(lineEditPerfectum->text())
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    //delete nLemme;
     nLemme = new Lemme(ret, 0, lemcore);
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
@@ -483,7 +518,7 @@ void MainWindow::peuple()
     lemcore = new LemCore(this);
     // lemmes
     litems.append(lemcore->cles());
-	//completeur = new QCompleter(litems);
+    // compléteur lemmes
 	completeur = new QCompleter;
     modele.setStringList(litems);
     completeur->setModelSorting(QCompleter::CaseInsensitivelySortedModel);

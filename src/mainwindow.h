@@ -79,6 +79,8 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
+        QPushButton *bHomon;
+        QPushButton *bSuppr;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_D;
@@ -89,8 +91,6 @@ class MainWindow : public QMainWindow
         QCheckBox *checkBoxVb;
         QLabel *labelModele;
         QComboBox* comboBoxModele;
-        QPushButton *bHomon;
-        QPushButton *bSuppr;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
         QLabel *labelSupin;
