@@ -1027,8 +1027,9 @@ void LemCore::lisFichierLexique(QString filepath)
 {
     int orig = 0;
     if (filepath.endsWith("ext.la")) orig = 1;
-    QStringList lignes = lignesFichier(filepath);
-    foreach (QString lin, lignes)
+    //QStringList lignes = lignesFichier(filepath);
+    _listeLemmesLa = lignesFichier(filepath);
+    foreach (QString lin, _listeLemmesLa)
     {
         Lemme *l = new Lemme(lin, orig, this);
         _lemmes.insert(l->cle(), l);
@@ -1084,6 +1085,11 @@ void LemCore::lisModeles()
         }
         sl.append(l);
     }
+}
+
+QStringList LemCore::listeLemmesLa()
+{
+    return _listeLemmesLa;
 }
 
 /**

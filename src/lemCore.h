@@ -72,6 +72,7 @@ class LemCore : public QObject
     void lisModeles();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
+    QStringList _listeLemmesLa;
     // variables et utils
     QMap<QString, QString> assims;
     QMap<QString, QString> assimsq;
@@ -134,6 +135,7 @@ class LemCore : public QObject
     QStringList            lignesFichier(QString nf);
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
+    QStringList            listeLemmesLa();
     QStringList            lModeles();
     Modele*                modele(QString m);
     QString                morpho(int i);
