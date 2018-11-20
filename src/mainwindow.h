@@ -145,17 +145,18 @@ class MainWindow : public QMainWindow
         void    peuple();
 
     private slots:
-        QString cle(QString ligne);
-        void    copier();
-        void    edLem(QString l);
-        void    enr();
-        void    enrFr();
-        void    enrLa();
-        int     indexOfInsert(QString s, QStringList l);
-        QString ligneLa(QString modl="");
-        void    lignesVisibles(bool v);
-        void    rotQ();
-        void    suppr();
+        QString     cle(QString ligne);
+        void        copier();
+        void        edLem(QString l);
+        void        enr();
+        void        enrFr();
+        void        enrLa();
+        int         indexOfInsert(QString s, QStringList l);
+        QString     ligneLa(QString modl="");
+        void        lignesVisibles(bool v);
+        QStringList lisLignes(QString nf);
+        void        rotQ();
+        void        suppr();
 };
 
 #endif

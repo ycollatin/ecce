@@ -322,13 +322,10 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
-    qDebug()<<"edLem"<<l;
     if (litems.contains(l))
     {
         lemme = lemcore->lemme(l);
-        qDebug()<<"ok a";
         textEditFlexion->setText(flexion->tableau(lemme));
-        qDebug()<<"ok b";
         lineEditGrq->setText(lemme->champ0());
         comboBoxModele->show();
         comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
@@ -443,7 +440,7 @@ void MainWindow::enr()
         */
         enrLa();
         // français
-        //i = indexOfInsert(linFr, listeLemmesFr);
+        i = indexOfInsert(linFr, listeLemmesFr);
         listeLemmesFr.insert(i, linFr);
         /*
         listeLemmesFr.append(linFr);
@@ -535,6 +532,7 @@ void MainWindow::enrLa()
     for (int j=0;j<listeLemmesLa.count();++j)
         flux << listeLemmesLa.at(j)<<'\n';
     f.close();
+    qDebug()<<"fin enrLa";
 }
 
 void MainWindow::enrFr()
@@ -548,29 +546,16 @@ void MainWindow::enrFr()
     f.close();
 }
 
-/*
 int MainWindow::indexOfInsert(QString s, QStringList l)
 {
-    s = Ch::atone(s.toLower());
+    s = s.toLower();
+    qDebug()<<"indexOfInsert s"<<s;
     for (int i=0;i<l.count();++i)
     {
-        QString cle = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
-        cle = Ch::atone(Ch::deramise(cle));
-        if (QString::compare(s, cle) < 0) 
-        {
-            return i-1;
-        }
-    }
-    return l.count();
-}
-*/
-
-int MainWindow::indexOfInsert(QString s, QStringList l)
-{
-    for (int i=0;i<l.count();++i)
-    {
-		if (l.startsWith("!")) continue;
-        if (l.at(i) >= s)
+        QString lin = l.at(i);
+		if (lin.startsWith("!")) continue;
+        lin = Ch::atone(lin).toLower();
+        if (lin >= s)
             return i;
     }
     return l.count();
@@ -623,6 +608,21 @@ QString MainWindow::ligneFr()
         .arg(lineEditTr->text());
 }
 
+QStringList MainWindow::lisLignes(QString nf)
+{
+    QFile f(nf);
+    f.open(QFile::ReadOnly);
+    QTextStream flux(&f);
+    flux.setCodec("UTF-8"); // Pour windôze !
+    QStringList retour;
+    while (!flux.atEnd())
+    {
+        retour.append(flux.readLine());
+    }
+    f.close();
+    return retour;
+}
+
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
@@ -630,8 +630,8 @@ void MainWindow::peuple()
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
-    listeLemmesLa = lemcore->listeLemmesLa();
-    listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
+    listeLemmesLa = lisLignes("data/lemmes.la");
+    listeLemmesFr = lisLignes("data/lemmes.fr");
     // compléteur lemmes
 	completeur = new QCompleter;
     modele.setStringList(litems);
