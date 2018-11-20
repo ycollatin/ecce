@@ -447,11 +447,12 @@ void MainWindow::enr()
         std::sort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
         */
         enrFr();
+        qDebug()<<"enrfr ok";
         // màj du compléteur
         litems.append(lc);
-        qSort(litems.begin(), litems.end(), Ch::sort_i);
         modele.setStringList(litems);
         completeur->setModel(&modele);
+        qDebug()<<"::enr ok";
         return;
     }
     if (nLemme == 0) return;
@@ -549,7 +550,6 @@ void MainWindow::enrFr()
 int MainWindow::indexOfInsert(QString s, QStringList l)
 {
     s = s.toLower();
-    qDebug()<<"indexOfInsert s"<<s;
     for (int i=0;i<l.count();++i)
     {
         QString lin = l.at(i);
