@@ -21,18 +21,21 @@
 
 /*
                         FIXME
-   
+
+    Christophorus inséré à la fin de lemmes.la                            
+
                         TODO
-                       
-    - insersion de traduction 1 ligne trop bas
-    - aj. Elicona, Ganimedis, 
+
+    - Factoriser l'enregistrement de lemmes.la et .fr.
+    - aj. Elicona, Ganimedis,
     - bouton supprimer une ligne
     - rendre le combo modele plus ergonomique
-    - Chemin absolu des données A et B 
+    - Chemin absolu des données A et B
     - initialisation d'un module
     - analyser la version médiévale de C11
 */
 
+#include <QFileDialog>
 #include "mainwindow.h"
 
 MainWindow::MainWindow()
@@ -129,15 +132,6 @@ MainWindow::MainWindow()
     textEditFlexion = new QTextEdit(frame1);
     textEditFlexion->setReadOnly(true);
     verticalLayout_D->addWidget(textEditFlexion);
-    /*
-    horizontalLayout_3 = new QHBoxLayout();
-    horizontalLayout_3->setSpacing(6);
-    boutonEnr = new QPushButton(frame1);
-    horizontalLayout_3->addWidget(boutonEnr);
-    boutonSuppr = new QPushButton(frame1);
-    horizontalLayout_3->addWidget(boutonSuppr);
-    verticalLayout_D->addLayout(horizontalLayout_3);
-    */
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
@@ -203,7 +197,7 @@ MainWindow::MainWindow()
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
     tabWidget->setCurrentIndex(0);
-    
+
     setWindowTitle(QApplication::translate("MainWindow", "Collatinus, données", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow","aăā (Ctrl+W)", Q_NULLPTR));
     actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
@@ -229,14 +223,14 @@ MainWindow::MainWindow()
     tabWidget->setTabText(tabWidget->indexOf(tabModeles), QApplication::translate("MainWindow", "Mod\303\250les", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(varGraph), QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph), QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
-    menuFichier->setTitle(QApplication::translate("MainWindow", "Fichier", Q_NULLPTR));
+    menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     tabWidget->setCurrentIndex(0);
 
     // liste des lignes demandant des quantités
     lignes
         << lineEditGrq
         //<< lineEditInfectum
-        << lineEditPerfectum  
+        << lineEditPerfectum
         << lineSupin;
     aaa << "aăā"
         << "eĕē"
@@ -252,10 +246,6 @@ MainWindow::MainWindow()
         << "YЎȲ";
     peuple();
     connecte();
-    flexion = new Flexion(lemcore);
-
-    listeLemmesLa = lemcore->lignesFichier("data/lemmes.la");
-    listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
 }
 
 
@@ -263,14 +253,65 @@ MainWindow::~MainWindow()
 {
 }
 
+QString MainWindow::cle(QString ligne)
+{
+    QString ret = ligne.section(QRegExp("[\\W]"),0,0);
+    return Ch::atone(Ch::deramise(ret));
+}
+
+void MainWindow::copier()
+{
+
+	// vider data/
+    QDir folder("data");
+    folder.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
+	QFileInfoList entrees = folder.entryInfoList();
+    foreach(QFileInfo fileInfo, folder.entryInfoList())
+	for (int i=0;i<entrees.count();++i)
+    {
+		QFileInfo fileInfo = entrees.at(i);
+        if(fileInfo.isFile())
+        {
+            if(!QFile::remove(fileInfo.filePath()))
+                continue;
+        }
+    }
+	// copie 
+    QString nfc = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
+    if (nfc.isEmpty()) return;
+    // copier lemmes.la et lemmes.fr
+    QFile::copy(nfc+"/lemmes.la", "data/lemmes.la");
+    QFile::copy(nfc+"/lemmes.fr", "data/lemmes.fr");
+    //QFile::copy(nfc+"/abreviations.la", "data/abreviations.la");
+    QFile::copy(nfc+"/assimilations.la", "data/assimilations.la");
+    QFile::copy(nfc+"/contractions.la", "data/contractions.la");
+    QFile::copy(nfc+"/irregs.la", "data/irregs.la");
+    QFile::copy(nfc+"/modeles.la", "data/modeles.la");
+    QFile::copy(nfc+"/morphos.fr", "data/morphos.fr");
+    // réinitialiser
+    listeLemmesLa.clear();
+    listeLemmesFr.clear();
+    litems.clear();
+    lmodeles.clear();
+    comboBoxModele->clear();
+    delete lemcore;
+    delete completeur;
+    peuple();
+}
+
 void MainWindow::connecte()
 {
+    // fichier
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
+    // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
+    connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditGrq, SIGNAL(textChanged(QString)), comboBoxModele, SLOT(show()));
@@ -281,18 +322,19 @@ void MainWindow::connecte()
 
 void MainWindow::edLem(QString l)
 {
+    qDebug()<<"edLem"<<l;
     if (litems.contains(l))
     {
         lemme = lemcore->lemme(l);
+        qDebug()<<"ok a";
         textEditFlexion->setText(flexion->tableau(lemme));
+        qDebug()<<"ok b";
         lineEditGrq->setText(lemme->champ0());
         comboBoxModele->show();
         comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
         // vider les lignes
-        //labelInfectum->hide();
-        //lineEditInfectum->hide();
         labelPerfectum->hide();
         lineEditPerfectum->hide();
         labelSupin->hide();
@@ -359,6 +401,7 @@ void MainWindow::edLem(QString l)
     }
     else
     {
+        lemme = 0;
         // effacer les lignes
         lineEditGrq->clear();
         lineEditPerfectum->clear();
@@ -378,8 +421,11 @@ void MainWindow::enr()
 {
     // radicaux et morphologie
     QString lc = lineEditLemme->text();
-    qDebug()<<"lc"<<lc;
-    QString nl = ligneLa();
+    QString linLa = ligneLa();
+    QString ltr = lineEditTr->text();
+    QString linFr = QString("%1:%2")
+                             .arg(lc)
+                             .arg(ltr);
     Lemme* lem = lemcore->lemme(lc);
     if (lem == 0)
     {
@@ -388,12 +434,28 @@ void MainWindow::enr()
         // ajouter le lemme à la map _lemmes
         lemcore->ajLemme(lem);
         // màj des clés et des lignes à enregistrer
-        listeLemmesLa.append(nl);
+        // latin
+        int i = indexOfInsert(linLa, listeLemmesLa);
+        listeLemmesLa.insert(i, linLa);
+        /*
+        listeLemmesLa.append(linLa);
+        std::sort(listeLemmesLa.begin(), listeLemmesLa.end(), Ch::sort_i);
+        */
+        enrLa();
+        // français
+        //i = indexOfInsert(linFr, listeLemmesFr);
+        listeLemmesFr.insert(i, linFr);
+        /*
+        listeLemmesFr.append(linFr);
+        std::sort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
+        */
+        enrFr();
         // màj du compléteur
         litems.append(lc);
         qSort(litems.begin(), litems.end(), Ch::sort_i);
         modele.setStringList(litems);
         completeur->setModel(&modele);
+        return;
     }
     if (nLemme == 0) return;
     if (lemme != 0 && nLemme != 0)
@@ -402,16 +464,19 @@ void MainWindow::enr()
         lemme = nLemme;
     }
     QString tr = lem->traduction("fr");
-    int i=0;
     // enregistrement dans lemmes.la
-    while (i<listeLemmesLa.count())
+    for (int i=0;i<listeLemmesLa.count();++i)
     {
-        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
-        QString cle = Ch::atone(Ch::deramise(l));
+        QString ligne = listeLemmesLa.at(i);
+        QString cle = this->cle(ligne);
+        //QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
+        //QString cle = Ch::atone(Ch::deramise(l));
         if (lem->cle() == cle)
         {
-            listeLemmesLa[i] = nl;
+            listeLemmesLa[i] = linLa;
             // enregistrer
+            enrLa();
+            /*
             QFile f("data/lemmes.la");
             f.remove();
             f.open(QFile::WriteOnly);
@@ -419,39 +484,34 @@ void MainWindow::enr()
             for (int j=0;j<listeLemmesLa.count();++j)
                 flux << listeLemmesLa.at(j)<<'\n';
             f.close();
+            */
             break;
         }
-        ++i;
     }
     // traductions
-    QString ltr = lineEditTr->text();
-    i = 0;
+    int i = 0;
+    QString lcl = lc.toLower();
     while(i<listeLemmesFr.count())
     {
         QString l = listeLemmesFr.at(i).section(':',0,0);
-        QString lcl = lc.toLower();
-        qDebug()<<"l"<<l<<"lcl"<<lcl;
         if (l >= lcl)
         {
-            qDebug()<<"l >= lc";
             if (l == lc && ltr != tr)
             {
-                qDebug()<<"==";
                 listeLemmesFr[i] = QString("%1:%2")
                     .arg(l)
                     .arg(ltr);
             }
             else if (l > lcl)
             {
-                qDebug()<<">";
-                qDebug()<<i<<l<<"plus grand que"<<lcl<<", insert";
                 if (i > 0) --i;
                 listeLemmesFr.insert(i, QString("%1:%2")
                                      .arg(lc)
                                      .arg(ltr));
-                qDebug()<<"vérif"<<listeLemmesFr.at(i);
             }
             // enregistrer
+            enrFr();
+            /*
             QFile f("data/lemmes.fr");
             f.remove();
             f.open(QFile::WriteOnly);
@@ -459,11 +519,61 @@ void MainWindow::enr()
             for (int j=0;j<listeLemmesFr.count();++j)
                 flux << listeLemmesFr.at(j)+'\n';
             f.close();
+            */
             break;
         }
         ++i;
-        qDebug()<<"++i"<<i;
     }
+}
+
+void MainWindow::enrLa()
+{
+    QFile f("data/lemmes.la");
+    f.remove();
+    f.open(QFile::WriteOnly);
+    QTextStream flux(&f);
+    for (int j=0;j<listeLemmesLa.count();++j)
+        flux << listeLemmesLa.at(j)<<'\n';
+    f.close();
+}
+
+void MainWindow::enrFr()
+{
+    QFile f("data/lemmes.fr");
+    f.remove();
+    f.open(QFile::WriteOnly);
+    QTextStream flux(&f);
+    for (int j=0;j<listeLemmesFr.count();++j)
+        flux << listeLemmesFr.at(j)+'\n';
+    f.close();
+}
+
+/*
+int MainWindow::indexOfInsert(QString s, QStringList l)
+{
+    s = Ch::atone(s.toLower());
+    for (int i=0;i<l.count();++i)
+    {
+        QString cle = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
+        cle = Ch::atone(Ch::deramise(cle));
+        if (QString::compare(s, cle) < 0) 
+        {
+            return i-1;
+        }
+    }
+    return l.count();
+}
+*/
+
+int MainWindow::indexOfInsert(QString s, QStringList l)
+{
+    for (int i=0;i<l.count();++i)
+    {
+		if (l.startsWith("!")) continue;
+        if (l.at(i) >= s)
+            return i;
+    }
+    return l.count();
 }
 
 QString MainWindow::ligneLa(QString modl)
@@ -516,8 +626,12 @@ QString MainWindow::ligneFr()
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
+    flexion = new Flexion(lemcore);
     // lemmes
-    litems.append(lemcore->cles());
+    litems = lemcore->cles();
+    qSort(litems.begin(), litems.end(), Ch::sort_i);
+    listeLemmesLa = lemcore->listeLemmesLa();
+    listeLemmesFr = lemcore->lignesFichier("data/lemmes.fr");
     // compléteur lemmes
 	completeur = new QCompleter;
     modele.setStringList(litems);
@@ -526,22 +640,12 @@ void MainWindow::peuple()
     completeur->setMaxVisibleItems(litems.count());
     QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
-    // completeur->setCompletionRole(Qt::AscendingOrder);
-    // completeur->setCompletionMode(QCompleter::PopupCompletion);
-    // completeur->setCompletionMode(QCompleter::InlineCompletion);
-    // completeur->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     lineEditLemme->setCompleter(completeur);
     // modèles
-    lmodeles.append(lemcore->lModeles());
+    lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
-    /*
-    completeurM = new  QCompleter(lmodeles);
-    completeurM->setMaxVisibleItems(lmodeles.count());
-    QStringListModel* modeleM = new QStringListModel(lmodeles, completeurM);
-    completeurM->setModel(modeleM);
-    completeur->setCompletionMode(QCompleter::PopupCompletion);
-    comboBoxModele->setCompleter(completeurM);
-    */
+    //qSort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
+    //qSort(listeLemmesLa.begin(), listeLemmesLa.end(), Ch::sort_i);
 }
 
 void MainWindow::rotQ()
@@ -581,3 +685,33 @@ void MainWindow::rotQ()
     }
 }
 
+void MainWindow::suppr()
+{
+    if (lemme == 0) return;
+    QString cle = lemme->cle();
+    // litems
+    litems.removeAt(litems.indexOf(cle));
+    // listeLemmesLa
+    for (int i=0;i<listeLemmesLa.count();++i)
+    {
+        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
+        l = Ch::atone(Ch::deramise(l));
+        if (l == cle)
+        {
+            listeLemmesLa.removeAt(i);
+            enrLa();
+            break;
+        }
+    }
+
+    for(int i=0; i<listeLemmesFr.count(); ++i)
+    {
+        QString l = listeLemmesFr.at(i).section(':',0,0);
+        if (l == cle)
+        {
+            listeLemmesFr.removeAt(i);
+            enrFr();
+            break;
+        }
+    }
+}
