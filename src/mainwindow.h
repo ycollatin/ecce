@@ -129,20 +129,20 @@ class MainWindow : public QMainWindow
         QStringList       aaa;
         QCompleter*       completeur;
         QCompleter*       completeurM;
+        void              connecte();
         Flexion*          flexion;
+        QString GabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
+        QString           ligneFr();
         QList<QLineEdit*> lignes;
+        QStringList       listeLemmesLa;
+        QStringList       listeLemmesFr;
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
         QStringListModel  modele;
         Lemme*            nLemme = 0;
-
-        QString     ligneFr();
-        QStringList listeLemmesLa;
-        QStringList listeLemmesFr;
-        void    connecte();
-        void    peuple();
+        void              peuple();
 
     private slots:
         QString     cle(QString ligne);

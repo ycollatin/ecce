@@ -22,12 +22,10 @@
 /*
                         FIXME
 
-    Christophorus inséré à la fin de lemmes.la                            
+    Les lemmes modifiés s'ajoutent au lieu de remplacer.
 
                         TODO
 
-    - Factoriser l'enregistrement de lemmes.la et .fr.
-    - aj. Elicona, Ganimedis,
     - bouton supprimer une ligne
     - rendre le combo modele plus ergonomique
     - Chemin absolu des données A et B
@@ -427,7 +425,6 @@ void MainWindow::enr()
     if (lem == 0)
     {
         lem = nLemme;
-        lem->setCle(lc);
         // ajouter le lemme à la map _lemmes
         lemcore->ajLemme(lem);
         // màj des clés et des lignes à enregistrer
@@ -572,7 +569,7 @@ QString MainWindow::ligneLa(QString modl)
     if (d.isDigit()) grq.append(d);
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
-    QString GabaritLa = "%1|%2|%3|%4|%5|%6";
+    //QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     QString ret = GabaritLa
         .arg(grq)
         .arg(modl)
@@ -581,6 +578,7 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineMorpho->text())
         .arg(nbOcc);
     nLemme = new Lemme(ret, 0, lemcore);
+    nLemme->setCle(lineEditLemme->text());
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
 }
