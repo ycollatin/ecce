@@ -23,6 +23,7 @@ QMAKE_DISTCLEAN += $${DESTDIR}/editcol
 
 # Input
 HEADERS += src/ch.h \
+           src/diff_match_patch.cpp \
            src/flexion.h \
            src/irregs.h \
            src/lemCore.h \
@@ -31,6 +32,7 @@ HEADERS += src/ch.h \
            src/mainwindow.h 
 
 SOURCES += src/ch.cpp \
+           src/diff_match_patch.h \
            src/flexion.cpp \
            src/irregs.cpp \
            src/lemCore.cpp \
