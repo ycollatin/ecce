@@ -29,7 +29,8 @@ HEADERS += src/ch.h \
            src/lemCore.h \
            src/lemme.h \
 		   src/modele.h \
-           src/mainwindow.h 
+           src/mainwindow.h \
+           src/preanalyse.h
 
 SOURCES += src/ch.cpp \
            src/diff_match_patch.h \
@@ -39,7 +40,8 @@ SOURCES += src/ch.cpp \
            src/lemme.cpp \
            src/main.cpp \
            src/mainwindow.cpp \
-           src/modele.cpp
+           src/modele.cpp \
+           src/preanalyse.cpp
 
 #RESOURCES += editcol.qrc
 #RC_ICONS = res/editcol.ico
