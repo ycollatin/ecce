@@ -38,6 +38,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
@@ -64,18 +65,18 @@ class MainWindow : public QMainWindow
 
     private:
         QAction *actionQuant;
-        QAction *actionCopier;
-        QAction *actionDiff;
         QAction *actionQuitter;
+        QAction *actionDiff;
+        QAction *actionCopier;
 
         QWidget *centralWidget;
-        QVBoxLayout *verticalLayout;
+        QVBoxLayout *verticalLayout_9;
         QTabWidget *tabWidget;
         QWidget *tabLexique;
         QVBoxLayout *verticalLayout_Lex;
         QSplitter *splitter;
         QFrame *frame;
-        QVBoxLayout *verticalLayout_G;
+        QVBoxLayout *verticalLayout_3;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
@@ -83,48 +84,77 @@ class MainWindow : public QMainWindow
         QPushButton *bSuppr;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
-        QVBoxLayout *verticalLayout_D;
-        QFormLayout *formLayout_L;
+        QVBoxLayout *verticalLayout_2;
+        QFormLayout *formLayout;
         QLabel *labelGrq;
         QHBoxLayout *horizontalLayout_grq;
         QLineEdit *lineEditGrq;
         QCheckBox *checkBoxVb;
         QLabel *labelModele;
-        QComboBox* comboBoxModele;
+        QComboBox *comboBoxModele;
         QLabel *labelPerfectum;
         QLineEdit *lineEditPerfectum;
         QLabel *labelSupin;
         QLineEdit *lineSupin;
-        QLabel* labelTr;
-        QLineEdit *lineEditTr;
         QLabel *labelMorpho;
         QLineEdit *lineMorpho;
-        QTextEdit *textEditFlexion;
+        QLabel *labelTr;
+        QLineEdit *lineEditTr;
         QHBoxLayout *horizontalLayout_3;
         QPushButton *boutonEnr;
         QPushButton *boutonSuppr;
-        QWidget *tabModeles;
-        QVBoxLayout *verticalLayout_8;
-        QVBoxLayout *verticalLayout_7;
-        QHBoxLayout *horizontalLayout_2;
-        QVBoxLayout *verticalLayout_6;
-        QComboBox *comboModele;
-        QListView *listView;
-        QVBoxLayout *verticalLayout_5;
-        QPushButton *pushButton;
-        QPushButton *pushButton_2;
-        QSpacerItem *verticalSpacer;
-        QLineEdit *lineEdit;
-        QListView *listView_2;
-        QTextEdit *textEditFlexion_2;
-        QWidget *varGraph;
-        QComboBox *comboBox_2;
+        QTextEdit *textEditFlexion;
         QWidget *tabVarGraph;
-        QComboBox *comboBox_3;
+        QVBoxLayout *verticalLayout_5;
+        QSplitter *splitterVarGraph;
+        QWidget *layoutWidget;
+        QVBoxLayout *verticalLayoutConf;
+        QLabel *label_3;
+        QHBoxLayout *horizontalLayoutBtnPre;
+        QPushButton *btnPre;
+        QSpacerItem *horizontalSpacerPre;
+        QFormLayout *formLayoutCochesVar;
+        QLabel *labelVariante;
+        QCheckBox *checkBoxAe;
+        QCheckBox *checkBox_ae;
+        QCheckBox *checkBox_H;
+        QCheckBox *checkBox_h;
+        QCheckBox *checkBox_Mihi;
+        QCheckBox *checkBox_mihi;
+        QCheckBox *checkBox_IJ;
+        QCheckBox *checkBox_ij;
+        QCheckBox *checkBox_UV;
+        QCheckBox *checkBox_uv;
+        QCheckBox *checkBox_TICI;
+        QCheckBox *checkBox_tici;
+        QCheckBox *checkBox_MPN;
+        QCheckBox *checkBox_mpn;
+        QLabel *label_tju;
+        QSplitter *splitter_2;
+        QPlainTextEdit *plainTextEditVariantes;
+        QWidget *layoutWidget1;
+        QVBoxLayout *verticalLayout_4;
+        QLabel *label_AutresVar;
+        QPlainTextEdit *plainTextEdit_AutresVar;
+        QWidget *tab;
+        QVBoxLayout *verticalLayout_7;
+        QHBoxLayout *horizontalLayout_5;
+        QComboBox *comboBox;
+        QFrame *frame_2;
+        QVBoxLayout *verticalLayout_6;
+        QHBoxLayout *horizontalLayout_4;
+        QLabel *label_5;
+        QCheckBox *checkBox_15;
+        QLineEdit *lineEdit;
+        QPushButton *pushButton;
+        QPlainTextEdit *plainTextEdit_3;
         QMenuBar *menuBar;
         QMenu *menuFichier;
+        //QMenu *menu_Aide;
         QToolBar *mainToolBar;
         QStatusBar *statusBar;
+
+        void retranslateUi();
 
         QStringList       aaa;
         QCompleter*       completeur;
@@ -144,8 +174,8 @@ class MainWindow : public QMainWindow
         Lemme*            nLemme = 0;
         void              peuple();
 
-    private slots:
-        QString     cle(QString ligne);
+        private slots:
+            QString     cle(QString ligne);
         void        copier();
         void        edLem(QString l);
         void        enr();
