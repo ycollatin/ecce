@@ -26,8 +26,9 @@
 
                         TODO
 
-    - bouton supprimer une ligne
-    - rendre le combo modele plus ergonomique
+    - rendre le choix du modele plus ergonomique
+        mettre au point une taxonomie des pos ?
+    - rendre l'homonymie plus ergonomique
     - Chemin absolu des données A et B
     - initialisation d'un module
     - analyser la version médiévale de C11
