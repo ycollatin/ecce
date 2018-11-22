@@ -35,7 +35,7 @@
  */
 
 #include <QFileDialog>
-#include "mainwindow.h"
+#include <mainwindow.h>
 
 MainWindow::MainWindow()
 {
@@ -617,6 +617,8 @@ void MainWindow::connecte()
     connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    // préanalyse
+    connect(btnPre, SIGNAL(clicked()), this, SLOT(preAn()));
 }
 
 void MainWindow::edLem(QString l)

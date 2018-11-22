@@ -165,6 +165,7 @@ class MainWindow : public QMainWindow
         LemCore*          lemcore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
+        QStringList       listeGr;
         QStringList       listeLemmesLa;
         QStringList       listeLemmesFr;
         QStringList       litems;
@@ -185,6 +186,7 @@ class MainWindow : public QMainWindow
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf);
+        void        preAn();
         void        rotQ();
         void        suppr();
 };
