@@ -29,8 +29,7 @@ HEADERS += src/ch.h \
            src/lemCore.h \
            src/lemme.h \
 		   src/modele.h \
-           src/mainwindow.h \
-           src/preanalyse.h
+           src/mainwindow.h
 
 SOURCES += src/ch.cpp \
            src/diff_match_patch.h \
