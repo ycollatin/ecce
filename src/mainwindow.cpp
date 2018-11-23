@@ -281,12 +281,21 @@ MainWindow::MainWindow()
     checkBox_H = new QCheckBox(layoutWidget);
     checkBox_H->setObjectName(QStringLiteral("checkBox_H"));
 
+
     formLayoutCochesVar->setWidget(2, QFormLayout::LabelRole, checkBox_H);
 
     checkBox_h = new QCheckBox(layoutWidget);
     checkBox_h->setObjectName(QStringLiteral("checkBox_h"));
 
     formLayoutCochesVar->setWidget(2, QFormLayout::FieldRole, checkBox_h);
+
+    /*
+    checkBox_PH = new QCheckBox(layoutWidget);
+    formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_PH);
+
+    checkBox_ph = new QCheckBox(layoutWidget);
+    formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_ph);
+    */
 
     checkBox_Mihi = new QCheckBox(layoutWidget);
     checkBox_Mihi->setObjectName(QStringLiteral("checkBox_Mihi"));
@@ -337,6 +346,12 @@ MainWindow::MainWindow()
     checkBox_mpn->setObjectName(QStringLiteral("checkBox_mpn"));
 
     formLayoutCochesVar->setWidget(7, QFormLayout::FieldRole, checkBox_mpn);
+
+    checkBox_PH = new QCheckBox(layoutWidget);
+    formLayoutCochesVar->setWidget(8, QFormLayout::LabelRole, checkBox_PH);
+
+    checkBox_ph = new QCheckBox(layoutWidget);
+    formLayoutCochesVar->setWidget(8, QFormLayout::FieldRole, checkBox_ph);
 
     label_tju = new QLabel(layoutWidget);
     label_tju->setObjectName(QStringLiteral("label_tju"));
@@ -534,6 +549,8 @@ void MainWindow::retranslateUi()
     checkBox_tici->setText(QString());
     checkBox_MPN->setText(QApplication::translate("MainWindow", "mn > mpn", Q_NULLPTR));
     checkBox_mpn->setText(QString());
+    checkBox_PH->setText(QApplication::translate("MainWindow", "ph > f", Q_NULLPTR));
+    checkBox_ph->setText(QString());
     label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
     label_AutresVar->setText(QApplication::translate("MainWindow", "Autres variantes", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph), QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
@@ -619,6 +636,22 @@ void MainWindow::connecte()
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     // préanalyse
     connect(btnPre, SIGNAL(clicked()), this, SLOT(preAn()));
+    connect(checkBoxAe, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_ae, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_H, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_h, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_Mihi, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_mihi, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_IJ, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_ij, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_UV, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_uv, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_TICI, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_tici, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_MPN, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
 }
 
 void MainWindow::edLem(QString l)
@@ -774,15 +807,6 @@ void MainWindow::enr()
             listeLemmesLa[i] = linLa;
             // enregistrer
             enrLa();
-            /*
-               QFile f("data/lemmes.la");
-               f.remove();
-               f.open(QFile::WriteOnly);
-               QTextStream flux(&f);
-               for (int j=0;j<listeLemmesLa.count();++j)
-               flux << listeLemmesLa.at(j)<<'\n';
-               f.close();
-             */
             break;
         }
     }

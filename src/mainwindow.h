@@ -129,6 +129,8 @@ class MainWindow : public QMainWindow
         QCheckBox *checkBox_tici;
         QCheckBox *checkBox_MPN;
         QCheckBox *checkBox_mpn;
+        QCheckBox *checkBox_PH;
+        QCheckBox *checkBox_ph;
         QLabel *label_tju;
         QSplitter *splitter_2;
         QPlainTextEdit *plainTextEditVariantes;
@@ -177,6 +179,7 @@ class MainWindow : public QMainWindow
 
         private slots:
             QString     cle(QString ligne);
+        void        coche();
         void        copier();
         void        edLem(QString l);
         void        enr();
