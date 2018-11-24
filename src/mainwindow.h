@@ -141,20 +141,6 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout_4;
         QLabel *label_AutresVar;
         QPlainTextEdit *plainTextEdit_AutresVar;
-        /*
-        QWidget *tab;
-        QVBoxLayout *verticalLayout_7;
-        QHBoxLayout *horizontalLayout_5;
-        QComboBox *comboBox;
-        QFrame *frame_2;
-        QVBoxLayout *verticalLayout_6;
-        QHBoxLayout *horizontalLayout_4;
-        QLabel *label_5;
-        QCheckBox *checkBox_15;
-        QLineEdit *lineEdit;
-        QPushButton *pushButton;
-        QPlainTextEdit *plainTextEdit_3;
-        */
 
         // onglet irréguliers
         QWidget *tabIrr;
@@ -172,14 +158,14 @@ class MainWindow : public QMainWindow
         QPushButton *bPlusMorpho;
         QPushButton *pushButton_3;
         QLineEdit *linIrreg;
-        QTextBrowser *textBrowserMorphos;
+        QListView *listView_Morphos;
         QWidget *widget1;
         QVBoxLayout *verticalLayoutIrrCentre;
         QSpacerItem *spacerIrrHaut;
         QPushButton *bAjIrr;
         QPushButton *bsupprIrr;
         QSpacerItem *spacerIrrBas;
-        QTextBrowser *textBrowserIrr;
+        QListView   *listViewIrr;
 
         // menu et barrre d'état
         QMenuBar *menuBar;
@@ -205,6 +191,8 @@ class MainWindow : public QMainWindow
         Lemme*            lemme = 0;
         QStringList       lmodeles;
         QStringListModel  modele;
+        QStringListModel  modeleIrr;
+        QStringListModel  modeleMorphos;
         Lemme*            nLemme = 0;
         void              peuple();
 
@@ -219,7 +207,7 @@ class MainWindow : public QMainWindow
         int         indexOfInsert(QString s, QStringList l);
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
-        QStringList lisLignes(QString nf);
+        QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        preAn();
         void        rotQ();
         void        suppr();

@@ -45,177 +45,114 @@ MainWindow::MainWindow()
     actionCopier = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
-    centralWidget->setObjectName(QStringLiteral("centralWidget"));
     verticalLayout_9 = new QVBoxLayout(centralWidget);
     verticalLayout_9->setSpacing(6);
     verticalLayout_9->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
     tabWidget = new QTabWidget(centralWidget);
-    tabWidget->setObjectName(QStringLiteral("tabWidget"));
     tabLexique = new QWidget();
-    tabLexique->setObjectName(QStringLiteral("tabLexique"));
     verticalLayout_Lex = new QVBoxLayout(tabLexique);
     verticalLayout_Lex->setSpacing(6);
     verticalLayout_Lex->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_Lex->setObjectName(QStringLiteral("verticalLayout_Lex"));
     splitter = new QSplitter(tabLexique);
-    splitter->setObjectName(QStringLiteral("splitter"));
     splitter->setMouseTracking(false);
     splitter->setFrameShape(QFrame::NoFrame);
     splitter->setOrientation(Qt::Horizontal);
     frame = new QFrame(splitter);
-    frame->setObjectName(QStringLiteral("frame"));
     frame->setFrameShape(QFrame::Box);
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
-    horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
     labelLemme = new QLabel(frame);
-    labelLemme->setObjectName(QStringLiteral("labelLemme"));
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(labelLemme->sizePolicy().hasHeightForWidth());
     labelLemme->setSizePolicy(sizePolicy);
     labelLemme->setMaximumSize(QSize(16777215, 50));
-
     horizontalLayout->addWidget(labelLemme);
 
     lineEditLemme = new QLineEdit(frame);
-    lineEditLemme->setObjectName(QStringLiteral("lineEditLemme"));
-
     horizontalLayout->addWidget(lineEditLemme);
-
     bHomon = new QPushButton(frame);
-    bHomon->setObjectName(QStringLiteral("bHomon"));
-
     horizontalLayout->addWidget(bHomon);
-
     bSuppr = new QPushButton(frame);
-    bSuppr->setObjectName(QStringLiteral("bSuppr"));
-
     horizontalLayout->addWidget(bSuppr);
-
 
     verticalLayout_3->addLayout(horizontalLayout);
 
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
     verticalLayout_3->addItem(verticalSpacer_2);
 
     splitter->addWidget(frame);
     frame1 = new QFrame(splitter);
-    frame1->setObjectName(QStringLiteral("frame1"));
     frame1->setFrameShape(QFrame::Box);
     verticalLayout_2 = new QVBoxLayout(frame1);
     verticalLayout_2->setSpacing(6);
     verticalLayout_2->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
     formLayout = new QFormLayout();
     formLayout->setSpacing(6);
-    formLayout->setObjectName(QStringLiteral("formLayout"));
     labelGrq = new QLabel(frame1);
-    labelGrq->setObjectName(QStringLiteral("labelGrq"));
-
     formLayout->setWidget(0, QFormLayout::LabelRole, labelGrq);
 
     horizontalLayout_grq = new QHBoxLayout();
     horizontalLayout_grq->setSpacing(6);
-    horizontalLayout_grq->setObjectName(QStringLiteral("horizontalLayout_grq"));
     lineEditGrq = new QLineEdit(frame1);
-    lineEditGrq->setObjectName(QStringLiteral("lineEditGrq"));
-
     horizontalLayout_grq->addWidget(lineEditGrq);
 
     checkBoxVb = new QCheckBox(frame1);
-    checkBoxVb->setObjectName(QStringLiteral("checkBoxVb"));
-
     horizontalLayout_grq->addWidget(checkBoxVb);
 
 
     formLayout->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
 
     labelModele = new QLabel(frame1);
-    labelModele->setObjectName(QStringLiteral("labelModele"));
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout->setWidget(1, QFormLayout::LabelRole, labelModele);
 
     comboBoxModele = new QComboBox(frame1);
-    comboBoxModele->setObjectName(QStringLiteral("comboBoxModele"));
-
     formLayout->setWidget(1, QFormLayout::FieldRole, comboBoxModele);
 
     labelPerfectum = new QLabel(frame1);
-    labelPerfectum->setObjectName(QStringLiteral("labelPerfectum"));
-
     formLayout->setWidget(2, QFormLayout::LabelRole, labelPerfectum);
 
     lineEditPerfectum = new QLineEdit(frame1);
-    lineEditPerfectum->setObjectName(QStringLiteral("lineEditPerfectum"));
-
     formLayout->setWidget(2, QFormLayout::FieldRole, lineEditPerfectum);
 
     labelSupin = new QLabel(frame1);
-    labelSupin->setObjectName(QStringLiteral("labelSupin"));
     labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
     formLayout->setWidget(3, QFormLayout::LabelRole, labelSupin);
 
     lineSupin = new QLineEdit(frame1);
-    lineSupin->setObjectName(QStringLiteral("lineSupin"));
-
     formLayout->setWidget(3, QFormLayout::FieldRole, lineSupin);
 
     labelMorpho = new QLabel(frame1);
-    labelMorpho->setObjectName(QStringLiteral("labelMorpho"));
-
     formLayout->setWidget(4, QFormLayout::LabelRole, labelMorpho);
 
     lineMorpho = new QLineEdit(frame1);
-    lineMorpho->setObjectName(QStringLiteral("lineMorpho"));
-
     formLayout->setWidget(4, QFormLayout::FieldRole, lineMorpho);
 
     labelTr = new QLabel(frame1);
-    labelTr->setObjectName(QStringLiteral("labelTr"));
-
     formLayout->setWidget(5, QFormLayout::LabelRole, labelTr);
 
     lineEditTr = new QLineEdit(frame1);
-    lineEditTr->setObjectName(QStringLiteral("lineEditTr"));
-
     formLayout->setWidget(5, QFormLayout::FieldRole, lineEditTr);
-
-
     verticalLayout_2->addLayout(formLayout);
 
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
-    horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
     boutonEnr = new QPushButton(frame1);
-    boutonEnr->setObjectName(QStringLiteral("boutonEnr"));
-
     horizontalLayout_3->addWidget(boutonEnr);
 
     boutonSuppr = new QPushButton(frame1);
-    boutonSuppr->setObjectName(QStringLiteral("boutonSuppr"));
-    boutonEnr = new QPushButton(frame1);
-
     horizontalLayout_3->addWidget(boutonSuppr);
-
-
     verticalLayout_2->addLayout(horizontalLayout_3);
 
     textEditFlexion = new QTextEdit(frame1);
-    textEditFlexion->setObjectName(QStringLiteral("textEditFlexion"));
     textEditFlexion->setReadOnly(true);
-
     verticalLayout_2->addWidget(textEditFlexion);
 
     splitter->addWidget(frame1);
@@ -224,32 +161,22 @@ MainWindow::MainWindow()
 
     tabWidget->addTab(tabLexique, QString());
     tabVarGraph = new QWidget();
-    tabVarGraph->setObjectName(QStringLiteral("tabVarGraph"));
     verticalLayout_5 = new QVBoxLayout(tabVarGraph);
     verticalLayout_5->setSpacing(6);
     verticalLayout_5->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
     splitterVarGraph = new QSplitter(tabVarGraph);
-    splitterVarGraph->setObjectName(QStringLiteral("splitterVarGraph"));
     splitterVarGraph->setOrientation(Qt::Horizontal);
     layoutWidget = new QWidget(splitterVarGraph);
-    layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
     verticalLayoutConf = new QVBoxLayout(layoutWidget);
     verticalLayoutConf->setSpacing(6);
     verticalLayoutConf->setContentsMargins(11, 11, 11, 11);
-    verticalLayoutConf->setObjectName(QStringLiteral("verticalLayoutConf"));
     verticalLayoutConf->setContentsMargins(0, 0, 0, 0);
     label_3 = new QLabel(layoutWidget);
-    label_3->setObjectName(QStringLiteral("label_3"));
-
     verticalLayoutConf->addWidget(label_3);
 
     horizontalLayoutBtnPre = new QHBoxLayout();
     horizontalLayoutBtnPre->setSpacing(6);
-    horizontalLayoutBtnPre->setObjectName(QStringLiteral("horizontalLayoutBtnPre"));
     btnPre = new QPushButton(layoutWidget);
-    btnPre->setObjectName(QStringLiteral("btnPre"));
-
     horizontalLayoutBtnPre->addWidget(btnPre);
 
     horizontalSpacerPre = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -261,82 +188,51 @@ MainWindow::MainWindow()
 
     formLayoutCochesVar = new QFormLayout();
     formLayoutCochesVar->setSpacing(6);
-    formLayoutCochesVar->setObjectName(QStringLiteral("formLayoutCochesVar"));
     formLayoutCochesVar->setContentsMargins(13, 13, -1, -1);
     labelVariante = new QLabel(layoutWidget);
-    labelVariante->setObjectName(QStringLiteral("labelVariante"));
-
     formLayoutCochesVar->setWidget(0, QFormLayout::LabelRole, labelVariante);
 
     checkBoxAe = new QCheckBox(layoutWidget);
-    checkBoxAe->setObjectName(QStringLiteral("checkBoxAe"));
-
     formLayoutCochesVar->setWidget(1, QFormLayout::LabelRole, checkBoxAe);
 
     checkBox_ae = new QCheckBox(layoutWidget);
-    checkBox_ae->setObjectName(QStringLiteral("checkBox_ae"));
-
     formLayoutCochesVar->setWidget(1, QFormLayout::FieldRole, checkBox_ae);
-
     checkBox_H = new QCheckBox(layoutWidget);
-    checkBox_H->setObjectName(QStringLiteral("checkBox_H"));
 
 
     formLayoutCochesVar->setWidget(2, QFormLayout::LabelRole, checkBox_H);
 
     checkBox_h = new QCheckBox(layoutWidget);
-    checkBox_h->setObjectName(QStringLiteral("checkBox_h"));
-
     formLayoutCochesVar->setWidget(2, QFormLayout::FieldRole, checkBox_h);
 
     checkBox_Mihi = new QCheckBox(layoutWidget);
-    checkBox_Mihi->setObjectName(QStringLiteral("checkBox_Mihi"));
-
     formLayoutCochesVar->setWidget(3, QFormLayout::LabelRole, checkBox_Mihi);
 
     checkBox_mihi = new QCheckBox(layoutWidget);
-    checkBox_mihi->setObjectName(QStringLiteral("checkBox_mihi"));
-
     formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_mihi);
 
     checkBox_IJ = new QCheckBox(layoutWidget);
-    checkBox_IJ->setObjectName(QStringLiteral("checkBox_IJ"));
-
     formLayoutCochesVar->setWidget(4, QFormLayout::LabelRole, checkBox_IJ);
 
     checkBox_ij = new QCheckBox(layoutWidget);
-    checkBox_ij->setObjectName(QStringLiteral("checkBox_ij"));
-
     formLayoutCochesVar->setWidget(4, QFormLayout::FieldRole, checkBox_ij);
 
     checkBox_UV = new QCheckBox(layoutWidget);
-    checkBox_UV->setObjectName(QStringLiteral("checkBox_UV"));
-
     formLayoutCochesVar->setWidget(5, QFormLayout::LabelRole, checkBox_UV);
 
     checkBox_uv = new QCheckBox(layoutWidget);
-    checkBox_uv->setObjectName(QStringLiteral("checkBox_uv"));
-
     formLayoutCochesVar->setWidget(5, QFormLayout::FieldRole, checkBox_uv);
 
     checkBox_TICI = new QCheckBox(layoutWidget);
-    checkBox_TICI->setObjectName(QStringLiteral("checkBox_TICI"));
-
     formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
 
     checkBox_tici = new QCheckBox(layoutWidget);
-    checkBox_tici->setObjectName(QStringLiteral("checkBox_tici"));
-
     formLayoutCochesVar->setWidget(6, QFormLayout::FieldRole, checkBox_tici);
 
     checkBox_MPN = new QCheckBox(layoutWidget);
-    checkBox_MPN->setObjectName(QStringLiteral("checkBox_MPN"));
-
     formLayoutCochesVar->setWidget(7, QFormLayout::LabelRole, checkBox_MPN);
 
     checkBox_mpn = new QCheckBox(layoutWidget);
-    checkBox_mpn->setObjectName(QStringLiteral("checkBox_mpn"));
-
     formLayoutCochesVar->setWidget(7, QFormLayout::FieldRole, checkBox_mpn);
 
     checkBox_PH = new QCheckBox(layoutWidget);
@@ -346,8 +242,6 @@ MainWindow::MainWindow()
     formLayoutCochesVar->setWidget(8, QFormLayout::FieldRole, checkBox_ph);
 
     label_tju = new QLabel(layoutWidget);
-    label_tju->setObjectName(QStringLiteral("label_tju"));
-
     formLayoutCochesVar->setWidget(0, QFormLayout::FieldRole, label_tju);
 
 
@@ -355,27 +249,19 @@ MainWindow::MainWindow()
 
     splitterVarGraph->addWidget(layoutWidget);
     splitter_2 = new QSplitter(splitterVarGraph);
-    splitter_2->setObjectName(QStringLiteral("splitter_2"));
     splitter_2->setOrientation(Qt::Vertical);
     plainTextEditVariantes = new QPlainTextEdit(splitter_2);
-    plainTextEditVariantes->setObjectName(QStringLiteral("plainTextEditVariantes"));
     plainTextEditVariantes->setReadOnly(true);
     splitter_2->addWidget(plainTextEditVariantes);
     layoutWidget1 = new QWidget(splitter_2);
-    layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
     verticalLayout_4 = new QVBoxLayout(layoutWidget1);
     verticalLayout_4->setSpacing(6);
     verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
     verticalLayout_4->setContentsMargins(0, 0, 0, 0);
     label_AutresVar = new QLabel(layoutWidget1);
-    label_AutresVar->setObjectName(QStringLiteral("label_AutresVar"));
-
     verticalLayout_4->addWidget(label_AutresVar);
 
     plainTextEdit_AutresVar = new QPlainTextEdit(layoutWidget1);
-    plainTextEdit_AutresVar->setObjectName(QStringLiteral("plainTextEdit_AutresVar"));
-
     verticalLayout_4->addWidget(plainTextEdit_AutresVar);
 
     splitter_2->addWidget(layoutWidget1);
@@ -387,120 +273,76 @@ MainWindow::MainWindow()
 
     verticalLayout_9->addWidget(tabWidget);
 
-// irr
-        tabIrr = new QWidget();
-        tabIrr->setObjectName(QStringLiteral("tabIrr"));
-        verticalLayout_I = new QVBoxLayout(tabIrr);
-        verticalLayout_I->setSpacing(6);
-        verticalLayout_I->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_I->setObjectName(QStringLiteral("verticalLayout_7"));
-        splitterIrr = new QSplitter(tabIrr);
-        splitterIrr->setObjectName(QStringLiteral("splitterIrr"));
-        splitterIrr->setOrientation(Qt::Horizontal);
-        widget = new QWidget(splitterIrr);
-        widget->setObjectName(QStringLiteral("widget"));
-        verticalLayout_IrrG = new QVBoxLayout(widget);
-        verticalLayout_IrrG->setSpacing(6);
-        verticalLayout_IrrG->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_IrrG->setContentsMargins(0, 0, 0, 0);
-        formLayout_2 = new QFormLayout();
-        formLayout_2->setSpacing(6);
-        label_4 = new QLabel(widget);
-        label_4->setObjectName(QStringLiteral("label_4"));
+    // irr
+    tabIrr = new QWidget();
+    verticalLayout_I = new QVBoxLayout(tabIrr);
+    verticalLayout_I->setSpacing(6);
+    verticalLayout_I->setContentsMargins(11, 11, 11, 11);
+    splitterIrr = new QSplitter(tabIrr);
+    splitterIrr->setOrientation(Qt::Horizontal);
+    widget = new QWidget(splitterIrr);
+    verticalLayout_IrrG = new QVBoxLayout(widget);
+    verticalLayout_IrrG->setSpacing(6);
+    verticalLayout_IrrG->setContentsMargins(11, 11, 11, 11);
+    verticalLayout_IrrG->setContentsMargins(0, 0, 0, 0);
+    formLayout_2 = new QFormLayout();
+    formLayout_2->setSpacing(6);
+    label_4 = new QLabel(widget);
+    formLayout_2->setWidget(0, QFormLayout::LabelRole, label_4);
 
-        formLayout_2->setWidget(0, QFormLayout::LabelRole, label_4);
+    linLemmeIrr = new QLineEdit(widget);
+    formLayout_2->setWidget(0, QFormLayout::FieldRole, linLemmeIrr);
 
-        linLemmeIrr = new QLineEdit(widget);
-        linLemmeIrr->setObjectName(QStringLiteral("linLemmeIrr"));
+    label_2 = new QLabel(widget);
+    formLayout_2->setWidget(1, QFormLayout::LabelRole, label_2);
 
-        formLayout_2->setWidget(0, QFormLayout::FieldRole, linLemmeIrr);
+    label = new QLabel(widget);
+    formLayout_2->setWidget(2, QFormLayout::LabelRole, label);
 
-        label_2 = new QLabel(widget);
-        label_2->setObjectName(QStringLiteral("label_2"));
+    horizontalLayout_2 = new QHBoxLayout();
+    horizontalLayout_2->setSpacing(6);
+    bInitMorpho = new QLineEdit(widget);
+    horizontalLayout_2->addWidget(bInitMorpho);
+    bPlusMorpho = new QPushButton(widget);
+    horizontalLayout_2->addWidget(bPlusMorpho);
+    pushButton_3 = new QPushButton(widget);
+    horizontalLayout_2->addWidget(pushButton_3);
+    formLayout_2->setLayout(2, QFormLayout::FieldRole, horizontalLayout_2);
 
-        formLayout_2->setWidget(1, QFormLayout::LabelRole, label_2);
+    linIrreg = new QLineEdit(widget);
+    formLayout_2->setWidget(1, QFormLayout::FieldRole, linIrreg);
+    verticalLayout_IrrG->addLayout(formLayout_2);
+    listView_Morphos = new QListView(widget);
+    verticalLayout_IrrG->addWidget(listView_Morphos);
 
-        label = new QLabel(widget);
-        label->setObjectName(QStringLiteral("label"));
+    splitterIrr->addWidget(widget);
+    widget1 = new QWidget(splitterIrr);
+    verticalLayoutIrrCentre = new QVBoxLayout(widget1);
+    verticalLayoutIrrCentre->setSpacing(6);
+    verticalLayoutIrrCentre->setContentsMargins(11, 11, 11, 11);
+    verticalLayoutIrrCentre->setContentsMargins(0, 0, 0, 0);
+    spacerIrrHaut = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    verticalLayoutIrrCentre->addItem(spacerIrrHaut);
+    bAjIrr = new QPushButton(widget1);
+    verticalLayoutIrrCentre->addWidget(bAjIrr);
+    bsupprIrr = new QPushButton(widget1);
+    verticalLayoutIrrCentre->addWidget(bsupprIrr);
 
-        formLayout_2->setWidget(2, QFormLayout::LabelRole, label);
+    spacerIrrBas = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    verticalLayoutIrrCentre->addItem(spacerIrrBas);
 
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        bInitMorpho = new QLineEdit(widget);
-        bInitMorpho->setObjectName(QStringLiteral("bInitMorpho"));
+    splitterIrr->addWidget(widget1);
+    listViewIrr = new QListView(splitterIrr);
+    splitterIrr->addWidget(listViewIrr);
+    verticalLayout_I->addWidget(splitterIrr);
 
-        horizontalLayout_2->addWidget(bInitMorpho);
-
-        bPlusMorpho = new QPushButton(widget);
-        bPlusMorpho->setObjectName(QStringLiteral("bPlusMorpho"));
-
-        horizontalLayout_2->addWidget(bPlusMorpho);
-
-        pushButton_3 = new QPushButton(widget);
-        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
-
-        horizontalLayout_2->addWidget(pushButton_3);
-
-
-        formLayout_2->setLayout(2, QFormLayout::FieldRole, horizontalLayout_2);
-
-        linIrreg = new QLineEdit(widget);
-        linIrreg->setObjectName(QStringLiteral("linIrreg"));
-
-        formLayout_2->setWidget(1, QFormLayout::FieldRole, linIrreg);
-
-
-        verticalLayout_IrrG->addLayout(formLayout_2);
-
-        textBrowserMorphos = new QTextBrowser(widget);
-        textBrowserMorphos->setObjectName(QStringLiteral("textBrowserMorphos"));
-
-        verticalLayout_IrrG->addWidget(textBrowserMorphos);
-
-        splitterIrr->addWidget(widget);
-        widget1 = new QWidget(splitterIrr);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        verticalLayoutIrrCentre = new QVBoxLayout(widget1);
-        verticalLayoutIrrCentre->setSpacing(6);
-        verticalLayoutIrrCentre->setContentsMargins(11, 11, 11, 11);
-        verticalLayoutIrrCentre->setObjectName(QStringLiteral("verticalLayoutIrrCentre"));
-        verticalLayoutIrrCentre->setContentsMargins(0, 0, 0, 0);
-        spacerIrrHaut = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayoutIrrCentre->addItem(spacerIrrHaut);
-
-        bAjIrr = new QPushButton(widget1);
-        bAjIrr->setObjectName(QStringLiteral("bAjIrr"));
-
-        verticalLayoutIrrCentre->addWidget(bAjIrr);
-
-        bsupprIrr = new QPushButton(widget1);
-        bsupprIrr->setObjectName(QStringLiteral("bsupprIrr"));
-
-        verticalLayoutIrrCentre->addWidget(bsupprIrr);
-
-        spacerIrrBas = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayoutIrrCentre->addItem(spacerIrrBas);
-
-        splitterIrr->addWidget(widget1);
-        textBrowserIrr = new QTextBrowser(splitterIrr);
-        textBrowserIrr->setObjectName(QStringLiteral("textBrowserIrr"));
-        splitterIrr->addWidget(textBrowserIrr);
-
-        verticalLayout_I->addWidget(splitterIrr);
-
-        tabWidget->addTab(tabIrr, QString());
-// fin irr
+    tabWidget->addTab(tabIrr, QString());
+    // fin irr
 
     setCentralWidget(centralWidget);
-
     tabWidget->setCurrentIndex(0);
 
-    // Menus et barre d'état
-
+    // Menus et barres
 
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionQuant);
@@ -510,20 +352,18 @@ MainWindow::MainWindow()
     menuBar = new QMenuBar(this);
     menuBar->setGeometry(QRect(0, 0, 1067, 19));
     menuFichier = new QMenu(menuBar);
-    //menu_Aide = new QMenu(menuBar);
     setMenuBar(menuBar);
-
-    statusBar = new QStatusBar(this);
-    statusBar->setObjectName(QStringLiteral("statusBar"));
-    setStatusBar(statusBar);
-
     menuBar->addAction(menuFichier->menuAction());
+    //menu_Aide = new QMenu(menuBar);
     //menuBar->addAction(menu_Aide->menuAction());
     menuFichier->addSeparator();
     menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
+
+    statusBar = new QStatusBar(this);
+    setStatusBar(statusBar);
 
     retranslateUi();
 
@@ -976,7 +816,7 @@ QString MainWindow::ligneFr()
         .arg(lineEditTr->text());
 }
 
-QStringList MainWindow::lisLignes(QString nf)
+QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
 {
     QFile f(nf);
     f.open(QFile::ReadOnly);
@@ -985,7 +825,9 @@ QStringList MainWindow::lisLignes(QString nf)
     QStringList retour;
     while (!flux.atEnd())
     {
-        retour.append(flux.readLine());
+        QString lin = flux.readLine();
+        if (ignoreComm && lin.startsWith('!')) continue;
+        retour.append(lin);
     }
     f.close();
     return retour;
@@ -1012,8 +854,9 @@ void MainWindow::peuple()
     // modèles
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
-    //qSort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
-    //qSort(listeLemmesLa.begin(), listeLemmesLa.end(), Ch::sort_i);
+    // irréguliers 
+    modeleIrr.setStringList(lisLignes("data/irregs.la", true));
+    listViewIrr->setModel(&modeleIrr);
 }
 
 void MainWindow::rotQ()
