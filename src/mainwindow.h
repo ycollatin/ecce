@@ -44,6 +44,7 @@
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
+#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
@@ -104,6 +105,8 @@ class MainWindow : public QMainWindow
         QPushButton *boutonEnr;
         QPushButton *boutonSuppr;
         QTextEdit *textEditFlexion;
+
+        // onglet variantes graphiques
         QWidget *tabVarGraph;
         QVBoxLayout *verticalLayout_5;
         QSplitter *splitterVarGraph;
@@ -138,6 +141,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout_4;
         QLabel *label_AutresVar;
         QPlainTextEdit *plainTextEdit_AutresVar;
+        /*
         QWidget *tab;
         QVBoxLayout *verticalLayout_7;
         QHBoxLayout *horizontalLayout_5;
@@ -150,9 +154,36 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEdit;
         QPushButton *pushButton;
         QPlainTextEdit *plainTextEdit_3;
+        */
+
+        // onglet irréguliers
+        QWidget *tabIrr;
+        QVBoxLayout *verticalLayout_I;
+        QSplitter *splitterIrr;
+        QWidget *widget;
+        QVBoxLayout *verticalLayout_IrrG;
+        QFormLayout *formLayout_2;
+        QLabel *label_4;
+        QLineEdit *linLemmeIrr;
+        QLabel *label_2;
+        QLabel *label;
+        QHBoxLayout *horizontalLayout_2;
+        QLineEdit *bInitMorpho;
+        QPushButton *bPlusMorpho;
+        QPushButton *pushButton_3;
+        QLineEdit *linIrreg;
+        QTextBrowser *textBrowserMorphos;
+        QWidget *widget1;
+        QVBoxLayout *verticalLayoutIrrCentre;
+        QSpacerItem *spacerIrrHaut;
+        QPushButton *bAjIrr;
+        QPushButton *bsupprIrr;
+        QSpacerItem *spacerIrrBas;
+        QTextBrowser *textBrowserIrr;
+
+        // menu et barrre d'état
         QMenuBar *menuBar;
         QMenu *menuFichier;
-        //QMenu *menu_Aide;
         QToolBar *mainToolBar;
         QStatusBar *statusBar;
 
