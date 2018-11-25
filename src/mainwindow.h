@@ -149,16 +149,15 @@ class MainWindow : public QMainWindow
         QWidget *widget;
         QVBoxLayout *verticalLayout_IrrG;
         QFormLayout *formLayout_2;
-        QLabel *label_4;
+        QLabel *labelLemmeIrr;
         QLineEdit *linLemmeIrr;
-        QLabel *label_2;
-        QLabel *label;
+        QLabel *labelFormeIrr;
+        QLabel *labelMorphoIrr;
         QHBoxLayout *horizontalLayout_2;
-        QLineEdit *bInitMorpho;
-        QPushButton *bPlusMorpho;
-        QPushButton *pushButton_3;
+        QPushButton *pushButtonReinit;
         QLineEdit *linIrreg;
-        QListView *listView_Morphos;
+        QLineEdit *lineEditMorpho;
+        QSpacerItem *verticalSpacerMorpho;
         QWidget *widget1;
         QVBoxLayout *verticalLayoutIrrCentre;
         QSpacerItem *spacerIrrHaut;
@@ -190,11 +189,12 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
-        QStringListModel  modele;
-        QStringListModel  modeleIrr;
-        QStringListModel  modeleMorphos;
+        QStringListModel* modele;
+        QStringListModel* modeleIrr;
+        QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
         void              peuple();
+        // irréguliers
 
         private slots:
             QString     cle(QString ligne);

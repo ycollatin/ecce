@@ -287,33 +287,31 @@ MainWindow::MainWindow()
     verticalLayout_IrrG->setContentsMargins(0, 0, 0, 0);
     formLayout_2 = new QFormLayout();
     formLayout_2->setSpacing(6);
-    label_4 = new QLabel(widget);
-    formLayout_2->setWidget(0, QFormLayout::LabelRole, label_4);
+    labelLemmeIrr = new QLabel(widget);
+    formLayout_2->setWidget(0, QFormLayout::LabelRole, labelLemmeIrr);
 
     linLemmeIrr = new QLineEdit(widget);
     formLayout_2->setWidget(0, QFormLayout::FieldRole, linLemmeIrr);
 
-    label_2 = new QLabel(widget);
-    formLayout_2->setWidget(1, QFormLayout::LabelRole, label_2);
-
-    label = new QLabel(widget);
-    formLayout_2->setWidget(2, QFormLayout::LabelRole, label);
-
-    horizontalLayout_2 = new QHBoxLayout();
-    horizontalLayout_2->setSpacing(6);
-    bInitMorpho = new QLineEdit(widget);
-    horizontalLayout_2->addWidget(bInitMorpho);
-    bPlusMorpho = new QPushButton(widget);
-    horizontalLayout_2->addWidget(bPlusMorpho);
-    pushButton_3 = new QPushButton(widget);
-    horizontalLayout_2->addWidget(pushButton_3);
-    formLayout_2->setLayout(2, QFormLayout::FieldRole, horizontalLayout_2);
-
     linIrreg = new QLineEdit(widget);
     formLayout_2->setWidget(1, QFormLayout::FieldRole, linIrreg);
     verticalLayout_IrrG->addLayout(formLayout_2);
-    listView_Morphos = new QListView(widget);
-    verticalLayout_IrrG->addWidget(listView_Morphos);
+    verticalSpacerMorpho = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    verticalLayout_IrrG->addItem(verticalSpacerMorpho);
+
+    labelFormeIrr = new QLabel(widget);
+    formLayout_2->setWidget(1, QFormLayout::LabelRole, labelFormeIrr);
+
+    labelMorphoIrr = new QLabel(widget);
+    formLayout_2->setWidget(2, QFormLayout::LabelRole, labelMorphoIrr);
+
+    horizontalLayout_2 = new QHBoxLayout();
+    horizontalLayout_2->setSpacing(6);
+    lineEditMorpho = new QLineEdit(widget);
+    horizontalLayout_2->addWidget(lineEditMorpho);
+    pushButtonReinit = new QPushButton(widget);
+    horizontalLayout_2->addWidget(pushButtonReinit);
+    formLayout_2->setLayout(2, QFormLayout::FieldRole, horizontalLayout_2);
 
     splitterIrr->addWidget(widget);
     widget1 = new QWidget(splitterIrr);
@@ -410,7 +408,9 @@ void MainWindow::retranslateUi()
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
     boutonEnr->setText(QApplication::translate("MainWindow", "Enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
-    tabWidget->setTabText(tabWidget->indexOf(tabLexique), QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
+    tabWidget->setTabText(tabWidget->indexOf(tabLexique),
+                          QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
+
     label_3->setText(QApplication::translate("MainWindow", "Doc", Q_NULLPTR));
     btnPre->setText(QApplication::translate("MainWindow", "Pr\303\251analyse", Q_NULLPTR));
     labelVariante->setText(QApplication::translate("MainWindow", "variante", Q_NULLPTR));
@@ -432,15 +432,18 @@ void MainWindow::retranslateUi()
     checkBox_ph->setText(QString());
     label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
     label_AutresVar->setText(QApplication::translate("MainWindow", "Autres variantes", Q_NULLPTR));
-    tabWidget->setTabText(tabWidget->indexOf(tabVarGraph), QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
-        label_4->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
-        label_2->setText(QApplication::translate("MainWindow", "forme irr\303\251guli\303\250re", Q_NULLPTR));
-        label->setText(QApplication::translate("MainWindow", "Morphologie", Q_NULLPTR));
-        bPlusMorpho->setText(QApplication::translate("MainWindow", "+", Q_NULLPTR));
-        pushButton_3->setText(QApplication::translate("MainWindow", "r\303\251init", Q_NULLPTR));
-        bAjIrr->setText(QApplication::translate("MainWindow", "ajouter >", Q_NULLPTR));
-        bsupprIrr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
-        tabWidget->setTabText(tabWidget->indexOf(tabIrr), QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
+
+    tabWidget->setTabText(tabWidget->indexOf(tabVarGraph),
+                          QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
+    labelLemmeIrr->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
+    labelFormeIrr->setText(QApplication::translate("MainWindow",
+                                                   "forme irr\303\251guli\303\250re", Q_NULLPTR));
+    labelMorphoIrr->setText(QApplication::translate("MainWindow", "Morphologie", Q_NULLPTR));
+    pushButtonReinit->setText(QApplication::translate("MainWindow", "r\303\251init", Q_NULLPTR));
+    bAjIrr->setText(QApplication::translate("MainWindow", "ajouter >", Q_NULLPTR));
+    bsupprIrr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
+    tabWidget->setTabText(tabWidget->indexOf(tabIrr),
+                          QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
 }
@@ -535,6 +538,8 @@ void MainWindow::connecte()
     connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
+    // irréguliers
+    connect(pushButtonReinit, SIGNAL(clicked()), lineEditMorpho, SLOT(clear()));
 }
 
 void MainWindow::edLem(QString l)
@@ -663,12 +668,11 @@ void MainWindow::enr()
            std::sort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
          */
         enrFr();
-        qDebug()<<"enrfr ok";
         // màj du compléteur
         litems.append(lc);
-        modele.setStringList(litems);
-        completeur->setModel(&modele);
-        qDebug()<<"::enr ok";
+        modele = new QStringListModel(litems);
+        modele->setStringList(litems);
+        completeur->setModel(modele);
         return;
     }
     if (nLemme == 0) return;
@@ -740,7 +744,6 @@ void MainWindow::enrLa()
     for (int j=0;j<listeLemmesLa.count();++j)
         flux << listeLemmesLa.at(j)<<'\n';
     f.close();
-    qDebug()<<"fin enrLa";
 }
 
 void MainWindow::enrFr()
@@ -844,19 +847,32 @@ void MainWindow::peuple()
     listeLemmesFr = lisLignes("data/lemmes.fr");
     // compléteur lemmes
 	completeur = new QCompleter;
-    modele.setStringList(litems);
+    modele = new QStringListModel(litems);
     completeur->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-    completeur->setModel(&modele);
-    completeur->setMaxVisibleItems(litems.count());
-    QStringListModel* modele = new QStringListModel(litems, completeur);
     completeur->setModel(modele);
+    completeur->setMaxVisibleItems(litems.count());
     lineEditLemme->setCompleter(completeur);
     // modèles
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
     // irréguliers 
-    modeleIrr.setStringList(lisLignes("data/irregs.la", true));
-    listViewIrr->setModel(&modeleIrr);
+    QStringList itemsIrr = lisLignes("data/irregs.la", true);
+    modeleIrr = new QStringListModel(itemsIrr);
+    listViewIrr->setModel(modeleIrr);
+    // compléteur morphos
+    QStringList(lMorphos);
+    QString m = lemcore->morpho(1);
+    for (int i=1;m!="-";++i)
+    {
+        m = lemcore->morpho(i);
+        if (m!="-") lMorphos.append(m);
+    }
+	completeurM = new QCompleter;
+    modeleM = new QStringListModel(lMorphos);
+    completeurM->setModelSorting(QCompleter::UnsortedModel);
+    completeurM->setModel(modeleM);
+    completeurM->setMaxVisibleItems(lMorphos.count());
+    lineEditMorpho->setCompleter(completeurM);
 }
 
 void MainWindow::rotQ()
