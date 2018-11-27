@@ -244,7 +244,6 @@ MainWindow::MainWindow()
     label_tju = new QLabel(layoutWidget);
     formLayoutCochesVar->setWidget(0, QFormLayout::FieldRole, label_tju);
 
-
     verticalLayoutConf->addLayout(formLayoutCochesVar);
 
     splitterVarGraph->addWidget(layoutWidget);
@@ -295,6 +294,12 @@ MainWindow::MainWindow()
 
     linIrreg = new QLineEdit(widget);
     formLayout_2->setWidget(1, QFormLayout::FieldRole, linIrreg);
+
+    lineEditNumMorpho = new QLineEdit(widget);
+    formLayout_2->setWidget(2, QFormLayout::FieldRole, lineEditNumMorpho);
+    labelNumMorpho = new QLabel(widget);
+    formLayout_2->setWidget(2, QFormLayout::LabelRole, labelNumMorpho);
+
     verticalLayout_IrrG->addLayout(formLayout_2);
     verticalSpacerMorpho = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_IrrG->addItem(verticalSpacerMorpho);
@@ -302,16 +307,33 @@ MainWindow::MainWindow()
     labelFormeIrr = new QLabel(widget);
     formLayout_2->setWidget(1, QFormLayout::LabelRole, labelFormeIrr);
 
+
+
     labelMorphoIrr = new QLabel(widget);
-    formLayout_2->setWidget(2, QFormLayout::LabelRole, labelMorphoIrr);
+    formLayout_2->setWidget(3, QFormLayout::LabelRole, labelMorphoIrr);
 
     horizontalLayout_2 = new QHBoxLayout();
     horizontalLayout_2->setSpacing(6);
     lineEditMorpho = new QLineEdit(widget);
     horizontalLayout_2->addWidget(lineEditMorpho);
-    pushButtonReinit = new QPushButton(widget);
-    horizontalLayout_2->addWidget(pushButtonReinit);
-    formLayout_2->setLayout(2, QFormLayout::FieldRole, horizontalLayout_2);
+
+    btnPers = new QToolButton(widget);
+    btnCas = new QToolButton(widget);
+    btnGenre = new QToolButton(widget);
+    btnNb = new QToolButton(widget);
+    btnTps = new QToolButton(widget);
+    btnMod = new QToolButton(widget);
+    btnVx = new QToolButton(widget);
+    btnAj = new QToolButton(widget);
+    horizontalLayout_2->addWidget(btnPers);
+    horizontalLayout_2->addWidget(btnCas);
+    horizontalLayout_2->addWidget(btnGenre);
+    horizontalLayout_2->addWidget(btnNb);
+    horizontalLayout_2->addWidget(btnMod);
+    horizontalLayout_2->addWidget(btnTps);
+    horizontalLayout_2->addWidget(btnVx);
+    horizontalLayout_2->addWidget(btnAj);
+    formLayout_2->setLayout(3, QFormLayout::FieldRole, horizontalLayout_2);
 
     splitterIrr->addWidget(widget);
     widget1 = new QWidget(splitterIrr);
@@ -438,10 +460,18 @@ void MainWindow::retranslateUi()
     labelLemmeIrr->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     labelFormeIrr->setText(QApplication::translate("MainWindow",
                                                    "forme irr\303\251guli\303\250re", Q_NULLPTR));
-    labelMorphoIrr->setText(QApplication::translate("MainWindow", "Morphologie", Q_NULLPTR));
-    pushButtonReinit->setText(QApplication::translate("MainWindow", "r\303\251init", Q_NULLPTR));
-    bAjIrr->setText(QApplication::translate("MainWindow", "ajouter >", Q_NULLPTR));
-    bsupprIrr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
+    labelMorphoIrr->setText(QApplication::translate("MainWindow", "rech. morpho", Q_NULLPTR));
+    labelNumMorpho->setText(QApplication::translate("MainWindow", "num. morpho", Q_NULLPTR));
+    btnPers->setText(QApplication::translate("MainWindow","pers"));
+    btnCas->setText(QApplication::translate("MainWindow","cas"));
+    btnGenre->setText(QApplication::translate("MainWindow","genre"));
+    btnNb->setText(QApplication::translate("MainWindow", "nb"));
+    btnTps->setText(QApplication::translate("MainWindow", "tps"));
+    btnMod->setText(QApplication::translate("MainWindow", "mod"));
+    btnVx->setText(QApplication::translate("MainWindow", "vx"));
+    btnAj->setText(QApplication::translate("MainWindow", "^", Q_NULLPTR));
+    bAjIrr->setText(QApplication::translate("MainWindow", " > ", Q_NULLPTR));
+    bsupprIrr->setText(QApplication::translate("MainWindow", " x ", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabIrr),
                           QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
@@ -539,7 +569,24 @@ void MainWindow::connecte()
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
     // irréguliers
-    connect(pushButtonReinit, SIGNAL(clicked()), lineEditMorpho, SLOT(clear()));
+    connect(btnPers, SIGNAL(clicked()), this, SLOT(siPers()));
+    connect(btnCas, SIGNAL(clicked()), this, SLOT(siCas()));
+    connect(btnGenre, SIGNAL(clicked()), this, SLOT(siGenre()));
+    connect(btnNb, SIGNAL(clicked()), this, SLOT(siNb()));
+    connect(btnMod, SIGNAL(clicked()), this, SLOT(siMod()));
+    connect(btnTps, SIGNAL(clicked()), this, SLOT(siTps()));
+    connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
+    connect(listViewIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
+    connect(lineEditMorpho, SIGNAL(textChanged(QString)), completeurM, SLOT(complete()));
+}
+
+void MainWindow::editIrr(const QModelIndex &m)
+{
+    QString lin = qvariant_cast<QString>(m.data());
+    QStringList sections = lin.split(':');
+    linLemmeIrr->setText(sections.at(0));
+    linIrreg->setText(sections.at(1));
+    lineEditNumMorpho->setText(sections.at(2));
 }
 
 void MainWindow::edLem(QString l)
@@ -836,6 +883,19 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
     return retour;
 }
 
+void MainWindow::majLinMorph()
+{
+    QString m = "%1 %2 %3 %4 %5 %6 %7";
+    m = m.arg(lPers[iPers])
+        .arg(lCas[iCas])
+        .arg(lGenre[iGenre])
+        .arg(lNb[iNb])
+        .arg(lMod[iMod])
+        .arg(lTps[iTps])
+        .arg(lVx[iVx]);
+    lineEditMorpho->setText(m.simplified());
+}
+
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
@@ -872,7 +932,26 @@ void MainWindow::peuple()
     completeurM->setModelSorting(QCompleter::UnsortedModel);
     completeurM->setModel(modeleM);
     completeurM->setMaxVisibleItems(lMorphos.count());
+    //completeurM->setFilterMode(Qt::MatchContains);
     lineEditMorpho->setCompleter(completeurM);
+
+    lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
+        <<"génitif"<<"datif"<<"ablatif"<<"locatif";
+    lGenre << "" << "masculin" << "féminin" << "neutre";
+    lMod << "" << "indicatif" << "subjonctif"<<"impératif"
+        <<"participe"<<"infinitif"<<"gérondif"<<"adjectif verbal";
+    lNb << "" << "singulier" << "pluriel";
+    lPers << ""<<"1ère"<<"2ème"<<"3ème";
+    lTps << "" << "présent" << "futur" << "imparfait"
+        << "parfait" << "futur antérieur" << "plus-que-parfait";
+    lVx << "" << "actif" << "passif";
+    iCas = 0;
+    iGenre = 0;
+    iMod = 0;
+    iNb = 0;
+    iPers = 0;
+    iTps = 0;
+    iVx = 0;
 }
 
 void MainWindow::rotQ()
@@ -910,6 +989,62 @@ void MainWindow::rotQ()
             break;
         }
     }
+}
+
+void MainWindow::siCas()
+{
+    ++iCas;
+    if (iCas >= lCas.count())
+        iCas = 0;
+    majLinMorph();
+}
+
+void MainWindow::siGenre()
+{
+    ++iGenre;
+    if (iCas >= lGenre.count())
+        iGenre = 0;
+    majLinMorph();
+}
+
+void MainWindow::siMod()
+{
+    ++iMod;
+    if (iMod >= lMod.count())
+        iMod = 0;
+    majLinMorph();
+}
+
+void MainWindow::siNb()
+{
+    ++iNb;
+    if (iNb >= lNb.count())
+        iNb = 0;
+    majLinMorph();
+}
+
+void MainWindow::siPers()
+{
+    ++iPers;
+    if (iPers >= lPers.count())
+        iPers = 0;
+    majLinMorph();
+}
+
+void MainWindow::siTps()
+{
+    ++iTps;
+    if (iTps >= lTps.count())
+        iTps = 0;
+    majLinMorph();
+}
+
+void MainWindow::siVx()
+{
+    ++iVx;
+    if (iVx >= lVx.count())
+        iVx = 0;
+    majLinMorph();
 }
 
 void MainWindow::suppr()

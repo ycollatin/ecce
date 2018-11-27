@@ -47,6 +47,7 @@
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QToolButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -156,7 +157,17 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout_2;
         QPushButton *pushButtonReinit;
         QLineEdit *linIrreg;
+        QLineEdit *lineEditNumMorpho;
+        QLabel *labelNumMorpho;
         QLineEdit *lineEditMorpho;
+        QToolButton *btnPers;
+        QToolButton *btnCas;
+        QToolButton *btnGenre;
+        QToolButton *btnNb;
+        QToolButton *btnTps;
+        QToolButton *btnMod;
+        QToolButton *btnVx;
+        QToolButton *btnAj;
         QSpacerItem *verticalSpacerMorpho;
         QWidget *widget1;
         QVBoxLayout *verticalLayoutIrrCentre;
@@ -189,17 +200,33 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
+        void              majLinMorph();
         QStringListModel* modele;
         QStringListModel* modeleIrr;
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
         void              peuple();
         // irréguliers
+        QStringList       lCas;
+        int               iCas;
+        QStringList       lGenre;
+        int               iGenre;
+        QStringList       lMod;
+        int               iMod;
+        QStringList       lNb;
+        int               iNb;
+        QStringList       lPers;
+        int               iPers;
+        QStringList       lTps;
+        int               iTps;
+        QStringList       lVx;
+        int               iVx;
 
         private slots:
             QString     cle(QString ligne);
         void        coche();
         void        copier();
+        void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();
         void        enrFr();
@@ -210,6 +237,13 @@ class MainWindow : public QMainWindow
         QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        preAn();
         void        rotQ();
+        void        siCas();
+        void        siGenre();
+        void        siMod();
+        void        siNb(); 
+        void        siPers();
+        void        siTps();
+        void        siVx(); 
         void        suppr();
 };
 
