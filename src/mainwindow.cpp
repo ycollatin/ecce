@@ -302,6 +302,7 @@ MainWindow::MainWindow()
 
     verticalLayout_Irr->addLayout(formLayout_2);
     listWidgetMorphos = new QListWidget(widget);
+    listWidgetMorphos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     verticalLayout_Irr->addWidget(listWidgetMorphos);
 
     labelFormeIrr = new QLabel(widget);
@@ -314,8 +315,6 @@ MainWindow::MainWindow()
 
     horizontalLayout_2 = new QHBoxLayout();
     horizontalLayout_2->setSpacing(6);
-    //lineEditMorpho = new QLineEdit(widget);
-    //horizontalLayout_2->addWidget(lineEditMorpho);
 
     btnPers = new QToolButton(widget);
     btnCas = new QToolButton(widget);
@@ -576,7 +575,22 @@ void MainWindow::connecte()
     connect(btnMod, SIGNAL(clicked()), this, SLOT(siMod()));
     connect(btnTps, SIGNAL(clicked()), this, SLOT(siTps()));
     connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
+    connect(btnAj, SIGNAL(clicked()), this, SLOT(ajMorph()));
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
+}
+
+// ajoute les nْ° des morphos sélectionnées à la forme irrégulière
+void MainWindow::ajMorph()
+{
+    QList<QListWidgetItem*> liste = listWidgetMorphos->selectedItems();
+    for (int i=0;i<liste.count();++i)
+    {
+        QListWidgetItem *item = liste.at(i);
+        int n = lMorphos.key(item->text());
+        QStringList lm = lineEditNumMorpho->text().split(',', QString::SkipEmptyParts);
+        lm.append(QString::number(n));
+        lineEditNumMorpho->setText(lm.join(','));
+    }
 }
 
 void MainWindow::editIrr(const QModelIndex &m)
@@ -915,7 +929,7 @@ void MainWindow::majLinMorph()
     listWidgetMorphos->clear();
     for (int i=0;i<lMorphos.count();++i)
     {
-        QString lin = lMorphos.at(i);
+        QString lin = lMorphos.value(i);
         if (QRegExp(mm).exactMatch(lin))
             new QListWidgetItem(lin, listWidgetMorphos);
     }
@@ -948,11 +962,11 @@ void MainWindow::peuple()
     }
     // compléteur morphos
     lMorphos.clear();
-    QString m = lemcore->morpho(1);
+    QString m;// = lemcore->morpho(1);
     for (int i=1;m!="-";++i)
     {
         m = lemcore->morpho(i);
-        if (m!="-") lMorphos.append(m);
+        if (m!="-") lMorphos.insert(i, m);
     }
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
@@ -963,7 +977,7 @@ void MainWindow::peuple()
     lNb << "" << "singulier" << "pluriel";
     lPers << ""<<"1ère"<<"2ème"<<"3ème";
     lTps << "" << "présent" << "futur" << "imparfait"
-        << "parfait" << "futur antérieur" << "plus-que-parfait";
+        << "parfait" << "futur antérieur" << "PQP";
     lVx << "" << "actif" << "passif";
     iCas = 0;
     iGenre = 0;
@@ -1041,7 +1055,7 @@ void MainWindow::siMod()
     if (iMod >= lMod.count())
     {
         iMod = 0;
-        btnMod->setText("mode");
+        btnMod->setText("mod");
     }
     else btnMod->setText(lMod.at(iMod));
     majLinMorph();

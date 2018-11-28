@@ -22,6 +22,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtCore/QMap>
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -221,11 +222,13 @@ class MainWindow : public QMainWindow
         int               iTps;
         QStringList       lVx;
         int               iVx;
-        QStringList(lMorphos);
+        //QStringList(lMorphos);
+        QMap<int,QString> lMorphos;
         QStringList(selMorph);
 
-        private slots:
-            QString     cle(QString ligne);
+    private slots:
+        void        ajMorph();
+        QString     cle(QString ligne);
         void        coche();
         void        copier();
         void        editIrr(const QModelIndex &m);
