@@ -352,8 +352,8 @@ MainWindow::MainWindow()
     verticalLayoutIrrCentre->addItem(spacerIrrBas);
 
     splitterIrr->addWidget(widget1);
-    listViewIrr = new QListView(splitterIrr);
-    splitterIrr->addWidget(listViewIrr);
+    listWidgetIrr = new QListWidget(splitterIrr);
+    splitterIrr->addWidget(listWidgetIrr);
     verticalLayout_I->addWidget(splitterIrr);
 
     tabWidget->addTab(tabIrr, QString());
@@ -576,7 +576,7 @@ void MainWindow::connecte()
     connect(btnMod, SIGNAL(clicked()), this, SLOT(siMod()));
     connect(btnTps, SIGNAL(clicked()), this, SLOT(siTps()));
     connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
-    connect(listViewIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
+    connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
     connect(lineEditMorpho, SIGNAL(textChanged(QString)), completeurM, SLOT(complete()));
 }
 
@@ -917,8 +917,10 @@ void MainWindow::peuple()
     comboBoxModele->addItems(lmodeles);
     // irréguliers 
     QStringList itemsIrr = lisLignes("data/irregs.la", true);
-    modeleIrr = new QStringListModel(itemsIrr);
-    listViewIrr->setModel(modeleIrr);
+    for (int i=0;i<itemsIrr.count();++i)
+    {
+        new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
+    }
     // compléteur morphos
     QStringList(lMorphos);
     QString m = lemcore->morpho(1);

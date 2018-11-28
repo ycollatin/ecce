@@ -35,6 +35,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListView>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
@@ -175,7 +176,7 @@ class MainWindow : public QMainWindow
         QPushButton *bAjIrr;
         QPushButton *bsupprIrr;
         QSpacerItem *spacerIrrBas;
-        QListView   *listViewIrr;
+        QListWidget *listWidgetIrr;
 
         // menu et barrre d'état
         QMenuBar *menuBar;
