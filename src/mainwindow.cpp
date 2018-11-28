@@ -389,9 +389,9 @@ MainWindow::MainWindow()
     // liste des lignes demandant des quantités
     lignes
         << lineEditGrq
-        //<< lineEditInfectum
         << lineEditPerfectum
-        << lineSupin;
+        << lineSupin
+        << linIrreg;
     aaa << "aăā"
         << "eĕē"
         << "iĭī"
@@ -577,6 +577,43 @@ void MainWindow::connecte()
     connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
     connect(btnAj, SIGNAL(clicked()), this, SLOT(ajMorph()));
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
+    connect(bAjIrr, SIGNAL(clicked()), this, SLOT(ajIrr()));
+}
+
+void MainWindow::ajIrr()
+{
+    QString lin = QString("%1:%2:%3")
+        .arg(linIrreg->text())
+        .arg(linLemmeIrr->text())
+        .arg(lineEditNumMorpho->text());
+    // chercher si le lemme et la forme sont définis dans la liste
+    bool vu = false;
+    for (int i=0;i<itemsIrr.count();++i)
+    {
+        QStringList ecl = itemsIrr.at(i).split(':');
+        if ((linIrreg->text() == ecl.at(0))
+            && linLemmeIrr->text() == ecl.at(1))
+        {
+            qDebug()<<"lin:"<<lin;
+            qDebug()<<"irr:"<<itemsIrr.at(i);
+            itemsIrr[i] = lin;
+            vu = true;
+            break;
+        }
+    }
+    if (!vu)
+    {
+        // si non, créer un nouvel irrégulier
+        qDebug()<<lin;
+        itemsIrr.append(lin);
+    }
+    // enregistrer dans irregs.la
+    QFile firr("data/irregs.la");
+    firr.open(QFile::WriteOnly);
+    QTextStream fl(&firr);
+    for (int i=0;i<itemsIrr.count();++i)
+        fl << itemsIrr.at(i)+"\n";
+    firr.close();
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -955,7 +992,7 @@ void MainWindow::peuple()
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
     // irréguliers 
-    QStringList itemsIrr = lisLignes("data/irregs.la", true);
+    itemsIrr = lisLignes("data/irregs.la", true);
     for (int i=0;i<itemsIrr.count();++i)
     {
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);

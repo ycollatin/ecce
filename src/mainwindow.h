@@ -222,11 +222,13 @@ class MainWindow : public QMainWindow
         int               iTps;
         QStringList       lVx;
         int               iVx;
-        //QStringList(lMorphos);
+       
+        QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
-        QStringList(selMorph);
+        QStringList       selMorph;
 
     private slots:
+        void        ajIrr();
         void        ajMorph();
         QString     cle(QString ligne);
         void        coche();
