@@ -149,7 +149,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout_I;
         QSplitter *splitterIrr;
         QWidget *widget;
-        QVBoxLayout *verticalLayout_IrrG;
+        QVBoxLayout *verticalLayout_Irr;
         QFormLayout *formLayout_2;
         QLabel *labelLemmeIrr;
         QLineEdit *linLemmeIrr;
@@ -160,7 +160,6 @@ class MainWindow : public QMainWindow
         QLineEdit *linIrreg;
         QLineEdit *lineEditNumMorpho;
         QLabel *labelNumMorpho;
-        QLineEdit *lineEditMorpho;
         QToolButton *btnPers;
         QToolButton *btnCas;
         QToolButton *btnGenre;
@@ -169,7 +168,7 @@ class MainWindow : public QMainWindow
         QToolButton *btnMod;
         QToolButton *btnVx;
         QToolButton *btnAj;
-        QSpacerItem *verticalSpacerMorpho;
+        QListWidget *listWidgetMorphos;
         QWidget *widget1;
         QVBoxLayout *verticalLayoutIrrCentre;
         QSpacerItem *spacerIrrHaut;
@@ -222,6 +221,8 @@ class MainWindow : public QMainWindow
         int               iTps;
         QStringList       lVx;
         int               iVx;
+        QStringList(lMorphos);
+        QStringList(selMorph);
 
         private slots:
             QString     cle(QString ligne);

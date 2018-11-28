@@ -280,10 +280,10 @@ MainWindow::MainWindow()
     splitterIrr = new QSplitter(tabIrr);
     splitterIrr->setOrientation(Qt::Horizontal);
     widget = new QWidget(splitterIrr);
-    verticalLayout_IrrG = new QVBoxLayout(widget);
-    verticalLayout_IrrG->setSpacing(6);
-    verticalLayout_IrrG->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_IrrG->setContentsMargins(0, 0, 0, 0);
+    verticalLayout_Irr = new QVBoxLayout(widget);
+    verticalLayout_Irr->setSpacing(6);
+    verticalLayout_Irr->setContentsMargins(11, 11, 11, 11);
+    verticalLayout_Irr->setContentsMargins(0, 0, 0, 0);
     formLayout_2 = new QFormLayout();
     formLayout_2->setSpacing(6);
     labelLemmeIrr = new QLabel(widget);
@@ -300,9 +300,9 @@ MainWindow::MainWindow()
     labelNumMorpho = new QLabel(widget);
     formLayout_2->setWidget(2, QFormLayout::LabelRole, labelNumMorpho);
 
-    verticalLayout_IrrG->addLayout(formLayout_2);
-    verticalSpacerMorpho = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    verticalLayout_IrrG->addItem(verticalSpacerMorpho);
+    verticalLayout_Irr->addLayout(formLayout_2);
+    listWidgetMorphos = new QListWidget(widget);
+    verticalLayout_Irr->addWidget(listWidgetMorphos);
 
     labelFormeIrr = new QLabel(widget);
     formLayout_2->setWidget(1, QFormLayout::LabelRole, labelFormeIrr);
@@ -314,8 +314,8 @@ MainWindow::MainWindow()
 
     horizontalLayout_2 = new QHBoxLayout();
     horizontalLayout_2->setSpacing(6);
-    lineEditMorpho = new QLineEdit(widget);
-    horizontalLayout_2->addWidget(lineEditMorpho);
+    //lineEditMorpho = new QLineEdit(widget);
+    //horizontalLayout_2->addWidget(lineEditMorpho);
 
     btnPers = new QToolButton(widget);
     btnCas = new QToolButton(widget);
@@ -577,7 +577,6 @@ void MainWindow::connecte()
     connect(btnTps, SIGNAL(clicked()), this, SLOT(siTps()));
     connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
-    connect(lineEditMorpho, SIGNAL(textChanged(QString)), completeurM, SLOT(complete()));
 }
 
 void MainWindow::editIrr(const QModelIndex &m)
@@ -885,15 +884,41 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
 
 void MainWindow::majLinMorph()
 {
-    QString m = "%1 %2 %3 %4 %5 %6 %7";
-    m = m.arg(lPers[iPers])
-        .arg(lCas[iCas])
-        .arg(lGenre[iGenre])
-        .arg(lNb[iNb])
-        .arg(lMod[iMod])
-        .arg(lTps[iTps])
-        .arg(lVx[iVx]);
-    lineEditMorpho->setText(m.simplified());
+    // construire une regexp reflétant l'état des boutons
+    QString re = "%1\\s*%2\\s*%3\\s*%4\\s*%5\\s*%6\\s*%7";
+    // personne
+    QString p = "\\w*";
+    if (iPers > 0) p = lPers.at(iPers);
+    // cas
+    QString c = "\\w*";
+    if (iCas > 0) c = lCas.at(iCas);
+    // genre
+    QString g = "\\w*";
+    if (iGenre > 0) g = lGenre.at(iGenre);
+    // nombre
+    QString n = "\\w*";
+    if (iNb > 0) n = lNb.at(iNb);
+    // mode
+    QString m = "\\w*";
+    if (iMod > 0) m = lMod.at(iMod);
+    // temps
+    QString t = "\\w*";
+    if (iTps > 0) t = lTps.at(iTps);
+    // voix
+    QString v = "\\w*";
+    if (iVx > 0) v = lVx.at(iVx);
+
+    QString mm = re.arg(p).arg(c).arg(g).arg(n)
+        .arg(m).arg(t).arg(v);
+
+    // màj de la liste
+    listWidgetMorphos->clear();
+    for (int i=0;i<lMorphos.count();++i)
+    {
+        QString lin = lMorphos.at(i);
+        if (QRegExp(mm).exactMatch(lin))
+            new QListWidgetItem(lin, listWidgetMorphos);
+    }
 }
 
 void MainWindow::peuple()
@@ -922,26 +947,19 @@ void MainWindow::peuple()
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
     }
     // compléteur morphos
-    QStringList(lMorphos);
+    lMorphos.clear();
     QString m = lemcore->morpho(1);
     for (int i=1;m!="-";++i)
     {
         m = lemcore->morpho(i);
         if (m!="-") lMorphos.append(m);
     }
-	completeurM = new QCompleter;
-    modeleM = new QStringListModel(lMorphos);
-    completeurM->setModelSorting(QCompleter::UnsortedModel);
-    completeurM->setModel(modeleM);
-    completeurM->setMaxVisibleItems(lMorphos.count());
-    //completeurM->setFilterMode(Qt::MatchContains);
-    lineEditMorpho->setCompleter(completeurM);
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
         <<"génitif"<<"datif"<<"ablatif"<<"locatif";
     lGenre << "" << "masculin" << "féminin" << "neutre";
     lMod << "" << "indicatif" << "subjonctif"<<"impératif"
-        <<"participe"<<"infinitif"<<"gérondif"<<"adjectif verbal";
+        <<"infinitif"<<"participe"<<"gérondif"<<"adjectif verbal";
     lNb << "" << "singulier" << "pluriel";
     lPers << ""<<"1ère"<<"2ème"<<"3ème";
     lTps << "" << "présent" << "futur" << "imparfait"
@@ -997,15 +1015,23 @@ void MainWindow::siCas()
 {
     ++iCas;
     if (iCas >= lCas.count())
+    {
         iCas = 0;
+        btnCas->setText("cas");
+    }
+    else btnCas->setText(lCas.at(iCas));
     majLinMorph();
 }
 
 void MainWindow::siGenre()
 {
     ++iGenre;
-    if (iCas >= lGenre.count())
+    if (iGenre >= lGenre.count())
+    {
         iGenre = 0;
+        btnGenre->setText("mfn");
+    }
+    else btnGenre->setText(lGenre.at(iGenre));
     majLinMorph();
 }
 
@@ -1013,7 +1039,11 @@ void MainWindow::siMod()
 {
     ++iMod;
     if (iMod >= lMod.count())
+    {
         iMod = 0;
+        btnMod->setText("mode");
+    }
+    else btnMod->setText(lMod.at(iMod));
     majLinMorph();
 }
 
@@ -1021,7 +1051,11 @@ void MainWindow::siNb()
 {
     ++iNb;
     if (iNb >= lNb.count())
+    {
         iNb = 0;
+        btnNb->setText("nb");
+    }
+    else btnNb->setText(lNb.at(iNb));
     majLinMorph();
 }
 
@@ -1029,7 +1063,11 @@ void MainWindow::siPers()
 {
     ++iPers;
     if (iPers >= lPers.count())
+    {
         iPers = 0;
+        btnPers->setText("pers");
+    }
+    else btnPers->setText(lPers.at(iPers));
     majLinMorph();
 }
 
@@ -1037,7 +1075,11 @@ void MainWindow::siTps()
 {
     ++iTps;
     if (iTps >= lTps.count())
+    {
         iTps = 0;
+        btnTps->setText("tps");
+    } 
+    btnTps->setText(lTps.at(iTps));
     majLinMorph();
 }
 
@@ -1045,7 +1087,11 @@ void MainWindow::siVx()
 {
     ++iVx;
     if (iVx >= lVx.count())
+    {
         iVx = 0;
+        btnVx->setText("Vx");
+    }
+    else btnVx->setText(lVx.at(iVx));
     majLinMorph();
 }
 
