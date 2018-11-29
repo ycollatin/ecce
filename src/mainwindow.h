@@ -143,6 +143,7 @@ class MainWindow : public QMainWindow
         QWidget *layoutWidget1;
         QVBoxLayout *verticalLayout_4;
         QLabel *label_AutresVar;
+        QPushButton *btnEnrVar;
         QPlainTextEdit *plainTextEdit_AutresVar;
 
         // onglet irréguliers
@@ -190,6 +191,7 @@ class MainWindow : public QMainWindow
         QCompleter*       completeur;
         QCompleter*       completeurM;
         void              connecte();
+        QString           docVarGraph;
         Flexion*          flexion;
         QString GabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
@@ -233,12 +235,14 @@ class MainWindow : public QMainWindow
         QString     cle(QString ligne);
         void        coche();
         void        copier();
+        void        diff();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();
         void        enrFr();
         void        enrIrr();
         void        enrLa();
+        void        enrVar();
         int         indexOfInsert(QString s, QStringList l);
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);

@@ -26,12 +26,12 @@
 
    TODO
 
-   - rendre le choix du modele plus ergonomique
-   mettre au point une taxonomie des pos ?
+   - en-tête des fichiers de données, comme vargraph.la
+   - peupler les éditeurs de variantes graphiques 
+   - mettre au point une taxonomie des pos ?
    - rendre l'homonymie plus ergonomique
    - Chemin absolu des données A et B
    - initialisation d'un module
-   - analyser la version médiévale de C11
  */
 
 #include <QFileDialog>
@@ -257,6 +257,8 @@ MainWindow::MainWindow()
     verticalLayout_4->setSpacing(6);
     verticalLayout_4->setContentsMargins(11, 11, 11, 11);
     verticalLayout_4->setContentsMargins(0, 0, 0, 0);
+    btnEnrVar = new QPushButton(layoutWidget1);
+    verticalLayout_4->addWidget(btnEnrVar);
     label_AutresVar = new QLabel(layoutWidget1);
     verticalLayout_4->addWidget(label_AutresVar);
 
@@ -384,6 +386,26 @@ MainWindow::MainWindow()
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
 
+    // doc de l'onglet variantes graphiques
+    docVarGraph =
+    "!          vargraph.la\n"
+    "!\n"
+    "!  Dans ce fichier sont enregistrées les variantes\n"
+    "! graphiques du corpus traité. Chaque ligne est\n"
+    "! composée de deux chaînes séparées par le caractère\n"
+    "! ';' ou le caractère '>'.\n"
+    "! La première chaîne est la graphie classique, la\n"
+    "! seconde est la variante du corpus traité. Si\n"
+    "! la variante est systématiquement employée, et que\n"
+    "! la graphie classique disparaît, on utilise le\n"
+    "! séparateur '>'. Si les deux graphies coexistent,\n"
+    "! on utilise ';'. Par exemple, si la chaîne \"ae\"\n"
+    "! devient quelquefois \"e\", on note :\n"
+    "! ae;e\n"
+    "! Mais si \"ae\" devient toujours \"e\", on note :\n"
+    "! ae>e\n"
+    "!\n";
+
     retranslateUi();
 
     // liste des lignes demandant des quantités
@@ -405,6 +427,7 @@ MainWindow::MainWindow()
         << "OŎŌ"
         << "UŬŪ"
         << "YЎȲ";
+
     peuple();
     connecte();
 }
@@ -433,7 +456,8 @@ void MainWindow::retranslateUi()
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
                           QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
 
-    label_3->setText(QApplication::translate("MainWindow", "Doc", Q_NULLPTR));
+    //label_3->setText(QApplication::translate("MainWindow", docVarGraph, Q_NULLPTR));
+    label_3->setText(docVarGraph);
     btnPre->setText(QApplication::translate("MainWindow", "Pr\303\251analyse", Q_NULLPTR));
     labelVariante->setText(QApplication::translate("MainWindow", "variante", Q_NULLPTR));
     checkBoxAe->setText(QApplication::translate("MainWindow", "ae > e", Q_NULLPTR));
@@ -454,6 +478,7 @@ void MainWindow::retranslateUi()
     checkBox_ph->setText(QString());
     label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
     label_AutresVar->setText(QApplication::translate("MainWindow", "Autres variantes", Q_NULLPTR));
+    btnEnrVar->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
 
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph),
                           QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
@@ -531,11 +556,25 @@ void MainWindow::copier()
     peuple();
 }
 
+// génération d'un fichier diff
+void MainWindow::diff()
+{
+    // fichiers à comparer :
+    // - lemmes.la
+    // - lemmes.fr
+    // - irregs.fr
+    // - vargraph.la
+    // diff de chaque fichier
+    // joindre chaque diff
+    // enregistrer
+}
+
 void MainWindow::connecte()
 {
     // fichier
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
+    connect(actionDiff, SIGNAL(triggered()), this, SLOT(diff()));
     // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
@@ -550,7 +589,7 @@ void MainWindow::connecte()
     connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
-    // préanalyse
+    // préanalyse et variantes
     connect(btnPre, SIGNAL(clicked()), this, SLOT(preAn()));
     connect(checkBoxAe, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_ae, SIGNAL(clicked()), this, SLOT(coche()));
@@ -568,6 +607,7 @@ void MainWindow::connecte()
     connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(btnEnrVar, SIGNAL(clicked()), this, SLOT(enrVar()));
     // irréguliers
     connect(btnPers, SIGNAL(clicked()), this, SLOT(siPers()));
     connect(btnCas, SIGNAL(clicked()), this, SLOT(siCas()));

@@ -242,10 +242,25 @@ void MainWindow::coche()
         tv.append("f\n");
     }
     plainTextEditVariantes->setPlainText(tv);
-    QFile f("data/variantes.la");
+    enrVar();
+    /*
+    QFile f("data/vargraph.la");
     f.remove();
     f.open(QFile::WriteOnly);
     QTextStream flux(&f);
     flux << tv;
+    f.close();
+    */
+}
+
+void MainWindow::enrVar()
+{
+    QFile f("data/vargraph.la");
+    f.remove();
+    f.open(QFile::WriteOnly);
+    QTextStream flux(&f);
+    flux << docVarGraph;
+    flux << plainTextEditVariantes->toPlainText();
+    flux << plainTextEdit_AutresVar->toPlainText();
     f.close();
 }
