@@ -237,6 +237,7 @@ class MainWindow : public QMainWindow
         void        edLem(QString l);
         void        enr();
         void        enrFr();
+        void        enrIrr();
         void        enrLa();
         int         indexOfInsert(QString s, QStringList l);
         QString     ligneLa(QString modl="");
@@ -252,6 +253,7 @@ class MainWindow : public QMainWindow
         void        siTps();
         void        siVx(); 
         void        suppr();
+        void        supprIrr();
 };
 
 #endif

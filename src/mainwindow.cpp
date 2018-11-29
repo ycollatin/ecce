@@ -392,6 +392,7 @@ MainWindow::MainWindow()
         << lineEditPerfectum
         << lineSupin
         << linIrreg;
+    // voyelles avec quantité Ctrl+W
     aaa << "aăā"
         << "eĕē"
         << "iĭī"
@@ -472,7 +473,7 @@ void MainWindow::retranslateUi()
     bAjIrr->setText(QApplication::translate("MainWindow", " > ", Q_NULLPTR));
     bsupprIrr->setText(QApplication::translate("MainWindow", " x ", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabIrr),
-                          QApplication::translate("MainWindow", "Irr\303\251guliers", Q_NULLPTR));
+                          QApplication::translate("MainWindow", "&irr\303\251guliers", Q_NULLPTR));
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
 }
@@ -578,6 +579,7 @@ void MainWindow::connecte()
     connect(btnAj, SIGNAL(clicked()), this, SLOT(ajMorph()));
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
     connect(bAjIrr, SIGNAL(clicked()), this, SLOT(ajIrr()));
+    connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
 }
 
 void MainWindow::ajIrr()
@@ -608,12 +610,15 @@ void MainWindow::ajIrr()
         itemsIrr.append(lin);
     }
     // enregistrer dans irregs.la
+    enrIrr();
+    /*
     QFile firr("data/irregs.la");
     firr.open(QFile::WriteOnly);
     QTextStream fl(&firr);
     for (int i=0;i<itemsIrr.count();++i)
         fl << itemsIrr.at(i)+"\n";
     firr.close();
+    */
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -817,30 +822,10 @@ void MainWindow::enr()
             }
             // enregistrer
             enrFr();
-            /*
-               QFile f("data/lemmes.fr");
-               f.remove();
-               f.open(QFile::WriteOnly);
-               QTextStream flux(&f);
-               for (int j=0;j<listeLemmesFr.count();++j)
-               flux << listeLemmesFr.at(j)+'\n';
-               f.close();
-             */
             break;
         }
         ++i;
     }
-}
-
-void MainWindow::enrLa()
-{
-    QFile f("data/lemmes.la");
-    f.remove();
-    f.open(QFile::WriteOnly);
-    QTextStream flux(&f);
-    for (int j=0;j<listeLemmesLa.count();++j)
-        flux << listeLemmesLa.at(j)<<'\n';
-    f.close();
 }
 
 void MainWindow::enrFr()
@@ -851,6 +836,27 @@ void MainWindow::enrFr()
     QTextStream flux(&f);
     for (int j=0;j<listeLemmesFr.count();++j)
         flux << listeLemmesFr.at(j)+'\n';
+    f.close();
+}
+
+void MainWindow::enrIrr()
+{
+    QFile firr("data/irregs.la");
+    firr.open(QFile::WriteOnly);
+    QTextStream fl(&firr);
+    for (int i=0;i<itemsIrr.count();++i)
+        fl << itemsIrr.at(i)+"\n";
+    firr.close();
+}
+
+void MainWindow::enrLa()
+{
+    QFile f("data/lemmes.la");
+    f.remove();
+    f.open(QFile::WriteOnly);
+    QTextStream flux(&f);
+    for (int j=0;j<listeLemmesLa.count();++j)
+        flux << listeLemmesLa.at(j)<<'\n';
     f.close();
 }
 
@@ -1174,5 +1180,14 @@ void MainWindow::suppr()
             enrFr();
             break;
         }
+    }
+}
+
+void MainWindow::supprIrr()
+{
+    QList<QListWidgetItem*> liste = listWidgetIrr->selectedItems();
+    for (int i=0;i<liste.count();++i)
+    {
+        listWidgetIrr->removeItemWidget(liste.at(i));
     }
 }
