@@ -6,7 +6,7 @@ TARGET = editcol
 INCLUDEPATH += . src
 DEPENDPATH += .
 
-QT += widgets
+QT += widgets core
 
 # QMAKE_CXXFLAGS += -Wall -Wextra -pedantic -fstack-protector-strong
 # QMAKE_CPPFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
@@ -23,7 +23,7 @@ QMAKE_DISTCLEAN += $${DESTDIR}/editcol
 
 # Input
 HEADERS += src/ch.h \
-           src/diff_match_patch.cpp \
+           src/diff_match_patch.h \
            src/flexion.h \
            src/irregs.h \
            src/lemCore.h \
@@ -32,7 +32,7 @@ HEADERS += src/ch.h \
            src/mainwindow.h
 
 SOURCES += src/ch.cpp \
-           src/diff_match_patch.h \
+           src/diff_match_patch.cpp \
            src/flexion.cpp \
            src/irregs.cpp \
            src/lemCore.cpp \

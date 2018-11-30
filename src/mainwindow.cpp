@@ -26,7 +26,8 @@
 
    TODO
 
-   - en-tête des fichiers de données, comme vargraph.la
+   - génération et enregistrement d'un diff ;
+   - lecture et restitution des en-têtes des fichiers de données ;
    - peupler les éditeurs de variantes graphiques 
    - mettre au point une taxonomie des pos ?
    - rendre l'homonymie plus ergonomique
@@ -35,6 +36,8 @@
  */
 
 #include <QFileDialog>
+#include <QVector>
+#include "diff_match_patch.h"
 #include <mainwindow.h>
 
 MainWindow::MainWindow()
@@ -536,15 +539,25 @@ void MainWindow::copier()
 	// copie 
     QString nfc = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
     if (nfc.isEmpty()) return;
-    // copier lemmes.la et lemmes.fr
     QFile::copy(nfc+"/lemmes.la", "data/lemmes.la");
     QFile::copy(nfc+"/lemmes.fr", "data/lemmes.fr");
-    //QFile::copy(nfc+"/abreviations.la", "data/abreviations.la");
     QFile::copy(nfc+"/assimilations.la", "data/assimilations.la");
     QFile::copy(nfc+"/contractions.la", "data/contractions.la");
     QFile::copy(nfc+"/irregs.la", "data/irregs.la");
     QFile::copy(nfc+"/modeles.la", "data/modeles.la");
     QFile::copy(nfc+"/morphos.fr", "data/morphos.fr");
+    if (QFile::exists(nfc+"/vargraph.la"))
+        QFile::copy(nfc+"/vargraph.la", "data/vargraph.la");
+    else 
+    {
+        QFile fv("data/vargraph.la");
+        fv.open(QFile::WriteOnly);
+        QTextStream flux(&fv);
+        flux << docVarGraph;
+        fv.close();
+    }
+
+    // 
     // réinitialiser
     listeLemmesLa.clear();
     listeLemmesFr.clear();
@@ -559,14 +572,70 @@ void MainWindow::copier()
 // génération d'un fichier diff
 void MainWindow::diff()
 {
-    // fichiers à comparer :
-    // - lemmes.la
-    // - lemmes.fr
-    // - irregs.fr
-    // - vargraph.la
+    // localiser le répertoire d'origine
+    QString nra = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
+    if (nra.isEmpty()) return;
+    // dialogue de création de fichier
+    QString nfd = QFileDialog::getSaveFileName(this,
+      "fichier diff à générer", "./", tr("fichier diff (*.diff)"));
+    if (nfd.isEmpty()) return;
+    // ouverture du fichier de destination
+    QFile fDest(nfd);
+    fDest.open(QFile::WriteOnly);
+    QTextStream fld(&fDest);
     // diff de chaque fichier
-    // joindre chaque diff
+    // - lemmes.la
+    QString strPatch = diffPars(nra+"/lemmes.la", "data/lemmes.la");
+    if (!strPatch.isEmpty())
+    {
+        fld << "diff lemmes.la\n";
+        fld << strPatch;
+    }
+    // - lemmes.fr
+    strPatch = diffPars(nra+"/lemmes.fr", "data/lemmes.fr");
+    if (!strPatch.isEmpty())
+    {
+        fld << "diff lemmes.fr\n";
+        fld << strPatch;
+    }
+    // - irregs.la
+    strPatch = diffPars(nra+"/irregs.la", "data/irregs.la");
+    if (!strPatch.isEmpty())
+    {
+        fld << "diff irregs.la\n";
+        fld << strPatch;
+    }
+    // - vargraph.la
+    fld << "diff vargraph.la\n";
+    if (QFile::exists(nra+"/vargraph.la"))
+    {
+        strPatch = diffPars(nra+"/vargraph.la", "data/vargraph.la");
+        if (!strPatch.isEmpty())
+        {
+            fld << strPatch;
+        }
+    }
+    else 
+    {
+        QFile fvar("data/vargraph.la");
+        fvar.open(QFile::ReadOnly);
+        fld << fvar.readAll();
+    }
     // enregistrer
+    fDest.close();
+}
+
+QString MainWindow::diffPars(QString nfa, QString nfb)
+{
+    QFile fa(nfa);
+    fa.open(QIODevice::ReadOnly|QIODevice::Text);
+    QString chA = fa.readAll();
+    QFile fb(nfb);
+    fb.open(QIODevice::ReadOnly|QIODevice::Text);
+    QString chB = fb.readAll();
+    diff_match_patch dmp;
+    QString strPatch = dmp.patch_toText(dmp.patch_make(chA, chB));
+    return strPatch;
 }
 
 void MainWindow::connecte()

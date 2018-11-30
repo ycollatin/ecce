@@ -236,6 +236,7 @@ class MainWindow : public QMainWindow
         void        coche();
         void        copier();
         void        diff();
+        QString     diffPars(QString fa, QString fb);
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();
