@@ -1143,7 +1143,11 @@ void LemCore::lisTraductions(bool base, bool extension)
  * \fn Modele * LemCore::modele (QString m)
  * \brief Renvoie l'objet de la classe Modele dont le nom est m.
  */
-Modele *LemCore::modele(QString m) { return _modeles[m]; }
+Modele *LemCore::modele(QString m)
+{
+    return _modeles[m];
+}
+
 /**
  * \fn QString LemCore::morpho (int m)
  * \brief Renvoie la chaîne de rang m dans la liste des morphologies

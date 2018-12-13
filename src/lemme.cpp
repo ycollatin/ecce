@@ -105,12 +105,14 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     _nbOcc = 1; // Tous les lemmes doivent avoir été rencontrés une fois
     // lecture des radicaux, champs 2 et 3
     for (int i = 2; i < 4; ++i)
+    {
         if (!eclats.at(i).isEmpty())
         {
             QStringList lrad = eclats.at(i).split(',');
             foreach (QString rad, lrad)
                 _radicaux[i-1].append(new Radical(rad, i-1, this));
         }
+    }
     _lemmatiseur->ajRadicaux(this);
 
     _indMorph = eclats.at(4);
