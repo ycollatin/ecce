@@ -318,7 +318,10 @@ QList<int> Modele::absents() { return _absents; }
  * \brief Liste des numéros de radicaux utilisés, et
  *        rangés dans la map _genRadicaux.
  */
-QList<int> Modele::clesR() { return _genRadicaux.keys(); }
+QList<int> Modele::clesR()
+{
+    return _genRadicaux.keys();
+}
 
 /**
  * \fn Desinence* Modele::clone (Desinence *d)
