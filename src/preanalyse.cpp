@@ -7,12 +7,13 @@ avant de lemmatiser un texte.
 Format de sortie :
 cha  : graphie classique
 chb  : graphie non classique
-chb+ : cette graphie est toujours utilisée, la graphie classique disparaît.
 
 
-cha>chb
+cha;chb : les deux graphies sont utilisées
 ou
-cha>chb+
+cha>chb : la graphie classique cha disparaît au profit de chb.
+
+Ajouter qu[aou] > c : antiquo > antico
 
 */
 
