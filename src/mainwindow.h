@@ -197,6 +197,7 @@ class MainWindow : public QMainWindow
         LemCore*          lemcore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
+        QStringList       lis();
         QStringList       listeGr;
         QStringList       listeLemmesLa;
         QStringList       listeLemmesFr;
@@ -228,6 +229,8 @@ class MainWindow : public QMainWindow
         QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
         QStringList       selMorph;
+        // variantes graphiques
+        QStringList       lvarGraph;
 
     private slots:
         void        ajIrr();

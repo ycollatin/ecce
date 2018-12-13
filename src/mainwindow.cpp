@@ -573,7 +573,7 @@ void MainWindow::copier()
 void MainWindow::diff()
 {
     // localiser le répertoire d'origine
-    QString nra = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
+    QString nra = QFileDialog::getExistingDirectory(this, "Collatinus - répertoire des données de référence", "../");
     if (nra.isEmpty()) return;
     // dialogue de création de fichier
     QString nfd = QFileDialog::getSaveFileName(this,
@@ -630,9 +630,11 @@ QString MainWindow::diffPars(QString nfa, QString nfb)
     QFile fa(nfa);
     fa.open(QIODevice::ReadOnly|QIODevice::Text);
     QString chA = fa.readAll();
+    fa.close();
     QFile fb(nfb);
     fb.open(QIODevice::ReadOnly|QIODevice::Text);
     QString chB = fb.readAll();
+    fb.close();
     diff_match_patch dmp;
     QString strPatch = dmp.patch_toText(dmp.patch_make(chA, chB));
     return strPatch;
@@ -705,8 +707,6 @@ void MainWindow::ajIrr()
         if ((linIrreg->text() == ecl.at(0))
             && linLemmeIrr->text() == ecl.at(1))
         {
-            qDebug()<<"lin:"<<lin;
-            qDebug()<<"irr:"<<itemsIrr.at(i);
             itemsIrr[i] = lin;
             vu = true;
             break;
@@ -715,7 +715,6 @@ void MainWindow::ajIrr()
     if (!vu)
     {
         // si non, créer un nouvel irrégulier
-        qDebug()<<lin;
         itemsIrr.append(lin);
     }
     // enregistrer dans irregs.la
@@ -1112,14 +1111,18 @@ void MainWindow::peuple()
     {
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
     }
-    // compléteur morphos
+    // morphos
     lMorphos.clear();
-    QString m;// = lemcore->morpho(1);
-    for (int i=1;m!="-";++i)
+    QStringList listeM = lemcore->lignesFichier("data/morphos.fr");
+    for (int i=0;i<listeM.count();++i)
     {
-        m = lemcore->morpho(i);
-        if (m!="-") lMorphos.insert(i, m);
+        QString lin = listeM.at(i).simplified();
+        if (lin == "nominatif") break;
+        lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
     }
+    // variantes graphiques
+    lvarGraph = lemcore->lignesFichier("data/vargraph.la");
+    plainTextEdit_AutresVar->setPlainText(lvarGraph.join('\n'));
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
         <<"génitif"<<"datif"<<"ablatif"<<"locatif";
