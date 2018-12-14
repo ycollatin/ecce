@@ -1,4 +1,4 @@
-/*                 lemCore.cpp
+/*                 lemcore.cpp
  *
  *  This file is part of COLLATINUS.
  *
@@ -24,7 +24,7 @@
  * \brief module de lemmatisation des formes latines
  */
 
-#include "lemCore.h"
+#include "lemcore.h"
 
 #include <QDebug>
 // #include <QElapsedTimer>

@@ -1,4 +1,4 @@
-/*      lemCore.h
+/*      lemcore.h
  *
  *  This file is part of COLLATINUS.
  *

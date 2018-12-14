@@ -56,7 +56,7 @@
 #include <QCompleter>
 
 #include <flexion.h>
-#include <lemCore.h>
+#include <lemcore.h>
 
 class MainWindow : public QMainWindow
 {

@@ -26,7 +26,7 @@ HEADERS += src/ch.h \
            src/diff_match_patch.h \
            src/flexion.h \
            src/irregs.h \
-           src/lemCore.h \
+           src/lemcore.h \
            src/lemme.h \
 		   src/modele.h \
            src/mainwindow.h
@@ -35,12 +35,18 @@ SOURCES += src/ch.cpp \
            src/diff_match_patch.cpp \
            src/flexion.cpp \
            src/irregs.cpp \
-           src/lemCore.cpp \
+           src/lemcore.cpp \
            src/lemme.cpp \
            src/main.cpp \
            src/mainwindow.cpp \
            src/modele.cpp \
            src/preanalyse.cpp
 
-#RESOURCES += editcol.qrc
-#RC_ICONS = res/editcol.ico
+#install
+unix: {
+    target.path = /usr/bin
+    data.files = bin/data/*.*
+    data.path = /usr/share/editcol
+    INSTALLS += target
+    INSTALLS += data
+}
