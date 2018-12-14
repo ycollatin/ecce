@@ -28,7 +28,10 @@
 
 #include "ch.h"
 
+#include <QApplication>
 #include <QDebug>
+#include <QFileInfo>
+#include <QStandardPaths>
 
 /**
  * \fn Ch::ajoute (QString mot, QStringList liste)
@@ -115,6 +118,34 @@ QString Ch::atone(QString a, bool bdc)
     // combining breve
     a.remove(0x0306);  //ō̆ etc.
     return a;
+}
+
+/**
+ * \fn Ch:chemin(QString f, char t)
+ * \brief chemin complet du fichier f, de type t
+ * 'e' = exécutable
+ * 'd' = données
+ * 'p' = données perso
+ */
+QString Ch::chemin(QString f, char t)
+{
+    QStringList chemins;
+    if (t == 'e')
+        chemins = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+    else if (t == 'd')
+        chemins = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+    else if (t == 'p')
+        chemins = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    f.prepend('/');
+    QString ret;
+    for (int i=chemins.count()-1;i>-1;--i)
+    {
+        ret = chemins.at(i);
+        ret.append(f);
+        QFileInfo fi(ret);
+        if (fi.exists()) return ret;
+    }
+    return qApp->applicationDirPath()+"/data"+f;
 }
 
 /**
