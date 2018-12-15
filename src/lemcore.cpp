@@ -42,10 +42,12 @@
  */
 LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 {
-    if (resDir == "")
-        _resDir = qApp->applicationDirPath() + "/data/";
-    else if (resDir.endsWith("/")) _resDir = resDir;
-    else _resDir = resDir + "/";
+    if (resDir.isEmpty())
+    {
+        _resDir = Ch::chemin("collatinus/data",'d');
+        if (!_resDir.endsWith('/')) _resDir.append('/');
+        _ajDir = Ch::chemin("collatinus/data", 'p');
+    }
     // options
     _extension = false;
     _extLoaded = false;
