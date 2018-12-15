@@ -129,23 +129,24 @@ QString Ch::atone(QString a, bool bdc)
  */
 QString Ch::chemin(QString f, char t)
 {
-    QStringList chemins;
-    if (t == 'e')
-        chemins = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
-    else if (t == 'd')
-        chemins = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
-    else if (t == 'p')
-        chemins = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
-    f.prepend('/');
-    QString ret;
-    for (int i=chemins.count()-1;i>-1;--i)
+    if (t == 'd')
     {
-        ret = chemins.at(i);
-        ret.append(f);
-        QFileInfo fi(ret);
-        if (fi.exists()) return ret;
+        //QString dir = QStandardPaths::locate(QStandardPaths::AppDataLocation,
+        QString dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                             f, QStandardPaths::LocateDirectory);
+        if (dir.isEmpty()) dir = qApp->applicationDirPath()+"/data/";
+        return dir;
     }
-    return qApp->applicationDirPath()+"/data"+f;
+    QString ret;
+    if (t == 'p')
+    {
+        //ret = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        ret = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+        if (!ret.endsWith('/')) ret.append('/');
+        ret.append(f);
+        return ret;
+    }
+    return qApp->applicationDirPath()+"/ext/";
 }
 
 /**
