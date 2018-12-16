@@ -1053,11 +1053,11 @@ void LemCore::lisLexique()
  */
 void LemCore::lisExtension()
 {
-//    if (_nbrLoaded) foreach(Lemme *l, _lemmes.values())
-  //      l->clearOcc();
+    //    if (_nbrLoaded) foreach(Lemme *l, _lemmes.values())
+    //      l->clearOcc();
     // Si les nombres d'occurrences ont été chargés, je dois les ré-initialiser.
     lisFichierLexique(_resDir + "lem_ext.la");
-//    lisNombres();
+    //    lisNombres();
 }
 
 /**
@@ -1245,7 +1245,11 @@ QString LemCore::motsClefs(int m)
  * \brief Accesseur de l'option extension,
  *        qui permet de charger l'extension.
  */
-bool LemCore::optExtension() { return _extension; }
+bool LemCore::optExtension()
+{
+    return _extension;
+}
+
 /**
  * \fn QString LemCore::variable (QString v)
  * \brief permet de remplacer la métavariable v
@@ -1255,7 +1259,10 @@ bool LemCore::optExtension() { return _extension; }
  *        Elles sont repérées comme en PHP, par leur
  *        premier caractère $.
  */
-QString LemCore::variable(QString v) { return _variables[v]; }
+QString LemCore::variable(QString v)
+{
+    return _variables[v];
+}
 
 /**
  * @brief LemCore::setExtension
