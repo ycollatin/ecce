@@ -192,6 +192,7 @@ class MainWindow : public QMainWindow
         QCompleter*       completeurM;
         void              connecte();
         QString           docVarGraph;
+
         Flexion*          flexion;
         QString GabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
@@ -237,9 +238,7 @@ class MainWindow : public QMainWindow
         void        ajMorph();
         QString     cle(QString ligne);
         void        coche();
-        void        copier();
-        void        diff();
-        QString     diffPars(QString fa, QString fb);
+        //void        copier();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();

@@ -23,10 +23,17 @@
    FIXME
 
    Les lemmes modifiés s'ajoutent au lieu de remplacer.
+   - les résultats de la préanalyse sont dupliqués dans l'éditeur de saisie.
 
    TODO
 
-   - génération et enregistrement d'un diff ;
+   - nom : ecce (ecce communis collatini editor)
+   - charger lem_ext à part. Il sera utilisé à la demande, pour ajout dans 
+     le module lexical.
+   - suppression d'un lemme : il suffit de commenter sa ligne
+     prévoir une gestion des lignes lemmes commentées
+   - une doc pour que ceux qui ont compilé aient accès aux data de collatinus
+   - compression des données utilisateur
    - lecture et restitution des en-têtes des fichiers de données ;
    - peupler les éditeurs de variantes graphiques 
    - mettre au point une taxonomie des pos ?
@@ -37,7 +44,6 @@
 
 #include <QFileDialog>
 #include <QVector>
-#include "diff_match_patch.h"
 #include <mainwindow.h>
 
 MainWindow::MainWindow()
@@ -45,7 +51,7 @@ MainWindow::MainWindow()
     actionQuant = new QAction(this);
     actionQuitter = new QAction(this);
     actionDiff = new QAction(this);
-    actionCopier = new QAction(this);
+    //actionCopier = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
     verticalLayout_9 = new QVBoxLayout(centralWidget);
@@ -381,7 +387,7 @@ MainWindow::MainWindow()
     //menu_Aide = new QMenu(menuBar);
     //menuBar->addAction(menu_Aide->menuAction());
     menuFichier->addSeparator();
-    menuFichier->addAction(actionCopier);
+    //menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
@@ -443,7 +449,7 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
-    actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
+    //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
@@ -519,6 +525,7 @@ QString MainWindow::cle(QString ligne)
     return Ch::atone(Ch::deramise(ret));
 }
 
+/*
 void MainWindow::copier()
 {
 
@@ -568,84 +575,13 @@ void MainWindow::copier()
     delete completeur;
     peuple();
 }
-
-// génération d'un fichier diff
-void MainWindow::diff()
-{
-    // localiser le répertoire d'origine
-    QString nra = QFileDialog::getExistingDirectory(this, "Collatinus - répertoire des données de référence", "../");
-    if (nra.isEmpty()) return;
-    // dialogue de création de fichier
-    QString nfd = QFileDialog::getSaveFileName(this,
-      "fichier diff à générer", "./", tr("fichier diff (*.diff)"));
-    if (nfd.isEmpty()) return;
-    // ouverture du fichier de destination
-    QFile fDest(nfd);
-    fDest.open(QFile::WriteOnly);
-    QTextStream fld(&fDest);
-    // diff de chaque fichier
-    // - lemmes.la
-    QString strPatch = diffPars(nra+"/lemmes.la", "data/lemmes.la");
-    if (!strPatch.isEmpty())
-    {
-        fld << "diff lemmes.la\n";
-        fld << strPatch;
-    }
-    // - lemmes.fr
-    strPatch = diffPars(nra+"/lemmes.fr", "data/lemmes.fr");
-    if (!strPatch.isEmpty())
-    {
-        fld << "diff lemmes.fr\n";
-        fld << strPatch;
-    }
-    // - irregs.la
-    strPatch = diffPars(nra+"/irregs.la", "data/irregs.la");
-    if (!strPatch.isEmpty())
-    {
-        fld << "diff irregs.la\n";
-        fld << strPatch;
-    }
-    // - vargraph.la
-    fld << "diff vargraph.la\n";
-    if (QFile::exists(nra+"/vargraph.la"))
-    {
-        strPatch = diffPars(nra+"/vargraph.la", "data/vargraph.la");
-        if (!strPatch.isEmpty())
-        {
-            fld << strPatch;
-        }
-    }
-    else 
-    {
-        QFile fvar("data/vargraph.la");
-        fvar.open(QFile::ReadOnly);
-        fld << fvar.readAll();
-    }
-    // enregistrer
-    fDest.close();
-}
-
-QString MainWindow::diffPars(QString nfa, QString nfb)
-{
-    QFile fa(nfa);
-    fa.open(QIODevice::ReadOnly|QIODevice::Text);
-    QString chA = fa.readAll();
-    fa.close();
-    QFile fb(nfb);
-    fb.open(QIODevice::ReadOnly|QIODevice::Text);
-    QString chB = fb.readAll();
-    fb.close();
-    diff_match_patch dmp;
-    QString strPatch = dmp.patch_toText(dmp.patch_make(chA, chB));
-    return strPatch;
-}
+*/
 
 void MainWindow::connecte()
 {
     // fichier
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
-    connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
-    connect(actionDiff, SIGNAL(triggered()), this, SLOT(diff()));
+    //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
@@ -757,6 +693,10 @@ void MainWindow::edLem(QString l)
     if (litems.contains(l))
     {
         lemme = lemcore->lemme(l);
+        // si lem est issu de lem_ext, modifier l'intitulé du bouton
+        if (lemme->origin() > 0)
+            boutonEnr->setText("enregistrer (de lem_ext)");
+        else boutonEnr->setText("enregistrer");
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
         comboBoxModele->show();
@@ -1089,6 +1029,7 @@ void MainWindow::majLinMorph()
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
+    lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
     // lemmes
     litems = lemcore->cles();
