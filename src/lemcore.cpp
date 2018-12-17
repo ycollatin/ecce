@@ -85,6 +85,11 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 #endif
 }
 
+QString LemCore::ajDir()
+{
+    return _ajDir;
+}
+
 /**
  * @brief LemCore::lisTags
  * @param tout : bool
@@ -142,75 +147,6 @@ void LemCore::lisTags(bool tout)
 }
 
 /**
- * @brief LemCore::tag
- * @param l : le pointeur vers le lemme
- * @param morph : l'analyse morphologique
- * @return : le tag pour Collatinus
- *
- * Cette routine calcule le tag correspondant
- * à l'analyse morphologique donnée, morph,
- * pour le lemme, l.
- * Ce tag est toujours sur trois caractères.
- *
- * Ce tag est obtenu avec le POS du lemme,
- * suivi des cas (1-6 ou 7) et nombre (1, 2) pour les formes déclinées.
- * Pour les verbes conjugués, on donne le mode (1-4)
- * et un 1 si c'est un présent ou un espace sinon.
- * Les supins ont été joints aux impératifs autres que le présent (groupes trop peu nombreux).
- * Les formes verbales déclinées ont un "w" en tête (à la place du "v" pour verbe).
- * Pour les invariables, le POS est complété avec deux espaces.
- *
- */
-QString LemCore::tag(Lemme *l, int m)
-{
-    // Il faut encore traiter le cas des pos multiples
-    QString lp = l->pos();
-    if ((lp.size() > 0) && !lp[0].isLetter()) lp = "";
-    QString lTags = "";
-    QString morph = morpho(m);
-    while (lp.size() > 0)
-    {
-        QString p = lp.mid(0,1);
-        lp = lp.mid(1);
-        if ((p == "n") && (m == 413)) // Locatif !
-            lTags.append("n71,");
-        else if ((p == "v") && (morph.contains(" -u"))) // C'est un supin
-            lTags.append("v3 ,");
-        else if (!p.isEmpty())
-        {
-            p.append("%1%2,");
-            if (p.startsWith("v"))
-            {
-                for (int i=0; i<4; i++) if (morph.contains(modes(i).toLower()))
-                {
-                    if (morph.contains(temps(0))) p = p.arg(i+1).arg(1); // présent
-                    else  p = p.arg(i+1).arg(" ");
-                    lTags.append(p);
-                    break;
-                }
-            }
-            if (p.size() > 4) // Si p == 4, c'est que c'était un verbe conjugué.
-            {
-                for (int i=0; i<6; i++) if (morph.contains(cas(i)))
-                {
-                    if (morph.contains(nombre(1))) p = p.arg(i+1).arg(2);
-                    else  p = p.arg(i+1).arg(1);
-                    if (p.startsWith("v")) p[0] = 'w'; // Forme verbale déclinée.
-                    lTags.append(p);
-                    break;
-                }
-            }
-            if (p.size() > 4)
-            {
-                p = p.arg(" ").arg(" ");
-                lTags.append(p);
-            }
-        }
-    }
-    return lTags;
-}
-
-/**
  * @brief LemCore::fraction
  * @param t : le tag
  * @return : la fraction moyenne du tag.
@@ -251,14 +187,9 @@ int LemCore::fraction(QString listTags)
     return frFin;
 }
 
-/**
- * @brief LemCore::tagOcc
- * @param t : tag
- * @return Le nombre d'occurrences du tag t
- */
-int LemCore::tagOcc(QString t)
+QString LemCore::resDir()
 {
-    return _tagOcc[t];
+    return _resDir;
 }
 
 /**
@@ -1317,4 +1248,84 @@ QStringList LemCore::lModeles()
 {
     return _modeles.keys();
 }
+
+/**
+ * @brief LemCore::tag
+ * @param l : le pointeur vers le lemme
+ * @param morph : l'analyse morphologique
+ * @return : le tag pour Collatinus
+ *
+ * Cette routine calcule le tag correspondant
+ * à l'analyse morphologique donnée, morph,
+ * pour le lemme, l.
+ * Ce tag est toujours sur trois caractères.
+ *
+ * Ce tag est obtenu avec le POS du lemme,
+ * suivi des cas (1-6 ou 7) et nombre (1, 2) pour les formes déclinées.
+ * Pour les verbes conjugués, on donne le mode (1-4)
+ * et un 1 si c'est un présent ou un espace sinon.
+ * Les supins ont été joints aux impératifs autres que le présent (groupes trop peu nombreux).
+ * Les formes verbales déclinées ont un "w" en tête (à la place du "v" pour verbe).
+ * Pour les invariables, le POS est complété avec deux espaces.
+ *
+ */
+QString LemCore::tag(Lemme *l, int m)
+{
+    // Il faut encore traiter le cas des pos multiples
+    QString lp = l->pos();
+    if ((lp.size() > 0) && !lp[0].isLetter()) lp = "";
+    QString lTags = "";
+    QString morph = morpho(m);
+    while (lp.size() > 0)
+    {
+        QString p = lp.mid(0,1);
+        lp = lp.mid(1);
+        if ((p == "n") && (m == 413)) // Locatif !
+            lTags.append("n71,");
+        else if ((p == "v") && (morph.contains(" -u"))) // C'est un supin
+            lTags.append("v3 ,");
+        else if (!p.isEmpty())
+        {
+            p.append("%1%2,");
+            if (p.startsWith("v"))
+            {
+                for (int i=0; i<4; i++) if (morph.contains(modes(i).toLower()))
+                {
+                    if (morph.contains(temps(0))) p = p.arg(i+1).arg(1); // présent
+                    else  p = p.arg(i+1).arg(" ");
+                    lTags.append(p);
+                    break;
+                }
+            }
+            if (p.size() > 4) // Si p == 4, c'est que c'était un verbe conjugué.
+            {
+                for (int i=0; i<6; i++) if (morph.contains(cas(i)))
+                {
+                    if (morph.contains(nombre(1))) p = p.arg(i+1).arg(2);
+                    else  p = p.arg(i+1).arg(1);
+                    if (p.startsWith("v")) p[0] = 'w'; // Forme verbale déclinée.
+                    lTags.append(p);
+                    break;
+                }
+            }
+            if (p.size() > 4)
+            {
+                p = p.arg(" ").arg(" ");
+                lTags.append(p);
+            }
+        }
+    }
+    return lTags;
+}
+
+/**
+ * @brief LemCore::tagOcc
+ * @param t : tag
+ * @return Le nombre d'occurrences du tag t
+ */
+int LemCore::tagOcc(QString t)
+{
+    return _tagOcc[t];
+}
+
 

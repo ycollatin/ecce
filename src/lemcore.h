@@ -112,6 +112,7 @@ class LemCore : public QObject
    public:
     LemCore(QObject *parent = 0, QString resDir="");
     void                   ajDesinence(Desinence *d);
+    QString                ajDir();
     void                   ajLemme(Lemme* l);
     void                   ajModele(Modele *m);
     void                   ajRadicaux(Lemme *l);
@@ -141,26 +142,25 @@ class LemCore : public QObject
     Modele*                modele(QString m);
     QString                morpho(int i);
     void                   remplaceLemme(Lemme* l, Lemme* nl);
+    QString                resDir();
     QMap<QString, QString> suffixes;
     QString                variable(QString v);
 
     // Pour l'internationalisation
     QString                cas(int i);
     QString                genre(int i);
+    QString                motsClefs(int i);
+    QString                modes(int i);
     QString                nombre(int i);
     QString                temps(int i);
-    QString                modes(int i);
     QString                voix(int i);
-    QString                motsClefs(int i);
 
     void                   setCible(QString c);
     QString                cible();
     bool                   optExtension();
 
-
-//    QString tagPhrase(QString phr);
-    QString                tag(Lemme *l, int m);
     int                    fraction(QString listTags);
+    QString                tag(Lemme *l, int m);
     int                    tagOcc(QString t);
     int                    trigram(QString seq);
 
