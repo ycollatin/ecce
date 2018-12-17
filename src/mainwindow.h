@@ -227,6 +227,11 @@ class MainWindow : public QMainWindow
         QStringList       lVx;
         int               iVx;
        
+        // chemins
+        QString           dirLa;
+        QString           dirFr;
+        QString           dirIrr;
+        QString           dirVg;
         QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
         QStringList       selMorph;
@@ -238,15 +243,15 @@ class MainWindow : public QMainWindow
         void        ajMorph();
         QString     cle(QString ligne);
         void        coche();
-        //void        copier();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();
-        void        enrFr();
-        void        enrIrr();
-        void        enrLa();
+        void        enrFr(QString l);
+        //void        enrIrr(QString l);
+        void        enrLa(QString l);
         void        enrVar();
         int         indexOfInsert(QString s, QStringList l);
+        void        insereLigne(QString l, QString f);
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
@@ -259,7 +264,8 @@ class MainWindow : public QMainWindow
         void        siPers();
         void        siTps();
         void        siVx(); 
-        void        suppr();
+        void        suppr(QString l, QString f);
+        void        supprLa();
         void        supprIrr();
 };
 

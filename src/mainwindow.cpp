@@ -22,17 +22,20 @@
 /*
    FIXME
 
-   Les lemmes modifiés s'ajoutent au lieu de remplacer.
+   - Les lemmes modifiés s'ajoutent au lieu de remplacer.
+     Il faut tester la clé, et en cas d'identité de clé, écraser.
    - les résultats de la préanalyse sont dupliqués dans l'éditeur de saisie.
 
    TODO
 
-   - nom : ecce (ecce communis collatini editor)
+   - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
+     boutonEnr.
    - charger lem_ext à part. Il sera utilisé à la demande, pour ajout dans 
      le module lexical.
    - suppression d'un lemme : il suffit de commenter sa ligne
      prévoir une gestion des lignes lemmes commentées
    - une doc pour que ceux qui ont compilé aient accès aux data de collatinus
+   - nom : ecce (ecce communis collatini editor)
    - compression des données utilisateur
    - lecture et restitution des en-têtes des fichiers de données ;
    - peupler les éditeurs de variantes graphiques 
@@ -635,6 +638,8 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
+    insereLigne(lin, dirIrr);
+    /*
     // chercher si le lemme et la forme sont définis dans la liste
     bool vu = false;
     for (int i=0;i<itemsIrr.count();++i)
@@ -655,6 +660,7 @@ void MainWindow::ajIrr()
     }
     // enregistrer dans irregs.la
     enrIrr();
+    */
     /*
     QFile firr("data/irregs.la");
     firr.open(QFile::WriteOnly);
@@ -788,6 +794,7 @@ void MainWindow::edLem(QString l)
 
 void MainWindow::enr()
 {
+    qDebug()<<"enr";
     // radicaux et morphologie
     QString lc = lineEditLemme->text();
     QString linLa = ligneLa();
@@ -796,28 +803,16 @@ void MainWindow::enr()
         .arg(lc)
         .arg(ltr);
     Lemme* lem = lemcore->lemme(lc);
-    if (lem == 0)
+    if (lem == 0 || lem->origin() > 0)
     {
         lem = nLemme;
         // ajouter le lemme à la map _lemmes
         lemcore->ajLemme(lem);
         // màj des clés et des lignes à enregistrer
         // latin
-        int i = indexOfInsert(linLa, listeLemmesLa);
-        listeLemmesLa.insert(i, linLa);
-        /*
-           listeLemmesLa.append(linLa);
-           std::sort(listeLemmesLa.begin(), listeLemmesLa.end(), Ch::sort_i);
-         */
-        enrLa();
+        enrLa(linLa);
         // français
-        i = indexOfInsert(linFr, listeLemmesFr);
-        listeLemmesFr.insert(i, linFr);
-        /*
-           listeLemmesFr.append(linFr);
-           std::sort(listeLemmesFr.begin(), listeLemmesFr.end(), Ch::sort_i);
-         */
-        enrFr();
+        enrFr(linFr);
         // màj du compléteur
         litems.append(lc);
         modele = new QStringListModel(litems);
@@ -832,52 +827,13 @@ void MainWindow::enr()
         lemme = nLemme;
     }
     QString tr = lem->traduction("fr");
-    // enregistrement dans lemmes.la
-    for (int i=0;i<listeLemmesLa.count();++i)
-    {
-        QString ligne = listeLemmesLa.at(i);
-        QString cle = this->cle(ligne);
-        //QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
-        //QString cle = Ch::atone(Ch::deramise(l));
-        if (lem->cle() == cle)
-        {
-            listeLemmesLa[i] = linLa;
-            // enregistrer
-            enrLa();
-            break;
-        }
-    }
-    // traductions
-    int i = 0;
-    QString lcl = lc.toLower();
-    while(i<listeLemmesFr.count())
-    {
-        QString l = listeLemmesFr.at(i).section(':',0,0);
-        if (l >= lcl)
-        {
-            if (l == lc && ltr != tr)
-            {
-                listeLemmesFr[i] = QString("%1:%2")
-                    .arg(l)
-                    .arg(ltr);
-            }
-            else if (l > lcl)
-            {
-                if (i > 0) --i;
-                listeLemmesFr.insert(i, QString("%1:%2")
-                                     .arg(lc)
-                                     .arg(ltr));
-            }
-            // enregistrer
-            enrFr();
-            break;
-        }
-        ++i;
-    }
 }
 
-void MainWindow::enrFr()
+void MainWindow::enrFr(QString l)
 {
+    qDebug()<<"enrFr"<<lemcore->ajDir()<<l;
+    insereLigne(l, lemcore->ajDir() + "/lemmes.fr");
+    /*
     QFile f("data/lemmes.fr");
     f.remove();
     f.open(QFile::WriteOnly);
@@ -885,9 +841,11 @@ void MainWindow::enrFr()
     for (int j=0;j<listeLemmesFr.count();++j)
         flux << listeLemmesFr.at(j)+'\n';
     f.close();
+    */
 }
 
-void MainWindow::enrIrr()
+/*
+void MainWindow::enrIrr(QString l)
 {
     QFile firr("data/irregs.la");
     firr.open(QFile::WriteOnly);
@@ -896,9 +854,14 @@ void MainWindow::enrIrr()
         fl << itemsIrr.at(i)+"\n";
     firr.close();
 }
+*/
 
-void MainWindow::enrLa()
+void MainWindow::enrLa(QString l)
 {
+    // ajDir : /home/collatin/.local/share/collatinus/data
+    qDebug()<<"enrLa"<<lemcore->ajDir();
+    insereLigne(l, lemcore->ajDir()+"/lemmes.la");
+    /*
     QFile f("data/lemmes.la");
     f.remove();
     f.open(QFile::WriteOnly);
@@ -906,6 +869,7 @@ void MainWindow::enrLa()
     for (int j=0;j<listeLemmesLa.count();++j)
         flux << listeLemmesLa.at(j)<<'\n';
     f.close();
+    */
 }
 
 int MainWindow::indexOfInsert(QString s, QStringList l)
@@ -920,6 +884,65 @@ int MainWindow::indexOfInsert(QString s, QStringList l)
             return i;
     }
     return l.count();
+}
+
+void MainWindow::insereLigne(QString l, QString f)
+{
+    qDebug()<<"insereligne"<<l<<f;
+    bool lemla = f.endsWith("lemmes.la");
+    QString cle;
+    if (lemla) cle = l.section('|',0,0);
+    QStringList lignes = lisLignes(f);
+    qDebug()<<"     lignes"<<lignes.count();
+    for (int i=0;i<lignes.count();++i)
+    {
+        QString lin = lignes.at(i);
+        if (lemla)
+        {
+            QString cleLin = lin.section('|',0,0);
+            // édition
+            if (cleLin == cle)
+            {
+                lignes[i] = l;
+                break;
+            }
+            if (cleLin > cle)
+            {
+                lignes.insert(i, l);
+                break;
+            }
+        }
+        else
+        {
+            if (Ch::sort_i(lin, l))
+            {
+                lignes.insert(i, l);
+                break;
+            }
+            if (lin == l)
+            {
+                std::cerr << qPrintable(l+": ligne redondante");
+                break;
+            }
+        }
+    }
+    if (lignes.count() == 0)
+    {
+        lignes.append(l);
+    }
+    qDebug()<<"  lignes(2)"<<lignes.count();
+    // enregistrement
+    QFile file(f);
+    QString path = QFileInfo(f).path();
+    if (!QFile::exists(path))
+    {
+        QDir dir;
+        dir.mkpath(path);
+    }
+    file.open(QFile::WriteOnly);
+    QTextStream fl(&file);
+    fl << lignes.join('\n');
+    file.close();
 }
 
 QString MainWindow::ligneLa(QString modl)
@@ -1031,6 +1054,12 @@ void MainWindow::peuple()
     lemcore = new LemCore(this);
     lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
+    // chemins
+    QString ajd = lemcore->ajDir();
+    dirLa = ajd+"/lemmes.la";
+    dirFr = ajd+"/lemmes.fr";
+    dirIrr = ajd+"/irregs.la";
+    dirVg = ajd+"/vargraph.la";
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
@@ -1205,35 +1234,19 @@ void MainWindow::siVx()
     majLinMorph();
 }
 
-void MainWindow::suppr()
+void MainWindow::suppr(QString l, QString f)
+{
+    qDebug()<<"suppr"<<l<<f;
+}
+
+void MainWindow::supprLa()
 {
     if (lemme == 0) return;
     QString cle = lemme->cle();
     // litems
     litems.removeAt(litems.indexOf(cle));
-    // listeLemmesLa
-    for (int i=0;i<listeLemmesLa.count();++i)
-    {
-        QString l = listeLemmesLa.at(i).section(QRegExp("[\\W]"),0,0);
-        l = Ch::atone(Ch::deramise(l));
-        if (l == cle)
-        {
-            listeLemmesLa.removeAt(i);
-            enrLa();
-            break;
-        }
-    }
-
-    for(int i=0; i<listeLemmesFr.count(); ++i)
-    {
-        QString l = listeLemmesFr.at(i).section(':',0,0);
-        if (l == cle)
-        {
-            listeLemmesFr.removeAt(i);
-            enrFr();
-            break;
-        }
-    }
+    suppr(ligneLa(), lemcore->ajDir()+"/lemmes.la");
+    suppr(ligneFr(), lemcore->ajDir()+"/lemmes.fr");
 }
 
 void MainWindow::supprIrr()
