@@ -156,22 +156,6 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     }
     // nombre d'occurrences
     _nbOcc = eclats.at(5).toInt();
-
-
-/* Avec l'internationalisation des morphos, le genre dépend de la langue choisie.
- * Il faut donc le définir à la demande.
-    _genre.clear();
-    if (_indMorph.contains(" m."))
-        _genre.append(" " + _lemmatiseur->genre(0));
-//        _genre.append(" masculin"); // Peut-être mieux d'utiliser Flexion::genres[0] ?
-    if (_indMorph.contains(" f."))
-        _genre.append(" " + _lemmatiseur->genre(1));
-//        _genre.append(" féminin");
-    if (_indMorph.contains(" n."))
-        _genre.append(" " + _lemmatiseur->genre(2));
-//        _genre.append(" neutre");
-    _genre = _genre.trimmed();
-*/
 }
 
 /**
