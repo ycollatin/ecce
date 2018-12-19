@@ -27,7 +27,8 @@
    - les résultats de la préanalyse sont dupliqués dans l'éditeur de saisie.
 
    TODO
-
+   - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
+     ne les calculer qu'à la fin de l'initialisation.
    - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
      boutonEnr.
    - charger lem_ext à part. Il sera utilisé à la demande, pour ajout dans 
@@ -35,7 +36,7 @@
    - suppression d'un lemme : il suffit de commenter sa ligne
      prévoir une gestion des lignes lemmes commentées
    - une doc pour que ceux qui ont compilé aient accès aux data de collatinus
-   - nom : ecce (ecce communis collatini editor)
+   - nom : ecce (ecce collatinistorum communitatis editor)
    - compression des données utilisateur
    - lecture et restitution des en-têtes des fichiers de données ;
    - peupler les éditeurs de variantes graphiques 
@@ -794,7 +795,6 @@ void MainWindow::edLem(QString l)
 
 void MainWindow::enr()
 {
-    qDebug()<<"enr";
     // radicaux et morphologie
     QString lc = lineEditLemme->text();
     QString linLa = ligneLa();
@@ -831,7 +831,6 @@ void MainWindow::enr()
 
 void MainWindow::enrFr(QString l)
 {
-    qDebug()<<"enrFr"<<lemcore->ajDir()<<l;
     insereLigne(l, lemcore->ajDir() + "/lemmes.fr");
     /*
     QFile f("data/lemmes.fr");
@@ -859,7 +858,6 @@ void MainWindow::enrIrr(QString l)
 void MainWindow::enrLa(QString l)
 {
     // ajDir : /home/collatin/.local/share/collatinus/data
-    qDebug()<<"enrLa"<<lemcore->ajDir();
     insereLigne(l, lemcore->ajDir()+"/lemmes.la");
     /*
     QFile f("data/lemmes.la");
@@ -888,12 +886,10 @@ int MainWindow::indexOfInsert(QString s, QStringList l)
 
 void MainWindow::insereLigne(QString l, QString f)
 {
-    qDebug()<<"insereligne"<<l<<f;
     bool lemla = f.endsWith("lemmes.la");
     QString cle;
     if (lemla) cle = l.section('|',0,0);
     QStringList lignes = lisLignes(f);
-    qDebug()<<"     lignes"<<lignes.count();
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
@@ -930,7 +926,6 @@ void MainWindow::insereLigne(QString l, QString f)
     {
         lignes.append(l);
     }
-    qDebug()<<"  lignes(2)"<<lignes.count();
     // enregistrement
     QFile file(f);
     QString path = QFileInfo(f).path();
@@ -1055,11 +1050,14 @@ void MainWindow::peuple()
     lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
     // chemins
-    QString ajd = lemcore->ajDir();
-    dirLa = ajd+"/lemmes.la";
-    dirFr = ajd+"/lemmes.fr";
-    dirIrr = ajd+"/irregs.la";
-    dirVg = ajd+"/vargraph.la";
+    dirLa = lemcore->dirLa();
+    dirFr = lemcore->dirFr();
+    dirIrr = lemcore->dirIrr();
+    dirVg = lemcore->dirVg();
+    peupleAjLemmes();
+    peupleAjTr();
+    peupleAjIrr();
+    peupleAjVg();
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
@@ -1111,6 +1109,31 @@ void MainWindow::peuple()
     iPers = 0;
     iTps = 0;
     iVx = 0;
+}
+
+void MainWindow::peupleAjLemmes()
+{
+    QStringList ll = lisLignes(dirLa, true);
+    for (int i=0;i<ll.count();++i)
+    {
+        Lemme *l = new Lemme(ll.at(i),2, lemcore);
+        Lemme *lc = lemcore->lemme(l->cle());
+        if (lc != 0)
+            lemcore->remplaceLemme(lc, l);
+        else lemcore->ajLemme(l);
+    }
+}
+
+void MainWindow::peupleAjTr()
+{
+}
+
+void MainWindow::peupleAjIrr()
+{
+}
+
+void MainWindow::peupleAjVg()
+{
 }
 
 void MainWindow::rotQ()

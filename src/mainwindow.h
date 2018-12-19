@@ -211,6 +211,10 @@ class MainWindow : public QMainWindow
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
         void              peuple();
+        void              peupleAjLemmes();
+        void              peupleAjTr();
+        void              peupleAjIrr();
+        void              peupleAjVg();
         // irréguliers
         QStringList       lCas;
         int               iCas;
