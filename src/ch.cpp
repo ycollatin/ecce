@@ -131,10 +131,12 @@ QString Ch::chemin(QString f, char t)
 {
     if (t == 'd')
     {
+        // si un data/ existe à côté de l'exécutable, le retourner
+        QString adpd = qApp->applicationDirPath()+"/data/";
+        if (QFile::exists(adpd)) return adpd;
         //QString dir = QStandardPaths::locate(QStandardPaths::AppDataLocation,
         QString dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                              f, QStandardPaths::LocateDirectory);
-        if (dir.isEmpty()) dir = qApp->applicationDirPath()+"/data/";
         return dir;
     }
     QString ret;
