@@ -24,6 +24,10 @@
  * \brief module de lemmatisation des formes latines
  */
 
+// TODO
+// Factoriser la lecture des listes morpho dans lisMorphos()
+// apt install libquazip5-1 : ziper et déziper
+
 #include "lemcore.h"
 
 #include <QDebug>
@@ -44,9 +48,15 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 {
     if (resDir.isEmpty())
     {
+        qDebug()<<"LemCore"<<resDir;
         _resDir = Ch::chemin("collatinus/data",'d');
+        qDebug()<<"_resdir"<<_resDir;
         if (!_resDir.endsWith('/')) _resDir.append('/');
         _ajDir = Ch::chemin("collatinus/data", 'p');
+        _dirLa = _ajDir+"/lemmes.la";
+        _dirFr = _ajDir+"/lemmes.fr";
+        _dirIrr = _ajDir+"irregs.la";
+        _dirVg = _ajDir+"/vargraph.la";
     }
     // options
     _extension = false;
@@ -71,7 +81,8 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
     rep = QDir(_resDir, "morphos.*");
     QStringList ltr = rep.entryList();
     ltr.removeOne("morphos.la");  // S'il traine encore...
-    foreach (QString nfl, ltr)
+    //foreach (QString nfl, ltr)
+    for (QString nfl : ltr)
         lisMorphos(QFileInfo(nfl).suffix());
     lisModeles();
     lisLexique();
@@ -88,6 +99,26 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 QString LemCore::ajDir()
 {
     return _ajDir;
+}
+
+QString LemCore::dirLa()
+{
+    return _dirLa;
+}
+
+QString LemCore::dirFr()
+{
+    return _dirFr;
+}
+
+QString LemCore::dirIrr()
+{
+    return _dirIrr;
+}
+
+QString LemCore::dirVg()
+{
+    return _dirVg;
 }
 
 /**
@@ -962,7 +993,8 @@ void LemCore::lisFichierLexique(QString filepath)
     if (filepath.endsWith("ext.la")) orig = 1;
     //QStringList lignes = lignesFichier(filepath);
     _listeLemmesLa = lignesFichier(filepath);
-    foreach (QString lin, _listeLemmesLa)
+    //foreach (QString lin, _listeLemmesLa)
+    for (QString lin: _listeLemmesLa)
     {
         Lemme *l = new Lemme(lin, orig, this);
         _lemmes.insert(l->cle(), l);
@@ -1247,6 +1279,11 @@ void LemCore::lireHyphen(QString fichierHyphen)
 QStringList LemCore::lModeles()
 {
     return _modeles.keys();
+}
+
+void LemCore::remplaceLemme(Lemme* l)
+{
+    _lemmes[l->cle()] = l;
 }
 
 /**

@@ -103,8 +103,12 @@ class LemCore : public QObject
     QMap<QString, int> _trigram; // Nombre d'occurrences des séquences de 3 tags.
     void lisTags(bool tout = false);
 
-    QString _resDir; // Le chemin du répertoire de ressources
-    QString _ajDir;  // chemin du répertoire des ajouts personnels
+    QString _resDir;          // Le chemin du répertoire de ressources
+    QString _ajDir;           // chemin du répertoire des ajouts personnels
+    QString          _dirLa;  // chemins des fichiers ajouts personnels
+    QString          _dirFr;  //            "
+    QString          _dirIrr; //            "
+    QString          _dirVg;  //            "
     bool _extLoaded; // = true après chargement de l'extension
     // Lorsque j'ai chargé l'extension, je dois pouvoir ignorer les analyses qui en viennent.
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.
@@ -112,7 +116,11 @@ class LemCore : public QObject
    public:
     LemCore(QObject *parent = 0, QString resDir="");
     void                   ajDesinence(Desinence *d);
-    QString                ajDir();
+    QString                ajDir();  // accesseurs chemins
+    QString                dirLa();  //     " ...
+    QString                dirFr();
+    QString                dirIrr();
+    QString                dirVg();
     void                   ajLemme(Lemme* l);
     void                   ajModele(Modele *m);
     void                   ajRadicaux(Lemme *l);
@@ -152,6 +160,7 @@ class LemCore : public QObject
     QString                motsClefs(int i);
     QString                modes(int i);
     QString                nombre(int i);
+    void                   remplaceLemme(Lemme* l);
     QString                temps(int i);
     QString                voix(int i);
 
