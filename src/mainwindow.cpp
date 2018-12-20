@@ -458,6 +458,7 @@ void MainWindow::retranslateUi()
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
+    actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
@@ -697,7 +698,6 @@ void MainWindow::ajMorph()
 
 void MainWindow::echec()
 {
-    qDebug()<<"echec, fluxC";
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
@@ -713,7 +713,7 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
-        MapLem ml = lemcore->lemmatise(c);
+        MapLem ml = lemcore->lemmatiseM(forme);
         qDebug()<<forme<<"ml.count"<<ml.count();
         if (ml.isEmpty())
         {

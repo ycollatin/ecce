@@ -739,6 +739,7 @@ QString LemCore::desassimq(QString a)
  */
 MapLem LemCore::lemmatise(QString f)
 {
+    qDebug()<<"lemmatise"<<f;
     MapLem result;
     if (f.isEmpty()) return result;
     QString f_lower = f.toLower();
@@ -848,7 +849,7 @@ bool LemCore::inv(Lemme *l, const MapLem ml)
 }
 
 /**
- * @brief LemCore::lemmatiseM renvoie dans une MapLem les lemmatisations de la
+ * @brief MapLem::LemCore::lemmatiseM renvoie dans une MapLem les lemmatisations de la
  *        forme f. Le paramètre debPhr à true indique qu'il
  *        s'agit d'un début de phrase.
  * @param f : la forme qui s'agit de lemmatiser.
