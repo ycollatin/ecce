@@ -48,9 +48,7 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
 {
     if (resDir.isEmpty())
     {
-        qDebug()<<"LemCore"<<resDir;
         _resDir = Ch::chemin("collatinus/data",'d');
-        qDebug()<<"_resdir"<<_resDir;
         if (!_resDir.endsWith('/')) _resDir.append('/');
         _ajDir = Ch::chemin("collatinus/data", 'p');
         _dirLa = _ajDir+"/lemmes.la";
@@ -941,9 +939,37 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
  * \brief cherche dans la liste des lemmes le lemme
  *        dont la clé est l, et retourne le résultat.
  */
-Lemme *LemCore::lemme(QString l)
+Lemme* LemCore::lemme(QString l)
 {
     return _lemmes.value(l, 0);
+}
+
+Lemme* LemCore::lemmeDisque(QString l)
+{
+    QFile f(_resDir+"lem_ext.la");
+    f.open(QIODevice::ReadOnly | QIODevice::Text);
+    qint64 fin = f.size()-1;
+    qint64 debut = 0;
+    qint64 milieu;
+    QString lin;
+    bool fini = false;
+    while (!fini)
+    {
+        milieu = (debut + fin) / 2;
+        f.seek(milieu);
+        f.readLine();
+        lin = f.readLine();
+        while (lin.startsWith('!')) lin = f.readLine();
+        QString cle = lin.section(QRegExp("[|=]"),0,0);
+        cle = Ch::atone(Ch::deramise(cle));
+        cle.remove(QRegExp("[0-9]$"));
+        int c = QString::compare(cle, l);
+        if (c == 0) return new Lemme(lin, 1, this);
+        else if (c > 0) fin = milieu;
+        else debut = milieu;
+        fini = (fin - debut < 3);
+    }
+    return 0;
 }
 
 /**

@@ -139,6 +139,7 @@ class LemCore : public QObject
     // lemmatiseM lemmatise une forme en contexte
     MapLem                 lemmatiseM(QString f, bool debPhr = true, int etape  =0);
     Lemme*                 lemme(QString l);
+    Lemme*                 lemmeDisque(QString l);
     // lemmes(ml) renvoie la liste des graphies des lemmes
     QStringList            lemmes(MapLem ml);
     // Lit les lignes d'un fichier. Est devenu public.

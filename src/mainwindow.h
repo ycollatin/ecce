@@ -71,6 +71,7 @@ class MainWindow : public QMainWindow
         QAction *actionQuant;
         QAction *actionQuitter;
         QAction *actionDiff;
+        QAction *actionReserv;
         QAction *actionCopier;
 
         QWidget *centralWidget;
@@ -260,6 +261,7 @@ class MainWindow : public QMainWindow
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        preAn();
+        void        reserve();
         void        rotQ();
         void        siCas();
         void        siGenre();

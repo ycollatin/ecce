@@ -21,12 +21,11 @@
 
 /*
    FIXME
-
-   - Les lemmes modifiés s'ajoutent au lieu de remplacer.
-     Il faut tester la clé, et en cas d'identité de clé, écraser.
-   - les résultats de la préanalyse sont dupliqués dans l'éditeur de saisie.
+   - déboguer LemCore::lemmeDisque();
 
    TODO
+   - tests pour la recherche :
+      - caerimonior, aris, ari : honorer par des cérémonies religieuse
    - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
      ne les calculer qu'à la fin de l'initialisation.
    - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
@@ -55,6 +54,7 @@ MainWindow::MainWindow()
     actionQuant = new QAction(this);
     actionQuitter = new QAction(this);
     actionDiff = new QAction(this);
+    actionReserv = new QAction(this);
     //actionCopier = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
@@ -393,6 +393,7 @@ MainWindow::MainWindow()
     menuFichier->addSeparator();
     //menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
+    menuFichier->addAction(actionReserv);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
 
@@ -445,6 +446,12 @@ MainWindow::MainWindow()
     connecte();
 }
 
+void MainWindow::reserve()
+{
+    lemme = lemcore->lemmeDisque(lineEditLemme->text());
+    if (lemme != 0) edLem("-reserve");
+}
+
 void MainWindow::retranslateUi()
 {
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
@@ -453,6 +460,7 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
+    actionReserv->setText(QApplication::translate("MainWindow", "chercher sur le disque"));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
@@ -586,10 +594,12 @@ void MainWindow::connecte()
     // fichier
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
+    connect(actionReserv, SIGNAL(triggered()), this, SLOT(reserve()));
     // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
+    connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
@@ -697,9 +707,24 @@ void MainWindow::editIrr(const QModelIndex &m)
 
 void MainWindow::edLem(QString l)
 {
-    if (litems.contains(l))
+    bool contient = litems.contains(l) || l == "-reserve";
+    if (!contient)
     {
-        lemme = lemcore->lemme(l);
+        lemme = 0;
+        // effacer les lignes
+        lineEditGrq->clear();
+        lineEditPerfectum->clear();
+        lineSupin->clear();
+        lineMorpho->clear();
+        lineEditTr->clear();
+        textEditFlexion->clear();
+        comboBoxModele->hide();
+        checkBoxVb->setChecked(l.endsWith("o")
+                               || l.endsWith("or"));
+    }
+    else
+    {
+        if (lemme == 0) lemme = lemcore->lemme(l);
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
         if (lemme->origin() > 0)
             boutonEnr->setText("enregistrer (de lem_ext)");
@@ -774,22 +799,6 @@ void MainWindow::edLem(QString l)
                     }
             }
         }
-    }
-    else
-    {
-        lemme = 0;
-        // effacer les lignes
-        lineEditGrq->clear();
-        lineEditPerfectum->clear();
-        lineSupin->clear();
-        lineMorpho->clear();
-        lineEditTr->clear();
-        textEditFlexion->clear();
-        comboBoxModele->hide();
-        //comboBoxModele->setCurrentIndex(-1);
-        // case à cocher verbe
-        checkBoxVb->setChecked(l.endsWith("o")
-                               || l.endsWith("or"));
     }
 }
 
@@ -1047,7 +1056,6 @@ void MainWindow::majLinMorph()
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
-    lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
     // chemins
     dirLa = lemcore->dirLa();
@@ -1126,6 +1134,14 @@ void MainWindow::peupleAjLemmes()
 
 void MainWindow::peupleAjTr()
 {
+    QStringList ll = lisLignes(dirFr, true);
+    for (int i=0;i<ll.count();++i)
+    {
+        QString lin = ll.at(i);
+        Lemme *l = lemcore->lemme(lin.section(':',0,0));
+        if (l != 0)
+            l->ajTrad(lin.section(':',1), "fr");
+    }
 }
 
 void MainWindow::peupleAjIrr()
