@@ -71,7 +71,7 @@ class MainWindow : public QMainWindow
         QAction *actionQuant;
         QAction *actionQuitter;
         QAction *actionDiff;
-        QAction *actionReserv;
+        QAction *actionOuvrir;
         QAction *actionCopier;
 
         QWidget *centralWidget;
@@ -87,6 +87,7 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditLemme;
         QPushButton *bHomon;
         QPushButton *bSuppr;
+        QPushButton *bEchecSuiv;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_2;
@@ -193,7 +194,6 @@ class MainWindow : public QMainWindow
         QCompleter*       completeurM;
         void              connecte();
         QString           docVarGraph;
-
         Flexion*          flexion;
         QString GabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
@@ -237,17 +237,20 @@ class MainWindow : public QMainWindow
         QString           dirFr;
         QString           dirIrr;
         QString           dirVg;
+        QFile             fCorpus;
         QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
         QStringList       selMorph;
         // variantes graphiques
         QStringList       lvarGraph;
+        qint64            posFC;
 
     private slots:
         void        ajIrr();
         void        ajMorph();
         QString     cle(QString ligne);
         void        coche();
+        void        echec();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l);
         void        enr();
@@ -260,6 +263,7 @@ class MainWindow : public QMainWindow
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
+        void        ouvrir();
         void        preAn();
         void        reserve();
         void        rotQ();

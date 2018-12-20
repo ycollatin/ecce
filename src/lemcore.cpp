@@ -87,6 +87,7 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
     lisTags(false);
     lisTraductions(true, false);
     lisIrreguliers();
+    lisVarGraph();
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values()) {
         QString t = l->traduction("fr");
@@ -436,6 +437,7 @@ int LemCore::aRomano(QString f)
     return res;
 }
 
+
 /**
  * \fn void LemCore::ajDesinence (Desinence *d)
  * \brief ajoute la désinence d dans la map des
@@ -443,8 +445,31 @@ int LemCore::aRomano(QString f)
  */
 void LemCore::ajDesinence(Desinence *d)
 {
+    QString gr = d->gr();
+    QList<RegleVG*> lr = lTransfVG(gr);
+    bool excl = false;
+    for (int i=0;i<lr.count();++i)
+    {
+        RegleVG *r = lr.at(i);
+        gr = r->transf(gr); 
+        excl = excl || r->excl();
+    }
+    if (!excl) _desinences.insert(Ch::deramise(d->gr()), d);
+    if (gr != d->gr()) _desinences.insert(Ch::deramise(gr), d);
+    // else if ?
+}
+
+/**
+ * \fn void LemCore::ajDesinence (Desinence *d)
+ * \brief ajoute la désinence d dans la map des
+ * désinences.
+ */
+/*
+void LemCore::ajDesinence(Desinence *d)
+{
     _desinences.insert(Ch::deramise(d->gr()), d);
 }
+*/
 
 bool LemCore::estRomain(QString f)
 {
@@ -467,6 +492,77 @@ void LemCore::ajRadicaux(Lemme *l)
     Modele *m = modele(l->grModele());
     /* insérer d'abord les radicaux définis dans lemmes.la
     qui sont prioritaires */
+    foreach (int i, l->clesR())
+    {
+        QList<Radical *> lr = l->radical(i);
+        foreach (Radical *r, lr)
+        {
+            //_radicaux.insert(Ch::deramise(r->gr()), r);
+            //_radicaux.insert(transfVarGraph(Ch::deramise(r->gr()), true), r);
+            QString gr = r->gr();
+            QList<RegleVG*> lr = lTransfVG(gr);
+            bool excl = false;
+            for (int i=0;i<lr.count();++i)
+            {
+                RegleVG *regle = lr.at(i);
+                gr = regle->transf(gr); 
+                excl = excl || regle->excl();
+            }
+            if (!excl) _radicaux.insert(Ch::deramise(r->gr()), r);
+            else if (gr != r->gr()) _radicaux.insert(Ch::deramise(gr), r);
+        }
+    }
+    // pour chaque radical du modèle
+    foreach (int i, m->clesR())
+    {
+        if (l->clesR().contains(i)) continue;
+        QStringList gs = l->grq().split(',');
+        foreach (QString g, gs)
+        {
+            Radical *r = NULL;
+            {
+                QString gen = m->genRadical(i);
+                // si gen == 'K', le radical est la forme canonique
+                if (gen == "-") continue;
+                if (gen == "K")
+                    r = new Radical(g, i, l);
+                else
+                {
+                    // sinon, appliquer la règle de formation du modèle
+                    int oter = gen.section(',', 0, 0).toInt();
+                    QString ajouter = gen.section(',', 1, 1);
+                    if (g.endsWith(0x0306)) g.chop(1);
+                    g.chop(oter);
+                    if (ajouter != "0") g.append(ajouter);
+                    r = new Radical(g, i, l);
+                }
+            }
+            l->ajRadical(i, r);
+            //_radicaux.insert(Ch::deramise(r->gr()), r);
+            //_radicaux.insert(transfVarGraph(Ch::deramise(r->gr()), true), r);
+            QString gr = r->gr();
+            QList<RegleVG*> lr = lTransfVG(gr);
+            bool excl = false;
+            for (int i=0;i<lr.count();++i)
+            {
+                RegleVG *regle = lr.at(i);
+                gr = regle->transf(gr); 
+                excl = excl || regle->excl();
+            }
+            if (!excl) _radicaux.insert(Ch::deramise(r->gr()), r);
+            if (gr != r->gr()) _radicaux.insert(Ch::deramise(gr), r);
+        }
+    }
+}
+
+/*
+void LemCore::ajRadicaux(Lemme *l)
+{
+    // ablŭo=ā̆blŭo|lego|ā̆blŭ|ā̆blūt|is, ere, lui, lutum
+    //      0        1    2    3         4
+    Modele *m = modele(l->grModele());
+    // insérer d'abord les radicaux définis dans lemmes.la
+    //qui sont prioritaires 
     foreach (int i, l->clesR())
     {
         QList<Radical *> lr = l->radical(i);
@@ -503,6 +599,7 @@ void LemCore::ajRadicaux(Lemme *l)
         }
     }
 }
+*/
 
 /**
  * \fn QString LemCore::assim (QString a)
@@ -985,11 +1082,45 @@ QStringList LemCore::lemmes(MapLem lm)
     return res;
 }
 
+
+void LemCore::lisIrreguliers()
+{
+    QStringList lignes = lignesFichier("irregs.la");
+    foreach (QString lin, lignes)
+    {
+        Irreg *irr = new Irreg(lin, this);
+        if (irr != 0 && irr->lemme() != 0)
+        {
+            //_irregs.insert(Ch::deramise(irr->gr()), irr);
+            //_irregs.insert(transfVarGraph(Ch::deramise(irr->gr())), irr);
+            QString gr = irr->gr();
+            QList<RegleVG*> lr = lTransfVG(gr);
+            bool excl = false;
+            for (int i=0;i<lr.count();++i)
+            {
+                RegleVG *r = lr.at(i);
+                gr = r->transf(gr); 
+                excl = excl || r->excl();
+            }
+            if (!excl) _irregs.insert(Ch::deramise(irr->gr()), irr);
+            else if (gr != irr->gr()) _irregs.insert(Ch::deramise(gr), irr);
+        }
+#ifdef DEBOG
+        else
+            std::cerr << "Irréguliers, erreur dans la ligne" << qPrintable(lin);
+#endif
+    }
+    // ajouter les irréguliers aux lemmes
+    foreach (Irreg *ir, _irregs)
+        ir->lemme()->ajIrreg(ir);
+}
+
 /**
  * \fn void LemCore::lisIrreguliers()
  * \brief Chargement des formes irrégulières
  *        du fichier data/irregs.la
  */
+/*
 void LemCore::lisIrreguliers()
 {
     QStringList lignes = lignesFichier(_resDir + "irregs.la");
@@ -1007,6 +1138,7 @@ void LemCore::lisIrreguliers()
     foreach (Irreg *ir, _irregs)
         ir->lemme()->ajIrreg(ir);
 }
+*/
 
 /**
  * \fn void LemCore::lisFichierLexique(filepath)
@@ -1128,6 +1260,39 @@ void LemCore::lisTraductions(bool base, bool extension)
             if (l != 0) l->ajTrad(lin.section(':', 1), suff);
         }
     }
+}
+
+void LemCore::lisVarGraph()
+{
+    QStringList lignes = lignesFichier(_dirVg);
+    for (int i=0;i<lignes.count();++i)
+    {
+        QString l = lignes.at(i);
+        QChar sep;
+        if (l.contains(';')) sep = ';';
+        else if (l.contains('>')) sep = '>';
+        else continue;
+        _reglesVG.append(new RegleVG(l));
+    }
+}
+
+/**
+ * \fn QList<RegleVG*> LemCore::lTransfVG(QString s)
+ * \brief liste des règles de variante graphiqu susceptibles
+ *        de modifier la chaîne s.
+ */
+QList<RegleVG*> LemCore::lTransfVG(QString s)
+{
+    QList<RegleVG*> ret;
+    for (int i=0;i<_reglesVG.count();++i)
+    {
+        RegleVG* r = _reglesVG.at(i);
+        if (r->match(s))
+        {
+            ret.append(r);
+        }
+    }
+    return ret;
 }
 
 /**
@@ -1311,6 +1476,27 @@ void LemCore::remplaceLemme(Lemme* l)
 {
     _lemmes[l->cle()] = l;
 }
+
+/*
+QString LemCore::transfVarGraph(QString s, bool rad)
+{
+    if (s.isEmpty()) return s;
+    bool maj = s.at(0).isUpper();
+    s = s.toLower();
+    for (int i=0;i<_reglesVG.count();++i)
+    {
+        RegleVG *r = _reglesVG.at(i);
+        if (!r->excl()) s.replace(r->a(), r->b());
+        else if (rad)
+        {
+            QString rs = r->b();
+            s.replace(r->a(), rs);
+        }
+    }
+    if (maj) s[0] = s[0].toUpper();
+    return s;
+}
+*/
 
 /**
  * @brief LemCore::tag

@@ -28,7 +28,8 @@ HEADERS += src/ch.h \
            src/lemcore.h \
            src/lemme.h \
 		   src/modele.h \
-           src/mainwindow.h
+           src/mainwindow.h \
+           src/reglevg.h \
 
 SOURCES += src/ch.cpp \
            src/flexion.cpp \
@@ -38,7 +39,8 @@ SOURCES += src/ch.cpp \
            src/main.cpp \
            src/mainwindow.cpp \
            src/modele.cpp \
-           src/preanalyse.cpp
+           src/preanalyse.cpp \
+           src/reglevg.cpp
 
 #install
 unix: {

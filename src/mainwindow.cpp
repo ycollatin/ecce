@@ -21,20 +21,16 @@
 
 /*
    FIXME
-   - déboguer LemCore::lemmeDisque();
 
    TODO
-   - tests pour la recherche :
-      - caerimonior, aris, ari : honorer par des cérémonies religieuse
+   - inclure vargraph
+   - lemmatiser, et traiter les échecs pour lemmatisation
    - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
      ne les calculer qu'à la fin de l'initialisation.
    - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
      boutonEnr.
-   - charger lem_ext à part. Il sera utilisé à la demande, pour ajout dans 
-     le module lexical.
    - suppression d'un lemme : il suffit de commenter sa ligne
      prévoir une gestion des lignes lemmes commentées
-   - une doc pour que ceux qui ont compilé aient accès aux data de collatinus
    - nom : ecce (ecce collatinistorum communitatis editor)
    - compression des données utilisateur
    - lecture et restitution des en-têtes des fichiers de données ;
@@ -54,8 +50,7 @@ MainWindow::MainWindow()
     actionQuant = new QAction(this);
     actionQuitter = new QAction(this);
     actionDiff = new QAction(this);
-    actionReserv = new QAction(this);
-    //actionCopier = new QAction(this);
+    actionOuvrir = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
     verticalLayout_9 = new QVBoxLayout(centralWidget);
@@ -92,6 +87,8 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
+    bEchecSuiv = new QPushButton(frame);
+    horizontalLayout->addWidget(bEchecSuiv);
 
     verticalLayout_3->addLayout(horizontalLayout);
 
@@ -393,7 +390,7 @@ MainWindow::MainWindow()
     menuFichier->addSeparator();
     //menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
-    menuFichier->addAction(actionReserv);
+    menuFichier->addAction(actionOuvrir);
     menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
 
@@ -460,11 +457,12 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
-    actionReserv->setText(QApplication::translate("MainWindow", "chercher sur le disque"));
+    actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
+    bEchecSuiv->setText(QApplication::translate("MainWindow", "échec >", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
@@ -594,7 +592,7 @@ void MainWindow::connecte()
     // fichier
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
-    connect(actionReserv, SIGNAL(triggered()), this, SLOT(reserve()));
+    connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
@@ -604,6 +602,7 @@ void MainWindow::connecte()
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditGrq, SIGNAL(textChanged(QString)), comboBoxModele, SLOT(show()));
@@ -694,6 +693,36 @@ void MainWindow::ajMorph()
         lm.append(QString::number(n));
         lineEditNumMorpho->setText(lm.join(','));
     }
+}
+
+void MainWindow::echec()
+{
+    qDebug()<<"echec, fluxC";
+    QTextStream flux(&fCorpus);
+    flux.seek(posFC);
+    bool fini = flux.atEnd();
+    QChar c;
+    QString forme;
+    while(!fini)
+    {
+        do flux >> c;
+        while (!flux.atEnd() && !c.isLetter());
+        do
+        {
+            forme.append(c);
+            flux >> c;
+        }
+        while (!flux.atEnd() && c.isLetter());
+        MapLem ml = lemcore->lemmatise(c);
+        qDebug()<<forme<<"ml.count"<<ml.count();
+        if (ml.isEmpty())
+        {
+            lineEditLemme->setText(forme);
+            fini = true;
+        }
+        forme.clear();
+    }
+    posFC = flux.pos();
 }
 
 void MainWindow::editIrr(const QModelIndex &m)
@@ -1012,6 +1041,15 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
     }
     f.close();
     return retour;
+}
+
+void MainWindow::ouvrir()
+{
+    QString nf = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
+    if (nf.isEmpty()) return;
+    fCorpus.setFileName(nf);
+    if (!fCorpus.open(QFile::ReadOnly)) return;
+    posFC = 0;
 }
 
 void MainWindow::majLinMorph()

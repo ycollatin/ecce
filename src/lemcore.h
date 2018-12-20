@@ -36,6 +36,7 @@
 #include "irregs.h"
 #include "lemme.h"
 #include "modele.h"
+#include "reglevg.h"
 
 class Irreg;
 class Lemme;
@@ -72,6 +73,7 @@ class LemCore : public QObject
     void lisModeles();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
+    void lisVarGraph();
     QStringList _listeLemmesLa;
     // variables et utils
     QMap<QString, QString> assims;
@@ -91,6 +93,9 @@ class LemCore : public QObject
     QMap<QString,QStringList> _modes;
     QMap<QString,QStringList> _voix;
     QMap<QString,QStringList> _motsClefs;
+    QList<RegleVG*>           _reglesVG;
+    QList<RegleVG*>           lTransfVG(QString s);
+    //QString                   transfVarGraph(QString s, bool rad);
     // Les morphos doivent pouvoir être données en anglais !
     QMultiMap<QString, Radical *> _radicaux;
     QMap<QString, QString> _variables;
