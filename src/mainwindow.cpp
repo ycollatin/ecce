@@ -69,6 +69,10 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
+
+    labelContexte = new QLabel(frame);
+    verticalLayout_3->addWidget(labelContexte);
+
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     labelLemme = new QLabel(frame);
@@ -605,7 +609,7 @@ void MainWindow::connecte()
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
-    connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
@@ -671,6 +675,7 @@ void MainWindow::ajMorph()
 
 void MainWindow::echec()
 {
+    QString hist;
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
@@ -678,18 +683,26 @@ void MainWindow::echec()
     QString forme;
     while(!fini)
     {
-        do flux >> c;
+        do 
+        {
+            flux >> c;
+            hist.append(c);
+            if (hist.size() > 100) hist.remove(0,1);
+        }
         while (!flux.atEnd() && !c.isLetter());
         do
         {
             forme.append(c);
             flux >> c;
+            hist.append(c);
+            if (hist.size() > 100) hist.remove(0,1);
         }
         while (!flux.atEnd() && c.isLetter());
         MapLem ml = lemcore->lemmatiseM(forme);
         if (ml.isEmpty())
         {
             lineEditLemme->setText(forme);
+            labelContexte->setText(hist);
             fini = true;
         }
         forme.clear();
@@ -866,8 +879,8 @@ int MainWindow::indexOfInsert(QString s, QStringList l)
 
 void MainWindow::insereLigne(QString l, QString f)
 {
-    qDebug()<<"insereLigne"<<l<<f;
     QStringList lignes = lisLignes(f);
+    bool aj = false;
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
@@ -875,15 +888,16 @@ void MainWindow::insereLigne(QString l, QString f)
         if (c == 0)
         {
             std::cerr << qPrintable(l+" est un doublon dans "+f);
-            return;
+            break;
         }
         else if (c > 0)
         {
             lignes.insert(i, l);
-            return;
+            aj = true;
+            break;
         }
     }
-    lignes.append(l);
+    if (!aj) lignes.append(l);
     QFile file(f);
     file.open(QFile::WriteOnly);
     QTextStream(&file) << lignes.join('\n');
