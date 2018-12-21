@@ -112,6 +112,7 @@ class Lemme : public QObject
         bool                renvoi();
         void                setCle(QString c);
         void                setHyphen (QString h);
+        //QString             toString();
         QString             traduction(QString l);
         inline bool operator<(const Lemme &l) const;
 };

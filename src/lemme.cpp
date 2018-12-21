@@ -557,6 +557,27 @@ void Lemme::setHyphen(QString h)
 }
 
 /**
+ * \fn QString Lemme::toString()
+ * \brief rétablit la ligne de lemmes.la à partir
+ *        de laquelle le lemme a été créé.
+QString Lemme::toString()
+{
+    //abdōmĕn=ābdōmĕn|corpus|ābdōmĭn||inis, n.|8
+    qЅtring ch0; = _champ0;
+    bool egal (grq != _champ0);
+    if (_nh > 1) ch0.append(QString::number(_nh));
+    if (egal) ch0.append('=' + grq;
+    return "%1|%2|%3|%4|%5|%6"
+        .arg(ch0)
+        .arg(_grModele)
+        .arg()
+        .arg()
+        .arg()
+        .arg();
+}
+*/
+
+/**
  * @brief Lemme::getHyphen
  * @return la césure étymologique du lemme
  */
