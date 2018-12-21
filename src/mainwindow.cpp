@@ -23,8 +23,7 @@
    FIXME
 
    TODO
-   - inclure vargraph
-   - lemmatiser, et traiter les échecs pour lemmatisation
+   - lors de la recherche des échecs : afficher le contexte du texte source
    - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
      ne les calculer qu'à la fin de l'initialisation.
    - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
@@ -446,7 +445,11 @@ MainWindow::MainWindow()
 void MainWindow::reserve()
 {
     lemme = lemcore->lemmeDisque(lineEditLemme->text());
-    if (lemme != 0) edLem("-reserve");
+    if (lemme != 0)
+    {
+        edLem("-reserve");
+        lineEditTr->setText(lemcore->trDisque(lemme->cle()));
+    }
 }
 
 void MainWindow::retranslateUi()
@@ -650,36 +653,6 @@ void MainWindow::ajIrr()
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
     insereLigne(lin, dirIrr);
-    /*
-    // chercher si le lemme et la forme sont définis dans la liste
-    bool vu = false;
-    for (int i=0;i<itemsIrr.count();++i)
-    {
-        QStringList ecl = itemsIrr.at(i).split(':');
-        if ((linIrreg->text() == ecl.at(0))
-            && linLemmeIrr->text() == ecl.at(1))
-        {
-            itemsIrr[i] = lin;
-            vu = true;
-            break;
-        }
-    }
-    if (!vu)
-    {
-        // si non, créer un nouvel irrégulier
-        itemsIrr.append(lin);
-    }
-    // enregistrer dans irregs.la
-    enrIrr();
-    */
-    /*
-    QFile firr("data/irregs.la");
-    firr.open(QFile::WriteOnly);
-    QTextStream fl(&firr);
-    for (int i=0;i<itemsIrr.count();++i)
-        fl << itemsIrr.at(i)+"\n";
-    firr.close();
-    */
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -714,7 +687,6 @@ void MainWindow::echec()
         }
         while (!flux.atEnd() && c.isLetter());
         MapLem ml = lemcore->lemmatiseM(forme);
-        qDebug()<<forme<<"ml.count"<<ml.count();
         if (ml.isEmpty())
         {
             lineEditLemme->setText(forme);
@@ -870,42 +842,11 @@ void MainWindow::enr()
 void MainWindow::enrFr(QString l)
 {
     insereLigne(l, lemcore->ajDir() + "/lemmes.fr");
-    /*
-    QFile f("data/lemmes.fr");
-    f.remove();
-    f.open(QFile::WriteOnly);
-    QTextStream flux(&f);
-    for (int j=0;j<listeLemmesFr.count();++j)
-        flux << listeLemmesFr.at(j)+'\n';
-    f.close();
-    */
 }
-
-/*
-void MainWindow::enrIrr(QString l)
-{
-    QFile firr("data/irregs.la");
-    firr.open(QFile::WriteOnly);
-    QTextStream fl(&firr);
-    for (int i=0;i<itemsIrr.count();++i)
-        fl << itemsIrr.at(i)+"\n";
-    firr.close();
-}
-*/
 
 void MainWindow::enrLa(QString l)
 {
-    // ajDir : /home/collatin/.local/share/collatinus/data
     insereLigne(l, lemcore->ajDir()+"/lemmes.la");
-    /*
-    QFile f("data/lemmes.la");
-    f.remove();
-    f.open(QFile::WriteOnly);
-    QTextStream flux(&f);
-    for (int j=0;j<listeLemmesLa.count();++j)
-        flux << listeLemmesLa.at(j)<<'\n';
-    f.close();
-    */
 }
 
 int MainWindow::indexOfInsert(QString s, QStringList l)
@@ -922,59 +863,30 @@ int MainWindow::indexOfInsert(QString s, QStringList l)
     return l.count();
 }
 
+
 void MainWindow::insereLigne(QString l, QString f)
 {
-    bool lemla = f.endsWith("lemmes.la");
-    QString cle;
-    if (lemla) cle = l.section('|',0,0);
+    qDebug()<<"insereLigne"<<l<<f;
     QStringList lignes = lisLignes(f);
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
-        if (lemla)
+        int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
+        if (c == 0)
         {
-            QString cleLin = lin.section('|',0,0);
-            // édition
-            if (cleLin == cle)
-            {
-                lignes[i] = l;
-                break;
-            }
-            if (cleLin > cle)
-            {
-                lignes.insert(i, l);
-                break;
-            }
+            std::cerr << qPrintable(l+" est un doublon dans "+f);
+            return;
         }
-        else
+        else if (c > 0)
         {
-            if (Ch::sort_i(lin, l))
-            {
-                lignes.insert(i, l);
-                break;
-            }
-            if (lin == l)
-            {
-                std::cerr << qPrintable(l+": ligne redondante");
-                break;
-            }
+            lignes.insert(i, l);
+            return;
         }
     }
-    if (lignes.count() == 0)
-    {
-        lignes.append(l);
-    }
-    // enregistrement
+    lignes.append(l);
     QFile file(f);
-    QString path = QFileInfo(f).path();
-    if (!QFile::exists(path))
-    {
-        QDir dir;
-        dir.mkpath(path);
-    }
     file.open(QFile::WriteOnly);
-    QTextStream fl(&file);
-    fl << lignes.join('\n');
+    QTextStream(&file) << lignes.join('\n');
     file.close();
 }
 
