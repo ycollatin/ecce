@@ -739,7 +739,6 @@ QString LemCore::desassimq(QString a)
  */
 MapLem LemCore::lemmatise(QString f)
 {
-    qDebug()<<"lemmatise"<<f;
     MapLem result;
     if (f.isEmpty()) return result;
     QString f_lower = f.toLower();
@@ -1061,7 +1060,7 @@ Lemme* LemCore::lemmeDisque(QString l)
         QString cle = lin.section(QRegExp("[|=]"),0,0);
         cle = Ch::atone(Ch::deramise(cle));
         cle.remove(QRegExp("[0-9]$"));
-        int c = QString::compare(cle, l);
+        int c = QString::compare(cle, l, Qt::CaseInsensitive);
         if (c == 0) return new Lemme(lin, 1, this);
         else if (c > 0) fin = milieu;
         else debut = milieu;
@@ -1576,6 +1575,32 @@ QString LemCore::tag(Lemme *l, int m)
 int LemCore::tagOcc(QString t)
 {
     return _tagOcc[t];
+}
+
+QString LemCore::trDisque(QString c)
+{
+    QFile f(_resDir+"lem_ext.fr");
+    f.open(QIODevice::ReadOnly | QIODevice::Text);
+    qint64 fin = f.size()-1;
+    qint64 debut = 0;
+    qint64 milieu;
+    QString lin;
+    bool fini = false;
+    while (!fini)
+    {
+        milieu = (debut + fin) / 2;
+        f.seek(milieu);
+        f.readLine();
+        lin = f.readLine();
+        while (lin.startsWith('!')) lin = f.readLine();
+        QString cle = lin.section(':',0,0);
+        int comp = QString::compare(cle, c, Qt::CaseInsensitive);
+        if (comp == 0) return lin.section(':',1);
+        else if (comp > 0) fin = milieu;
+        else debut = milieu;
+        fini = (fin - debut < 3);
+    }
+    return "";
 }
 
 

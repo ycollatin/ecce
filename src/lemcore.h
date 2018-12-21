@@ -158,6 +158,7 @@ class LemCore : public QObject
     void                   remplaceLemme(Lemme* l, Lemme* nl);
     QString                resDir();
     QMap<QString, QString> suffixes;
+    QString                trDisque(QString c);
     QString                variable(QString v);
 
     // Pour l'internationalisation
