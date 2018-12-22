@@ -13,7 +13,9 @@ cha;chb : les deux graphies sont utilisées
 ou
 cha>chb : la graphie classique cha disparaît au profit de chb.
 
+TODO
 Ajouter qu[aou] > c : antiquo > antico
+Ajouter y[:>]i
 
 */
 
@@ -24,17 +26,18 @@ Ajouter qu[aou] > c : antiquo > antico
 
 void MainWindow::preAn()
 {
-    QString nf = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
-    if (nf.isEmpty()) return;
-    QFile f(nf);
+    if (fichier.isEmpty()) ouvrir();
+    if (fichier.isEmpty()) return;
+    QFile f(fichier);
     if (!f.open(QFile::ReadOnly)) return;
 
     listeGr.clear();
-    // chargement des 100000 premiers caractères
     QString txt;
-    QTextStream flux(&f);
+    QTextStream flux(&f);  // ajouter une limite ?
     while (!flux.atEnd())
         txt.append(flux.readLine());
+    f.close();
+
     int len = txt.length();
 
     // U > V
@@ -244,14 +247,6 @@ void MainWindow::coche()
     }
     plainTextEditVariantes->setPlainText(tv);
     enrVar();
-    /*
-    QFile f("data/vargraph.la");
-    f.remove();
-    f.open(QFile::WriteOnly);
-    QTextStream flux(&f);
-    flux << tv;
-    f.close();
-    */
 }
 
 void MainWindow::enrVar()
@@ -262,6 +257,5 @@ void MainWindow::enrVar()
     QTextStream flux(&f);
     flux << docVarGraph;
     flux << plainTextEditVariantes->toPlainText();
-    flux << plainTextEdit_AutresVar->toPlainText();
     f.close();
 }
