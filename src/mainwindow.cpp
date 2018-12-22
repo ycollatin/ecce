@@ -23,12 +23,18 @@
    FIXME
 
    TODO
-   - lors de la recherche des échecs : afficher le contexte du texte source
+   - Vérifier la prise en compte des variantes graphique utilisateur
+   - Dans les variantes graphiques : y;i
+   - Reprendre le principe de la lemmatisation lemmes + lem_ext ?
+     (une lemmatisation par lem_ext provoquerait aussi une proposition).
+   - Ajouter des boutons d'action : ouvrir, suivant
+   - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
+     lexical.
    - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
      ne les calculer qu'à la fin de l'initialisation.
    - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
      boutonEnr.
-   - suppression d'un lemme : il suffit de commenter sa ligne
+   - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - nom : ecce (ecce collatinistorum communitatis editor)
    - compression des données utilisateur
@@ -49,6 +55,7 @@ MainWindow::MainWindow()
     actionQuant = new QAction(this);
     actionQuitter = new QAction(this);
     actionDiff = new QAction(this);
+    actionEchecSuiv = new QAction(this);
     actionOuvrir = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
@@ -263,7 +270,7 @@ MainWindow::MainWindow()
     splitter_2 = new QSplitter(splitterVarGraph);
     splitter_2->setOrientation(Qt::Vertical);
     plainTextEditVariantes = new QPlainTextEdit(splitter_2);
-    plainTextEditVariantes->setReadOnly(true);
+    //plainTextEditVariantes->setReadOnly(true);
     splitter_2->addWidget(plainTextEditVariantes);
     layoutWidget1 = new QWidget(splitter_2);
     verticalLayout_4 = new QVBoxLayout(layoutWidget1);
@@ -272,11 +279,6 @@ MainWindow::MainWindow()
     verticalLayout_4->setContentsMargins(0, 0, 0, 0);
     btnEnrVar = new QPushButton(layoutWidget1);
     verticalLayout_4->addWidget(btnEnrVar);
-    label_AutresVar = new QLabel(layoutWidget1);
-    verticalLayout_4->addWidget(label_AutresVar);
-
-    plainTextEdit_AutresVar = new QPlainTextEdit(layoutWidget1);
-    verticalLayout_4->addWidget(plainTextEdit_AutresVar);
 
     splitter_2->addWidget(layoutWidget1);
     splitterVarGraph->addWidget(splitter_2);
@@ -379,8 +381,10 @@ MainWindow::MainWindow()
     // Menus et barres
 
     mainToolBar = new QToolBar(this);
+    mainToolBar->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
-    mainToolBar = new QToolBar(this);
+    mainToolBar->addAction(actionEchecSuiv);
+    mainToolBar->addAction(actionQuitter);
     addToolBar(Qt::TopToolBarArea, mainToolBar);
 
     menuBar = new QMenuBar(this);
@@ -394,8 +398,8 @@ MainWindow::MainWindow()
     //menuFichier->addAction(actionCopier);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionOuvrir);
-    menuFichier->addAction(actionQuitter);
     mainToolBar->addAction(actionQuant);
+    menuFichier->addAction(actionQuitter);
 
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
@@ -419,7 +423,6 @@ MainWindow::MainWindow()
     "! Mais si \"ae\" devient toujours \"e\", on note :\n"
     "! ae>e\n"
     "!\n";
-
     retranslateUi();
 
     // liste des lignes demandant des quantités
@@ -444,6 +447,8 @@ MainWindow::MainWindow()
 
     peuple();
     connecte();
+    // initialiser le nom du fichier analysé
+    fichier.clear();
 }
 
 void MainWindow::reserve()
@@ -464,6 +469,8 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
+    actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
+    actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
@@ -504,7 +511,6 @@ void MainWindow::retranslateUi()
     checkBox_PH->setText(QApplication::translate("MainWindow", "ph > f", Q_NULLPTR));
     checkBox_ph->setText(QString());
     label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
-    label_AutresVar->setText(QApplication::translate("MainWindow", "Autres variantes", Q_NULLPTR));
     btnEnrVar->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
 
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph),
@@ -608,9 +614,10 @@ void MainWindow::connecte()
     connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
-    connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
+    connect(actionEchecSuiv, SIGNAL(triggered()), this, SLOT(echec()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditGrq, SIGNAL(textChanged(QString)), comboBoxModele, SLOT(show()));
@@ -971,9 +978,10 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
 
 void MainWindow::ouvrir()
 {
-    QString nf = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
-    if (nf.isEmpty()) return;
-    fCorpus.setFileName(nf);
+    fichier = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
+    if (fichier.isEmpty()) return;
+    fCorpus.close();
+    fCorpus.setFileName(fichier);
     if (!fCorpus.open(QFile::ReadOnly)) return;
     posFC = 0;
 }
@@ -1020,6 +1028,7 @@ void MainWindow::majLinMorph()
 void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
+    lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
     // chemins
     dirLa = lemcore->dirLa();
@@ -1062,7 +1071,7 @@ void MainWindow::peuple()
     }
     // variantes graphiques
     lvarGraph = lemcore->lignesFichier("data/vargraph.la");
-    plainTextEdit_AutresVar->setPlainText(lvarGraph.join('\n'));
+    plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
         <<"génitif"<<"datif"<<"ablatif"<<"locatif";

@@ -71,6 +71,7 @@ class MainWindow : public QMainWindow
         QAction *actionQuant;
         QAction *actionQuitter;
         QAction *actionDiff;
+        QAction *actionEchecSuiv;
         QAction *actionOuvrir;
         QAction *actionCopier;
 
@@ -145,9 +146,7 @@ class MainWindow : public QMainWindow
         QPlainTextEdit *plainTextEditVariantes;
         QWidget *layoutWidget1;
         QVBoxLayout *verticalLayout_4;
-        QLabel *label_AutresVar;
         QPushButton *btnEnrVar;
-        QPlainTextEdit *plainTextEdit_AutresVar;
 
         // onglet irréguliers
         QWidget *tabIrr;
@@ -195,6 +194,7 @@ class MainWindow : public QMainWindow
         QCompleter*       completeurM;
         void              connecte();
         QString           docVarGraph;
+        QString           fichier; 
         Flexion*          flexion;
         QString GabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
