@@ -79,9 +79,11 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
     rep = QDir(_resDir, "morphos.*");
     QStringList ltr = rep.entryList();
     ltr.removeOne("morphos.la");  // S'il traine encore...
-    //foreach (QString nfl, ltr)
-    for (QString nfl : ltr)
+    for (int i=0;i<ltr.count();++i)
+    {
+        QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
+    }
     lisModeles();
     lisLexique();
     lisTags(false);
