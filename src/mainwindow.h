@@ -253,7 +253,7 @@ class MainWindow : public QMainWindow
         void        coche();
         void        echec();
         void        editIrr(const QModelIndex &m);
-        void        edLem(QString l);
+        void        edLem(QString l="");
         void        enr();
         void        enrFr(QString l);
         //void        enrIrr(QString l);
@@ -266,7 +266,7 @@ class MainWindow : public QMainWindow
         QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        ouvrir();
         void        preAn();
-        void        reserve();
+        //void        reserve();
         void        rotQ();
         void        siCas();
         void        siGenre();

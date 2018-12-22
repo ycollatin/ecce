@@ -23,7 +23,10 @@
    FIXME
 
    TODO
-   - Vérifier la prise en compte des variantes graphique utilisateur
+   - appeler edLem si une lemmatisation vient de lem_ext
+   - Vérifier la prise en compte des variantes graphiques utilisateur
+     (les radicaux et désinences, code à copier depuis c11-med).
+   - ne charger que les irregs de .local
    - Dans les variantes graphiques : y;i
    - Reprendre le principe de la lemmatisation lemmes + lem_ext ?
      (une lemmatisation par lem_ext provoquerait aussi une proposition).
@@ -53,10 +56,10 @@
 MainWindow::MainWindow()
 {
     actionQuant = new QAction(this);
-    actionQuitter = new QAction(this);
     actionDiff = new QAction(this);
     actionEchecSuiv = new QAction(this);
     actionOuvrir = new QAction(this);
+    actionQuitter = new QAction(this);
     //  setupUi
     centralWidget = new QWidget(this);
     verticalLayout_9 = new QVBoxLayout(centralWidget);
@@ -451,6 +454,7 @@ MainWindow::MainWindow()
     fichier.clear();
 }
 
+/*
 void MainWindow::reserve()
 {
     lemme = lemcore->lemmeDisque(lineEditLemme->text());
@@ -460,6 +464,7 @@ void MainWindow::reserve()
         lineEditTr->setText(lemcore->trDisque(lemme->cle()));
     }
 }
+*/
 
 void MainWindow::retranslateUi()
 {
@@ -604,14 +609,14 @@ void MainWindow::copier()
 void MainWindow::connecte()
 {
     // fichier
-    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
+    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // édition
     connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
-    connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
+    //connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
@@ -712,6 +717,13 @@ void MainWindow::echec()
             labelContexte->setText(hist);
             fini = true;
         }
+        else if (ml.keys().at(0)->origin() > 0)
+        {
+            lemme = ml.keys().at(0);
+            lineEditLemme->setText(lemme->cle());
+            labelContexte->setText(hist);
+            fini = true;
+        }
         forme.clear();
     }
     posFC = flux.pos();
@@ -728,8 +740,9 @@ void MainWindow::editIrr(const QModelIndex &m)
 
 void MainWindow::edLem(QString l)
 {
-    bool contient = litems.contains(l) || l == "-reserve";
-    if (!contient)
+    //bool contient = litems.contains(l) || l == "-reserve";
+    //if (!contient)
+    if (!litems.contains(l))
     {
         lemme = 0;
         // effacer les lignes
@@ -746,10 +759,10 @@ void MainWindow::edLem(QString l)
     else
     {
         if (lemme == 0) lemme = lemcore->lemme(l);
-        // si lem est issu de lem_ext, modifier l'intitulé du bouton
-        if (lemme->origin() > 0)
+        if (lemme != 0 && lemme->origin() > 0)
             boutonEnr->setText("enregistrer (de lem_ext)");
         else boutonEnr->setText("enregistrer");
+        // si lem est issu de lem_ext, modifier l'intitulé du bouton
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
         comboBoxModele->show();
