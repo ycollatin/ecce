@@ -902,6 +902,8 @@ bool LemCore::inv(Lemme *l, const MapLem ml)
 MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
     MapLem mm;
+    //QString fVar = transfVG(f);
+    //bool var = f != fVar;
     if (f.isEmpty()) return mm;
     if ((etape > 3) || (etape <0)) // Condition terminale
     {
@@ -1297,6 +1299,17 @@ QList<RegleVG*> LemCore::lTransfVG(QString s)
     return ret;
 }
 
+QString LemCore::transfVG(QString s)
+{
+    QList<RegleVG*> rr = lTransfVG(s);
+    for (int i=0;i<rr.count();++i)
+    {
+        RegleVG* r = rr.at(i);
+        s = r->transf(s);
+    }
+    return s;
+}
+
 /**
  * \fn Modele * LemCore::modele (QString m)
  * \brief Renvoie l'objet de la classe Modele dont le nom est m.
@@ -1579,6 +1592,7 @@ int LemCore::tagOcc(QString t)
     return _tagOcc[t];
 }
 
+/*
 QString LemCore::trDisque(QString c)
 {
     QFile f(_resDir+"lem_ext.fr");
@@ -1604,5 +1618,6 @@ QString LemCore::trDisque(QString c)
     }
     return "";
 }
+*/
 
 
