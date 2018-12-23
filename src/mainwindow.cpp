@@ -21,32 +21,17 @@
 
 /*
    FIXME
+   - les irréguliers ne sont pas pris en compte pour la
+     lemmatisation.
 
    TODO
-   - appeler edLem si une lemmatisation vient de lem_ext
-   - Vérifier la prise en compte des variantes graphiques utilisateur
-     (les radicaux et désinences, code à copier depuis c11-med).
-   - ne charger que les irregs de .local
-   - Dans les variantes graphiques : y;i
-   - Reprendre le principe de la lemmatisation lemmes + lem_ext ?
-     (une lemmatisation par lem_ext provoquerait aussi une proposition).
-   - Ajouter des boutons d'action : ouvrir, suivant
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
      lexical.
-   - Vérifier que les radicaux des lemmes perso sont bien mis à jour, ou
-     ne les calculer qu'à la fin de l'initialisation.
-   - tant que le lemme n'est pas changé, tant qu'il est incomplet, désactiver
-     boutonEnr.
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
-   - nom : ecce (ecce collatinistorum communitatis editor)
+   - nom : ECCE (ecce collatinistorum communitatis editor)
    - compression des données utilisateur
-   - lecture et restitution des en-têtes des fichiers de données ;
-   - peupler les éditeurs de variantes graphiques 
-   - mettre au point une taxonomie des pos ?
    - rendre l'homonymie plus ergonomique
-   - Chemin absolu des données A et B
-   - initialisation d'un module
  */
 
 #include <QFileDialog>
