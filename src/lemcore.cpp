@@ -54,7 +54,7 @@ LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
         _ajDir = Ch::chemin("collatinus/data", 'p');
         _dirLa = _ajDir+"/lemmes.la";
         _dirFr = _ajDir+"/lemmes.fr";
-        _dirIrr = _ajDir+"irregs.la";
+        _dirIrr = _ajDir+"/irregs.la";
         _dirVg = _ajDir+"/vargraph.la";
     }
     // options
@@ -1038,8 +1038,10 @@ void LemCore::lisIrreguliers()
 {
     QStringList lignes = lignesFichier("irregs.la");
     lignes.append(lignesFichier(_dirIrr));
-    foreach (QString lin, lignes)
+    for (int i=0;i<lignes.count();++i)
+    //foreach (QString lin, lignes)
     {
+        QString lin = lignes.at(i);
         Irreg *irr = new Irreg(lin, this);
         if (irr != 0 && irr->lemme() != 0)
         {

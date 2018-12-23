@@ -21,8 +21,6 @@
 
 /*
    FIXME
-   - les irréguliers ne sont pas pris en compte pour la
-     lemmatisation.
 
    TODO
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
