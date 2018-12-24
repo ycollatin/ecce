@@ -501,7 +501,6 @@ void LemCore::ajRadicaux(Lemme *l)
         foreach (Radical *r, lr)
         {
             QString gr = r->gr();
-            //QList<RegleVG*> lr = lTransfVG(gr);
             bool excl = false;
             for (int i=0;i<_reglesVG.count();++i)
             {
@@ -559,11 +558,16 @@ void LemCore::rmRadicaux(Lemme* l)
     for (int i=0;i<lr.count();++i)
     {
         QString g = lr.at(i)->gr();
-        QList<Radical*> lr = _radicaux.values(g);
-        QMutableListIterator<Radical*> ir(lr);
-        while (ir.hasNext())
+        QList<Radical*> lrTmp;
+        for (int j=0;j<_radicaux.values(g).count();++j) 
         {
-            if (ir.next()->lemme() == l) ir.remove();
+            Radical* r = _radicaux.values(g).at(j);
+            if (r->lemme() != l) lrTmp.append(r);
+        }
+        _radicaux.remove(g);
+        for (int i=0;i<lrTmp.count();++i)
+        {
+            _radicaux.insert(g,lrTmp.at(i));
         }
     }
 }
@@ -776,11 +780,12 @@ MapLem LemCore::lemmatise(QString f)
     }
     if (_extLoaded && !_extension && !result.isEmpty())
     {
-        // L'extension est chargée mais je ne veux voir les solutions qui en viennent que si toutes en viennent.
+        // L'extension est chargée mais je ne veux voir les solutions qui
+        // en viennent que si toutes en viennent.
         MapLem res;
         foreach (Lemme *l, result.keys())
         {
-            if (l->origin() == 0)
+            if (l->origin() != 1)
                 res[l] = result[l];
         }
 
@@ -1106,15 +1111,16 @@ void LemCore::lisFichierLexique(QString filepath)
     for (int i=0;i<_listeLemmesLa.count();++i)
     {
         QString lin = _listeLemmesLa.at(i);
-        Lemme* l = new Lemme(lin, orig, this);
+        QString k = lin.section(QRegExp("[|=]"),0,0);
         // détruire le lemme homonyme des listes précédentes
-        Lemme* dl = lemme(l->cle());
-        if (dl != 0)
+        Lemme* dl = lemme(k);
+        if (dl != 0 && dl->origin() != orig)
         {
-            _lemmes[l->cle()] = l;
             delete dl;
         }
-        else _lemmes.insert(l->cle(), l);
+        else if (dl != 0) return;
+        Lemme* l = new Lemme(lin, orig, this);
+        _lemmes.insert(l->cle(), l);
     }
 }
 

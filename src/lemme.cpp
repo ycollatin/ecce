@@ -165,9 +165,9 @@ Lemme::~Lemme()
     for (int i=0;i<_radicaux.count();++i)
     {
         QList<Radical*> lr = _radicaux.value(i);
-        qDeleteAll(lr.begin(), lr.end());
+        qDeleteAll(lr);
     }
-    _radicaux.clear();
+    //_radicaux.clear();
 }
 
 /**
@@ -506,8 +506,8 @@ QList<Radical*> Lemme::radicaux()
     QList<Radical*> ret;
     for (int i=0;i<_radicaux.count();++i)
     {
-        QList<Radical*> lr = _radicaux.values().at(i);
-        ret.append(lr);
+        //QList<Radical*> lr = _radicaux.values().at(i);
+        ret.append(_radicaux.values().at(i));
     }
     return ret;
 }

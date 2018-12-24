@@ -473,7 +473,7 @@ void MainWindow::retranslateUi()
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
-    bEchecSuiv->setText(QApplication::translate("MainWindow", "échec >", Q_NULLPTR));
+    //bEchecSuiv->setText(QApplication::translate("MainWindow", "échec >", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
@@ -1256,7 +1256,7 @@ void MainWindow::siVx()
 
 void MainWindow::suppr(QString l, QString f)
 {
-    qDebug()<<"suppr"<<l<<f;
+    std::cout<< "suppr "<<qPrintable(l + " " + f);
 }
 
 void MainWindow::supprLa()
