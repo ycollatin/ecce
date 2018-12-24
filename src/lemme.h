@@ -83,6 +83,7 @@ class Lemme : public QObject
 
     public:
         Lemme(const QString linea, const int origin, QObject* parent);
+        ~Lemme();
         void                ajIrreg(Irreg* irr);
         void                ajNombre(int n);
         void                ajRadical(int i, Radical* r);
@@ -109,10 +110,10 @@ class Lemme : public QObject
         QString static      oteNh(QString g, int& nh);
         QString             pos();
         QList<Radical*>     radical(int r);
+        QList<Radical*>     radicaux();
         bool                renvoi();
         void                setCle(QString c);
         void                setHyphen (QString h);
-        //QString             toString();
         QString             traduction(QString l);
         inline bool operator<(const Lemme &l) const;
 };

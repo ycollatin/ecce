@@ -23,8 +23,16 @@
    FIXME
 
    TODO
+   - Prendre en compte, pour ajout, tous les lemmes d'une lemmatisation. Les afficher dans 
+     le label hist, avec leur origine.
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
      lexical.
+     . ajouter un combo pour les modules lexicaux, avec possibilité de création 
+       et checkbox de confirmation.
+     . remplacer la constante "data" par le nom du module courant.
+     . en l'absence de définition du module courant, "data" est utilisé.
+   - Enregistrer dans QSettings le module lexical en cours,
+     et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - nom : ECCE (ecce collatinistorum communitatis editor)
@@ -555,7 +563,7 @@ void MainWindow::copier()
                     continue;
             }
         }
-	// copie 
+	// copie
     QString nfc = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
     if (nfc.isEmpty()) return;
     QFile::copy(nfc+"/lemmes.la", "data/lemmes.la");
@@ -567,7 +575,7 @@ void MainWindow::copier()
     QFile::copy(nfc+"/morphos.fr", "data/morphos.fr");
     if (QFile::exists(nfc+"/vargraph.la"))
         QFile::copy(nfc+"/vargraph.la", "data/vargraph.la");
-    else 
+    else
     {
         QFile fv("data/vargraph.la");
         fv.open(QFile::WriteOnly);
@@ -576,7 +584,7 @@ void MainWindow::copier()
         fv.close();
     }
 
-    // 
+    //
     // réinitialiser
     listeLemmesLa.clear();
     listeLemmesFr.clear();
@@ -678,7 +686,7 @@ void MainWindow::echec()
     QString forme;
     while(!fini)
     {
-        do 
+        do
         {
             flux >> c;
             hist.append(c);
@@ -700,8 +708,9 @@ void MainWindow::echec()
             labelContexte->setText(hist);
             fini = true;
         }
-        else if (ml.keys().at(0)->origin() > 0)
+        else if (ml.keys().at(0)->origin() == 1)
         {
+            // la lemmatisation vient de lem_ext
             lemme = ml.keys().at(0);
             lineEditLemme->setText(lemme->cle());
             labelContexte->setText(hist);
@@ -1025,16 +1034,17 @@ void MainWindow::peuple()
 {
     lemcore = new LemCore(this);
     lemcore->setExtension(true);
+    lemcore->setModuleLex(lemcore->dirLa());
     flexion = new Flexion(lemcore);
-    // chemins
+    // chemins pour enregistrement sur fichier
     dirLa = lemcore->dirLa();
     dirFr = lemcore->dirFr();
     dirIrr = lemcore->dirIrr();
     dirVg = lemcore->dirVg();
-    peupleAjLemmes();
-    peupleAjTr();
-    peupleAjIrr();
-    peupleAjVg();
+    //peupleAjLemmes();
+    //peupleAjTr();
+    //peupleAjIrr();
+    //peupleAjVg();
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
@@ -1050,7 +1060,7 @@ void MainWindow::peuple()
     // modèles
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
-    // irréguliers 
+    // irréguliers
     itemsIrr = lisLignes("data/irregs.la", true);
     for (int i=0;i<itemsIrr.count();++i)
     {
@@ -1088,6 +1098,7 @@ void MainWindow::peuple()
     iVx = 0;
 }
 
+/*
 void MainWindow::peupleAjLemmes()
 {
     QStringList ll = lisLignes(dirLa, true);
@@ -1120,6 +1131,7 @@ void MainWindow::peupleAjIrr()
 void MainWindow::peupleAjVg()
 {
 }
+*/
 
 void MainWindow::rotQ()
 {
@@ -1225,7 +1237,7 @@ void MainWindow::siTps()
     {
         iTps = 0;
         btnTps->setText("tps");
-    } 
+    }
     btnTps->setText(lTps.at(iTps));
     majLinMorph();
 }

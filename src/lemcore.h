@@ -73,6 +73,7 @@ class LemCore : public QObject
     void lisModeles();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
+    void lisTraductions(QString chemin);
     void lisVarGraph();
     QStringList _listeLemmesLa;
     // variables et utils
@@ -94,7 +95,6 @@ class LemCore : public QObject
     QMap<QString,QStringList> _voix;
     QMap<QString,QStringList> _motsClefs;
     QList<RegleVG*>           _reglesVG;
-    //QList<RegleVG*>           lTransfVG(QString s);
     QString                   transfVG(QString s);
     // Les morphos doivent pouvoir être données en anglais !
     QMultiMap<QString, Radical *> _radicaux;
@@ -168,6 +168,7 @@ class LemCore : public QObject
     QString                modes(int i);
     QString                nombre(int i);
     void                   remplaceLemme(Lemme* l);
+    void                   rmRadicaux(Lemme* l);
     QString                temps(int i);
     QString                voix(int i);
 
@@ -182,6 +183,7 @@ class LemCore : public QObject
 
    public slots:
     void                   setExtension(bool e);
+    void                   setModuleLex(QString m);
 };
 
 #endif // LEMCORE_H

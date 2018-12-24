@@ -19,6 +19,15 @@
  * © Yves Ouvrard, 2009 - 2016
  */
 
+/*
+// Remove all odd numbers from a QList<int> 
+QMutableListIterator<int> i(list);
+while (i.hasNext()) {
+    if (i.next() % 2 != 0)
+        i.remove();
+}
+*/
+
 /**
  * \file lemmatiseur.cpp
  * \brief module de lemmatisation des formes latines
@@ -458,7 +467,7 @@ void LemCore::ajDesinence(Desinence *d)
     {
         //RegleVG *r = lr.at(i);
         RegleVG *r = _reglesVG.at(i);
-        gr = r->transf(gr); 
+        gr = r->transf(gr);
         excl = excl || r->excl();
     }
     if (!excl) _desinences.insert(Ch::deramise(d->gr()), d);
@@ -497,7 +506,7 @@ void LemCore::ajRadicaux(Lemme *l)
             for (int i=0;i<_reglesVG.count();++i)
             {
                 RegleVG *regle = _reglesVG.at(i);
-                gr = regle->transf(gr); 
+                gr = regle->transf(gr);
                 excl = excl || regle->excl();
             }
             if (!excl) _radicaux.insert(Ch::deramise(r->gr()), r);
@@ -535,11 +544,26 @@ void LemCore::ajRadicaux(Lemme *l)
             for (int i=0;i<_reglesVG.count();++i)
             {
                 RegleVG *regle = _reglesVG.at(i);
-                gr = regle->transf(gr); 
+                gr = regle->transf(gr);
                 excl = excl || regle->excl();
             }
             if (!excl)         _radicaux.insert(Ch::deramise(r->gr()), r);
             if (gr != r->gr()) _radicaux.insert(Ch::deramise(gr), r);
+        }
+    }
+}
+
+void LemCore::rmRadicaux(Lemme* l)
+{
+    QList<Radical*> lr = l->radicaux();
+    for (int i=0;i<lr.count();++i)
+    {
+        QString g = lr.at(i)->gr();
+        QList<Radical*> lr = _radicaux.values(g);
+        QMutableListIterator<Radical*> ir(lr);
+        while (ir.hasNext())
+        {
+            if (ir.next()->lemme() == l) ir.remove();
         }
     }
 }
@@ -698,7 +722,6 @@ MapLem LemCore::lemmatise(QString f)
         foreach (int m, irr->morphos())
         {
             SLem sl = {irr->grq(), m, ""};
-            // result[irr->lemme()].prepend (morpho (m));
             result[irr->lemme()].prepend(sl);
         }
     }
@@ -720,8 +743,9 @@ MapLem LemCore::lemmatise(QString f)
             lrad << _radicaux.values(r + "i");
         if (lrad.empty()) continue;
         // Il n'y a rien à faire si le radical n'existe pas.
-        foreach (Radical *rad, lrad)
+        for (int ir=0;ir<lrad.count();++ir)
         {
+            Radical* rad = lrad.at(ir);
             Lemme *l = rad->lemme();
             foreach (Desinence *des, ldes)
             {
@@ -854,7 +878,9 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
             QString nf = f.toLower();
             MapLem nmm = lemmatiseM(nf);
             foreach (Lemme *nl, nmm.keys())
+            {
                 mm.insert(nl, nmm.value(nl));
+            }
         }
         return mm;
     }
@@ -1050,7 +1076,7 @@ void LemCore::lisIrreguliers()
             for (int i=0;i<_reglesVG.count();++i)
             {
                 RegleVG *r = _reglesVG.at(i);
-                gr = r->transf(gr); 
+                gr = r->transf(gr);
                 excl = excl || r->excl();
             }
             if (!excl) _irregs.insert(Ch::deramise(irr->gr()), irr);
@@ -1075,12 +1101,20 @@ void LemCore::lisFichierLexique(QString filepath)
 {
     int orig = 0;
     if (filepath.endsWith("ext.la")) orig = 1;
+    else if (filepath.contains(".local/share")) orig = 2;
     _listeLemmesLa = lignesFichier(filepath);
     for (int i=0;i<_listeLemmesLa.count();++i)
     {
         QString lin = _listeLemmesLa.at(i);
-        Lemme *l = new Lemme(lin, orig, this);
-        _lemmes.insert(l->cle(), l);
+        Lemme* l = new Lemme(lin, orig, this);
+        // détruire le lemme homonyme des listes précédentes
+        Lemme* dl = lemme(l->cle());
+        if (dl != 0)
+        {
+            _lemmes[l->cle()] = l;
+            delete dl;
+        }
+        else _lemmes.insert(l->cle(), l);
     }
 }
 
@@ -1091,7 +1125,6 @@ void LemCore::lisFichierLexique(QString filepath)
 void LemCore::lisLexique()
 {
     lisFichierLexique(_resDir + "lemmes.la");
-    lisFichierLexique(_dirLa);
 }
 
 /**
@@ -1168,8 +1201,6 @@ void LemCore::lisTraductions(bool base, bool extension)
         // suffixe
         QString suff = QFileInfo(nfl).suffix();
         QStringList lignes = lignesFichier(_resDir + nfl);
-        // lexique utilisateur
-        lignes.append(lignesFichier(_ajDir + nfl));
         if (base)
         {
             // lire le nom de la langue
@@ -1183,6 +1214,18 @@ void LemCore::lisTraductions(bool base, bool extension)
             Lemme *l = lemme(Ch::deramise(lin.section(':', 0, 0)));
             if (l != 0) l->ajTrad(lin.section(':', 1), suff);
         }
+    }
+}
+
+void LemCore::lisTraductions(QString chemin)
+{
+    QStringList lignes = lignesFichier(chemin);
+    QString suff = QFileInfo(chemin).suffix();
+    for (int i=0;i<lignes.count();++i)
+    {
+        QString lin = lignes.at(i);
+        Lemme* l = lemme(Ch::deramise(lin.section(':',0,0)));
+        if (l != 0) l->ajTrad(lin.section(':',1), suff);
     }
 }
 
@@ -1378,7 +1421,13 @@ void LemCore::setExtension(bool e)
         lisTraductions(false,true);
         _extLoaded = true;
     }
-//    else if (!_nbrLoaded) lisNombres();
+}
+
+void LemCore::setModuleLex(QString s)
+{
+    lisFichierLexique(s);
+    s.replace(".la", ".fr");
+    lisTraductions(s);
 }
 
 /**

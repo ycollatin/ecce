@@ -158,6 +158,18 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     _nbOcc = eclats.at(5).toInt();
 }
 
+Lemme::~Lemme()
+{
+    QString k = _cle;
+    _lemmatiseur->rmRadicaux(this);
+    for (int i=0;i<_radicaux.count();++i)
+    {
+        QList<Radical*> lr = _radicaux.value(i);
+        qDeleteAll(lr.begin(), lr.end());
+    }
+    _radicaux.clear();
+}
+
 /**
  * \fn void Lemme::ajIrreg (Irreg *irr)
  * \brief Ajoute au lemme l'obet irr, qui représente
@@ -487,6 +499,17 @@ QString Lemme::pos()
 QList<Radical *> Lemme::radical(int r)
 {
     return _radicaux.value(r);
+}
+
+QList<Radical*> Lemme::radicaux()
+{
+    QList<Radical*> ret;
+    for (int i=0;i<_radicaux.count();++i)
+    {
+        QList<Radical*> lr = _radicaux.values().at(i);
+        ret.append(lr);
+    }
+    return ret;
 }
 
 /**
