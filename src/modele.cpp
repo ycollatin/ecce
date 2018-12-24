@@ -235,7 +235,7 @@ Modele::Modele(QStringList ll, LemCore *parent)
                 break;
             }
             default:
-                qDebug() << "Modèle, erreur" << l;
+                std::cerr << qPrintable("Modèle, erreur:"+l);
         }
 
     }  // fin de l'interprétation des lignes
