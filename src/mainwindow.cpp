@@ -33,7 +33,9 @@
        et checkbox de confirmation.
      . remplacer la constante "data" par le nom du module courant.
      . en l'absence de définition du module courant, "data" est utilisé.
-   - apt install libquazip5-1 : ziper et déziper
+
+   - Création des paquets de distribution du module lexical. Utiliser zip:
+     apt install libquazip5-1 : ziper et déziper
    - Enregistrer dans QSettings le module lexical en cours,
      et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
@@ -790,28 +792,49 @@ void MainWindow::edLem(QString l)
                         //lineEditInfectum->show();
                         break;
                     }
-                case 1:
+                case 1: // génitif et perfectum
                     {
                         if (QString("vw").contains(lemme->pos()))
                             labelPerfectum->setText("rad. perfectum");
-
                         else
                         {
                             // adverbes ?
                             labelPerfectum->setText("rad. génitif");
                         }
                         labelPerfectum->show();
-                        lineEditPerfectum->setText(grq);
                         lineEditPerfectum->show();
+                        // TODO comparer la génération automatique de radical
+                        // le radical
+                        QString g = lemme->grq();
+                        QString gen = lemme->modele()->genRadical(1);
+                        int oter = gen.section(',', 0, 0).toInt();
+                        QString ajouter = gen.section(',', 1, 1);
+                        if (g.endsWith(0x0306)) g.chop(1);
+                        g.chop(oter);
+                        if (ajouter != "0") g.append(ajouter);
+                        if (g != grq)
+                        {
+                            qDebug()<<g<<grq;
+                            lineEditPerfectum->setText(grq);
+                        }
                         break;
                     }
-                case 2:
+                case 2: // supin
                     {
                         if (QString("vw").contains(lemme->pos()))
                         {
                             labelSupin->show();
                             lineSupin->show();
-                            lineSupin->setText(grq);
+                            // même comparaison
+                            QString g = lemme->grq();
+                            QString gen = lemme->modele()->genRadical(2);
+                            int oter = gen.section(',', 0, 0).toInt();
+                            QString ajouter = gen.section(',', 1, 1);
+                            if (g.endsWith(0x0306)) g.chop(1);
+                            g.chop(oter);
+                            if (ajouter != "0") g.append(ajouter);
+                            if (g != grq)
+                                lineSupin->setText(grq);
                         }
                         break;
                     }
@@ -927,7 +950,6 @@ QString MainWindow::ligneLa(QString modl)
     if (d.isDigit()) grq.append(d);
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
-    //QString GabaritLa = "%1|%2|%3|%4|%5|%6";
     QString ret = GabaritLa
         .arg(grq)
         .arg(modl)
