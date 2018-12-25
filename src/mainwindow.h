@@ -89,7 +89,8 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditLemme;
         QPushButton *bHomon;
         QPushButton *bSuppr;
-        QPushButton *bEchecSuiv;
+        //QPushButton *bEchecSuiv;
+        QToolButton *bEchecSuiv;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_2;

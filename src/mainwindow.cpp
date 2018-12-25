@@ -96,7 +96,9 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
-    bEchecSuiv = new QPushButton(frame);
+    //bEchecSuiv = new QPushButton(frame);
+    bEchecSuiv = new QToolButton();
+    bEchecSuiv->setDefaultAction(actionEchecSuiv);
     horizontalLayout->addWidget(bEchecSuiv);
 
     verticalLayout_3->addLayout(horizontalLayout);
@@ -399,6 +401,9 @@ MainWindow::MainWindow()
     // bare d'état
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
+    // textes
+    retranslateUi();
+
 
     // doc de l'onglet variantes graphiques
     docVarGraph =
@@ -419,7 +424,6 @@ MainWindow::MainWindow()
     "! Mais si \"ae\" devient toujours \"e\", on note :\n"
     "! ae>e\n"
     "!\n";
-    retranslateUi();
 
     // liste des lignes demandant des quantités
     lignes
@@ -710,13 +714,25 @@ void MainWindow::echec()
             labelContexte->setText(hist);
             fini = true;
         }
-        else if (ml.keys().at(0)->origin() == 1)
+        //else if (ml.keys().at(0)->origin() == 1)
+        else
         {
-            // la lemmatisation vient de lem_ext
-            lemme = ml.keys().at(0);
-            lineEditLemme->setText(lemme->cle());
-            labelContexte->setText(hist);
-            fini = true;
+            // voir si une lemmatisation vient du lexique
+            // classique ou du module lexical
+            for (int i=0;i<ml.keys().count();++i)
+            {
+                Lemme* l = ml.keys().at(i);
+                fini = fini && l->origin() == 1;
+                if (!fini) break;
+            }
+            if (fini)
+            {
+                // la lemmatisation vient de lem_ext
+                lemme = ml.keys().at(0);
+                lineEditLemme->setText(lemme->cle());
+                labelContexte->setText(hist);
+                fini = true;
+            } 
         }
         forme.clear();
     }
