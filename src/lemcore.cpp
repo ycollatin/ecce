@@ -1055,6 +1055,8 @@ void LemCore::lisIrreguliers()
 void LemCore::lisFichierLexique(QString filepath)
 {
     int orig = 0;
+    // trouver un moyen d'indentifier les données perso
+    // sous tous les OS.
     if (filepath.endsWith("ext.la")) orig = 1;
     else if (filepath.contains(".local/share")) orig = 2;
     _listeLemmesLa = lignesFichier(filepath);
