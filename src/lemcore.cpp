@@ -19,22 +19,12 @@
  * © Yves Ouvrard, 2009 - 2016
  */
 
-/*
-// Remove all odd numbers from a QList<int> 
-QMutableListIterator<int> i(list);
-while (i.hasNext()) {
-    if (i.next() % 2 != 0)
-        i.remove();
-}
-*/
-
 /**
  * \file lemmatiseur.cpp
  * \brief module de lemmatisation des formes latines
  */
 
 // TODO
-// Factoriser la lecture des listes morpho dans lisMorphos()
 // apt install libquazip5-1 : ziper et déziper
 
 #include "lemcore.h"
@@ -295,7 +285,7 @@ void LemCore::lisMorphos(QString lang)
     QStringList lignes = lignesFichier(_resDir + "morphos." + lang);
     int max = lignes.count() - 1;
     int i = 0;
-    QString l; // = "";
+    QString l;
     QStringList morphos;
     while (i <= max) // && !l.startsWith("! --- "))
     {
@@ -305,70 +295,30 @@ void LemCore::lisMorphos(QString lang)
         ++i;
     }
     _morphos.insert(lang,morphos);
-    QStringList cas;
-    l.clear();
     ++i;
-    while (i <= max && !l.startsWith("! --- "))
+
+    for(int j=0;j<7;++j)
     {
-        l = lignes.at(i);
-        cas << l;
-        ++i;
+        QStringList liste;
+        l.clear();
+        while (i <= max && !l.startsWith("! --- "))
+        {
+            if (!l.isEmpty()) liste.append(l);
+            l = lignes.at(i);
+            ++i;
+        }
+        switch (j)
+        {
+            case 0: _cas.insert(lang, liste); break;
+            case 1: _genres.insert(lang, liste); break;
+            case 2: _nombres.insert(lang, liste); break;
+            case 3: _temps.insert(lang, liste); break;
+            case 4: _modes.insert(lang, liste); break;
+            case 5: _voix.insert(lang, liste); break;
+            case 6: _motsClefs.insert(lang, liste); break;
+            default: break;
+        }
     }
-    _cas.insert(lang,cas);
-    QStringList genres;
-    l.clear();
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        genres << l;
-        ++i;
-    }
-    _genres.insert(lang,genres);
-    QStringList nombres;
-    l = "";
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        nombres << l;
-        ++i;
-    }
-    _nombres.insert(lang,nombres);
-    QStringList temps;
-    l.clear();
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        temps << l;
-        ++i;
-    }
-    _temps.insert(lang,temps);
-    QStringList modes;
-    l.clear();
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        modes << l;
-        ++i;
-    }
-    _modes.insert(lang,modes);
-    QStringList voix;
-    l.clear();
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        voix << l;
-        ++i;
-    }
-    _voix.insert(lang,voix);
-    QStringList mc;
-    l.clear();
-    while (i <= max && !l.startsWith("! --- "))
-    {
-        l = lignes.at(i);
-        mc << l;
-        ++i;
-    }
-    _motsClefs.insert(lang,mc);
 }
 
 /**
