@@ -256,7 +256,6 @@ class MainWindow : public QMainWindow
         void        edLem(QString l="");
         void        enr();
         void        enrFr(QString l);
-        //void        enrIrr(QString l);
         void        enrLa(QString l);
         void        enrVar();
         int         indexOfInsert(QString s, QStringList l);

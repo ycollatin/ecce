@@ -21,6 +21,8 @@
 
 /*
    FIXME
+   - enregistrement du génitif inutile dans lemmes.la.
+   - lem_ext paraît supplanter .local/
 
    TODO
    - Prendre en compte, pour ajout, tous les lemmes d'une lemmatisation. Les afficher dans 
@@ -31,6 +33,7 @@
        et checkbox de confirmation.
      . remplacer la constante "data" par le nom du module courant.
      . en l'absence de définition du module courant, "data" est utilisé.
+   - apt install libquazip5-1 : ziper et déziper
    - Enregistrer dans QSettings le module lexical en cours,
      et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
@@ -170,10 +173,10 @@ MainWindow::MainWindow()
     verticalLayout_2->addWidget(textEditFlexion);
 
     splitter->addWidget(frame1);
-
     verticalLayout_Lex->addWidget(splitter);
-
     tabWidget->addTab(tabLexique, QString());
+
+    // variantes graphiques
     tabVarGraph = new QWidget();
     verticalLayout_5 = new QVBoxLayout(tabVarGraph);
     verticalLayout_5->setSpacing(6);
@@ -197,7 +200,6 @@ MainWindow::MainWindow()
 
     horizontalLayoutBtnPre->addItem(horizontalSpacerPre);
 
-
     verticalLayoutConf->addLayout(horizontalLayoutBtnPre);
 
     formLayoutCochesVar = new QFormLayout();
@@ -212,7 +214,6 @@ MainWindow::MainWindow()
     checkBox_ae = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(1, QFormLayout::FieldRole, checkBox_ae);
     checkBox_H = new QCheckBox(layoutWidget);
-
 
     formLayoutCochesVar->setWidget(2, QFormLayout::LabelRole, checkBox_H);
 
@@ -283,7 +284,7 @@ MainWindow::MainWindow()
 
     verticalLayout_9->addWidget(tabWidget);
 
-    // irr
+    // onglet irréguliers
     tabIrr = new QWidget();
     verticalLayout_I = new QVBoxLayout(tabIrr);
     verticalLayout_I->setSpacing(6);
@@ -318,8 +319,6 @@ MainWindow::MainWindow()
 
     labelFormeIrr = new QLabel(widget);
     formLayout_2->setWidget(1, QFormLayout::LabelRole, labelFormeIrr);
-
-
 
     labelMorphoIrr = new QLabel(widget);
     formLayout_2->setWidget(3, QFormLayout::LabelRole, labelMorphoIrr);
@@ -372,8 +371,7 @@ MainWindow::MainWindow()
     setCentralWidget(centralWidget);
     tabWidget->setCurrentIndex(0);
 
-    // Menus et barres
-
+    // barre d'outils
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
@@ -381,6 +379,7 @@ MainWindow::MainWindow()
     mainToolBar->addAction(actionQuitter);
     addToolBar(Qt::TopToolBarArea, mainToolBar);
 
+    // barre de menu
     menuBar = new QMenuBar(this);
     menuBar->setGeometry(QRect(0, 0, 1067, 19));
     menuFichier = new QMenu(menuBar);
@@ -395,6 +394,7 @@ MainWindow::MainWindow()
     mainToolBar->addAction(actionQuant);
     menuFichier->addAction(actionQuitter);
 
+    // bare d'état
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
 
