@@ -509,7 +509,7 @@ void LemCore::rmRadicaux(Lemme* l)
     {
         QString g = lr.at(i)->gr();
         QList<Radical*> lrTmp;
-        for (int j=0;j<_radicaux.values(g).count();++j) 
+        for (int j=0;j<_radicaux.values(g).count();++j)
         {
             Radical* r = _radicaux.values(g).at(j);
             if (r->lemme() != l) lrTmp.append(r);

@@ -21,15 +21,13 @@
 
 /*
    FIXME
-   - enregistrement du génitif inutile dans lemmes.la.
-   - lem_ext paraît supplanter .local/
 
    TODO
-   - Prendre en compte, pour ajout, tous les lemmes d'une lemmatisation. Les afficher dans 
-     le label hist, avec leur origine.
+   - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
+     et mettre en évidence le mot courant.
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
      lexical.
-     . ajouter un combo pour les modules lexicaux, avec possibilité de création 
+     . ajouter un combo pour les modules lexicaux, avec possibilité de création
        et checkbox de confirmation.
      . remplacer la constante "data" par le nom du module courant.
      . en l'absence de définition du module courant, "data" est utilisé.
@@ -41,7 +39,6 @@
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - nom : ECCE (ecce collatinistorum communitatis editor)
-   - compression des données utilisateur
    - rendre l'homonymie plus ergonomique
  */
 
@@ -732,7 +729,7 @@ void MainWindow::echec()
                 lineEditLemme->setText(lemme->cle());
                 labelContexte->setText(hist);
                 fini = true;
-            } 
+            }
         }
         forme.clear();
     }
