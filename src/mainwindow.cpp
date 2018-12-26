@@ -51,14 +51,18 @@ MainWindow::MainWindow()
     actionQuant = new QAction(this);
     actionDiff = new QAction(this);
     actionEchecSuiv = new QAction(this);
+    actionModules = new QAction(this);
     actionOuvrir = new QAction(this);
     actionQuitter = new QAction(this);
+
     //  setupUi
     centralWidget = new QWidget(this);
     verticalLayout_9 = new QVBoxLayout(centralWidget);
     verticalLayout_9->setSpacing(6);
     verticalLayout_9->setContentsMargins(11, 11, 11, 11);
     tabWidget = new QTabWidget(centralWidget);
+
+    // onglet Lexique
     tabLexique = new QWidget();
     verticalLayout_Lex = new QVBoxLayout(tabLexique);
     verticalLayout_Lex->setSpacing(6);
@@ -177,7 +181,7 @@ MainWindow::MainWindow()
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
 
-    // variantes graphiques
+    // onglet variantes graphiques
     tabVarGraph = new QWidget();
     verticalLayout_5 = new QVBoxLayout(tabVarGraph);
     verticalLayout_5->setSpacing(6);
@@ -191,82 +195,57 @@ MainWindow::MainWindow()
     verticalLayoutConf->setContentsMargins(0, 0, 0, 0);
     label_3 = new QLabel(layoutWidget);
     verticalLayoutConf->addWidget(label_3);
-
     horizontalLayoutBtnPre = new QHBoxLayout();
     horizontalLayoutBtnPre->setSpacing(6);
     btnPre = new QPushButton(layoutWidget);
     horizontalLayoutBtnPre->addWidget(btnPre);
-
     horizontalSpacerPre = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
     horizontalLayoutBtnPre->addItem(horizontalSpacerPre);
-
     verticalLayoutConf->addLayout(horizontalLayoutBtnPre);
-
     formLayoutCochesVar = new QFormLayout();
     formLayoutCochesVar->setSpacing(6);
     formLayoutCochesVar->setContentsMargins(13, 13, -1, -1);
     labelVariante = new QLabel(layoutWidget);
     formLayoutCochesVar->setWidget(0, QFormLayout::LabelRole, labelVariante);
-
     checkBoxAe = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(1, QFormLayout::LabelRole, checkBoxAe);
-
     checkBox_ae = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(1, QFormLayout::FieldRole, checkBox_ae);
     checkBox_H = new QCheckBox(layoutWidget);
-
     formLayoutCochesVar->setWidget(2, QFormLayout::LabelRole, checkBox_H);
-
     checkBox_h = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(2, QFormLayout::FieldRole, checkBox_h);
-
     checkBox_Mihi = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(3, QFormLayout::LabelRole, checkBox_Mihi);
-
     checkBox_mihi = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_mihi);
-
     checkBox_IJ = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(4, QFormLayout::LabelRole, checkBox_IJ);
-
     checkBox_ij = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(4, QFormLayout::FieldRole, checkBox_ij);
-
     checkBox_UV = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(5, QFormLayout::LabelRole, checkBox_UV);
-
     checkBox_uv = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(5, QFormLayout::FieldRole, checkBox_uv);
-
     checkBox_TICI = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
-
     checkBox_tici = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(6, QFormLayout::FieldRole, checkBox_tici);
-
     checkBox_MPN = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(7, QFormLayout::LabelRole, checkBox_MPN);
-
     checkBox_mpn = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(7, QFormLayout::FieldRole, checkBox_mpn);
-
     checkBox_PH = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(8, QFormLayout::LabelRole, checkBox_PH);
-
     checkBox_ph = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(8, QFormLayout::FieldRole, checkBox_ph);
-
     label_tju = new QLabel(layoutWidget);
     formLayoutCochesVar->setWidget(0, QFormLayout::FieldRole, label_tju);
-
     verticalLayoutConf->addLayout(formLayoutCochesVar);
-
     splitterVarGraph->addWidget(layoutWidget);
     splitter_2 = new QSplitter(splitterVarGraph);
     splitter_2->setOrientation(Qt::Vertical);
     plainTextEditVariantes = new QPlainTextEdit(splitter_2);
-    //plainTextEditVariantes->setReadOnly(true);
     splitter_2->addWidget(plainTextEditVariantes);
     layoutWidget1 = new QWidget(splitter_2);
     verticalLayout_4 = new QVBoxLayout(layoutWidget1);
@@ -275,14 +254,10 @@ MainWindow::MainWindow()
     verticalLayout_4->setContentsMargins(0, 0, 0, 0);
     btnEnrVar = new QPushButton(layoutWidget1);
     verticalLayout_4->addWidget(btnEnrVar);
-
     splitter_2->addWidget(layoutWidget1);
     splitterVarGraph->addWidget(splitter_2);
-
     verticalLayout_5->addWidget(splitterVarGraph);
-
     tabWidget->addTab(tabVarGraph, QString());
-
     verticalLayout_9->addWidget(tabWidget);
 
     // onglet irréguliers
@@ -346,28 +321,69 @@ MainWindow::MainWindow()
     formLayout_2->setLayout(3, QFormLayout::FieldRole, horizontalLayout_2);
 
     splitterIrr->addWidget(widget);
-    widget1 = new QWidget(splitterIrr);
-    verticalLayoutIrrCentre = new QVBoxLayout(widget1);
+    widgetM = new QWidget(splitterIrr);
+    verticalLayoutIrrCentre = new QVBoxLayout(widgetM);
     verticalLayoutIrrCentre->setSpacing(6);
     verticalLayoutIrrCentre->setContentsMargins(11, 11, 11, 11);
     verticalLayoutIrrCentre->setContentsMargins(0, 0, 0, 0);
     spacerIrrHaut = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayoutIrrCentre->addItem(spacerIrrHaut);
-    bAjIrr = new QPushButton(widget1);
+    bAjIrr = new QPushButton(widgetM);
     verticalLayoutIrrCentre->addWidget(bAjIrr);
-    bsupprIrr = new QPushButton(widget1);
+    bsupprIrr = new QPushButton(widgetM);
     verticalLayoutIrrCentre->addWidget(bsupprIrr);
 
     spacerIrrBas = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayoutIrrCentre->addItem(spacerIrrBas);
 
-    splitterIrr->addWidget(widget1);
+    splitterIrr->addWidget(widgetM);
     listWidgetIrr = new QListWidget(splitterIrr);
     splitterIrr->addWidget(listWidgetIrr);
     verticalLayout_I->addWidget(splitterIrr);
 
     tabWidget->addTab(tabIrr, QString());
     // fin irr
+
+    // onglet Modules
+    tabM = new QWidget();
+        verticalLayoutM = new QVBoxLayout(tabM);
+        verticalLayoutM->setSpacing(6);
+        verticalLayoutM->setContentsMargins(11, 11, 11, 11);
+        splitterM = new QSplitter(tabM);
+        splitterM->setOrientation(Qt::Horizontal);
+        widget = new QWidget(splitterM);
+        verticalLayoutLM = new QVBoxLayout(widget);
+        verticalLayoutLM->setSpacing(6);
+        verticalLayoutLM->setContentsMargins(11, 11, 11, 11);
+        verticalLayoutLM->setContentsMargins(0, 0, 0, 0);
+        labelM = new QLabel(widget);
+        verticalLayoutLM->addWidget(labelM);
+        listViewM = new QListView(widget);
+        verticalLayoutLM->addWidget(listViewM);
+        splitterM->addWidget(widget);
+        widgetM = new QWidget(splitterM);
+        verticalLayouM = new QVBoxLayout(widgetM);
+        verticalLayouM->setSpacing(6);
+        verticalLayouM->setContentsMargins(11, 11, 11, 11);
+        horizontalLayoutM = new QHBoxLayout();
+        horizontalLayoutM->setSpacing(6);
+        pushButtonCreeM = new QPushButton(widgetM);
+        horizontalLayoutM->addWidget(pushButtonCreeM);
+        lineEditM = new QLineEdit(widgetM);
+        horizontalLayoutM->addWidget(lineEditM);
+        verticalLayouM->addLayout(horizontalLayoutM);
+        pushButtonActM = new QPushButton(widgetM);
+        verticalLayouM->addWidget(pushButtonActM);
+        pushButtonDesactM = new QPushButton(widgetM);
+        verticalLayouM->addWidget(pushButtonDesactM);
+        pushButtonSupprM = new QPushButton(widgetM);
+        verticalLayouM->addWidget(pushButtonSupprM);
+        verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        verticalLayouM->addItem(verticalSpacerM);
+        splitterM->addWidget(widgetM);
+        verticalLayoutM->addWidget(splitterM);
+
+    tabWidget->addTab(tabM, QString());
 
     setCentralWidget(centralWidget);
     tabWidget->setCurrentIndex(0);
@@ -389,7 +405,7 @@ MainWindow::MainWindow()
     //menu_Aide = new QMenu(menuBar);
     //menuBar->addAction(menu_Aide->menuAction());
     menuFichier->addSeparator();
-    //menuFichier->addAction(actionCopier);
+    menuFichier->addAction(actionModules);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
@@ -463,15 +479,16 @@ void MainWindow::reserve()
 void MainWindow::retranslateUi()
 {
     setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+    actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
+    actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
+    actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
+    actionModules->setText("Modules");
+    actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
+    actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
     actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
-    actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
-    actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
-    actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
-    actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
-    actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
@@ -488,8 +505,6 @@ void MainWindow::retranslateUi()
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
                           QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
-
-    //label_3->setText(QApplication::translate("MainWindow", docVarGraph, Q_NULLPTR));
     label_3->setText(docVarGraph);
     btnPre->setText(QApplication::translate("MainWindow", "Pr\303\251analyse", Q_NULLPTR));
     labelVariante->setText(QApplication::translate("MainWindow", "variante", Q_NULLPTR));
@@ -511,7 +526,6 @@ void MainWindow::retranslateUi()
     checkBox_ph->setText(QString());
     label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
     btnEnrVar->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
-
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph),
                           QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
     labelLemmeIrr->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
@@ -531,6 +545,15 @@ void MainWindow::retranslateUi()
     bsupprIrr->setText(QApplication::translate("MainWindow", " x ", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabIrr),
                           QApplication::translate("MainWindow", "&irr\303\251guliers", Q_NULLPTR));
+    tabWidget->setTabText(tabWidget->indexOf(tabM),
+                          QApplication::translate("MainWindow", "Modules lexicaux", Q_NULLPTR));
+        labelM->setText(QApplication::translate("MainWindow", "modules", Q_NULLPTR));
+        pushButtonCreeM->setText(QApplication::translate("MainWindow", "Cr\303\251er un module ", Q_NULLPTR));
+        pushButtonActM->setText(QApplication::translate("MainWindow", "activer ce module", Q_NULLPTR));
+        pushButtonDesactM->setText(QApplication::translate("MainWindow",
+                                                           "d\303\251sactiver le module courant", Q_NULLPTR));
+        pushButtonSupprM->setText(QApplication::translate("MainWindow", "supprimer ce module", Q_NULLPTR));
+
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
 }

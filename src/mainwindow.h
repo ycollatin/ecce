@@ -72,12 +72,15 @@ class MainWindow : public QMainWindow
         QAction *actionQuitter;
         QAction *actionDiff;
         QAction *actionEchecSuiv;
+        QAction *actionModules;
         QAction *actionOuvrir;
         QAction *actionCopier;
 
         QWidget *centralWidget;
         QVBoxLayout *verticalLayout_9;
         QTabWidget *tabWidget;
+
+        // onglet lexique
         QWidget *tabLexique;
         QVBoxLayout *verticalLayout_Lex;
         QSplitter *splitter;
@@ -89,7 +92,6 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditLemme;
         QPushButton *bHomon;
         QPushButton *bSuppr;
-        //QPushButton *bEchecSuiv;
         QToolButton *bEchecSuiv;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
@@ -117,6 +119,7 @@ class MainWindow : public QMainWindow
         // onglet variantes graphiques
         QWidget *tabVarGraph;
         QVBoxLayout *verticalLayout_5;
+        QVBoxLayout *verticalLayout_4;
         QSplitter *splitterVarGraph;
         QWidget *layoutWidget;
         QVBoxLayout *verticalLayoutConf;
@@ -146,7 +149,6 @@ class MainWindow : public QMainWindow
         QSplitter *splitter_2;
         QPlainTextEdit *plainTextEditVariantes;
         QWidget *layoutWidget1;
-        QVBoxLayout *verticalLayout_4;
         QPushButton *btnEnrVar;
 
         // onglet irréguliers
@@ -174,13 +176,30 @@ class MainWindow : public QMainWindow
         QToolButton *btnVx;
         QToolButton *btnAj;
         QListWidget *listWidgetMorphos;
-        QWidget *widget1;
         QVBoxLayout *verticalLayoutIrrCentre;
         QSpacerItem *spacerIrrHaut;
         QPushButton *bAjIrr;
         QPushButton *bsupprIrr;
         QSpacerItem *spacerIrrBas;
         QListWidget *listWidgetIrr;
+
+        // onglet modules lexicaux
+        QWidget     *tabM;
+        QVBoxLayout *verticalLayoutM;
+        QSplitter   *splitterM;
+        QWidget     *widgetM;
+        QVBoxLayout *verticalLayoutLM;
+        QLabel      *labelM;
+        QListView   *listViewM;
+        QWidget     *widgetLM;
+        QVBoxLayout *verticalLayouM;
+        QHBoxLayout *horizontalLayoutM;
+        QPushButton *pushButtonCreeM;
+        QLineEdit   *lineEditM;
+        QPushButton *pushButtonActM;
+        QPushButton *pushButtonDesactM;
+        QPushButton *pushButtonSupprM;
+        QSpacerItem *verticalSpacerM;
 
         // menu et barrre d'état
         QMenuBar *menuBar;
@@ -214,10 +233,6 @@ class MainWindow : public QMainWindow
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
         void              peuple();
-        //void              peupleAjLemmes();
-        //void              peupleAjTr();
-        //void              peupleAjIrr();
-        //void              peupleAjVg();
         // irréguliers
         QStringList       lCas;
         int               iCas;
