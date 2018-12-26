@@ -38,7 +38,7 @@
      et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
-   - nom : ECCE (ecce collatinistorum communitatis editor)
+   - nom : ECCE (Ecce Collatinistarum Communitatis Editor)
    - rendre l'homonymie plus ergonomique
  */
 
