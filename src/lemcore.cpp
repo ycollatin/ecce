@@ -44,13 +44,13 @@
  * de lecture des données : modèles, lexique,
  * traductions et irréguliers.
  */
-LemCore::LemCore(QObject *parent, QString resDir) : QObject(parent)
+LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(parent)
 {
     if (resDir.isEmpty())
     {
         _resDir = Ch::chemin("collatinus/data",'d');
         if (!_resDir.endsWith('/')) _resDir.append('/');
-        _ajDir = Ch::chemin("collatinus/data", 'p');
+        _ajDir = Ch::chemin("collatinus/"+module, 'p');
         _dirLa = _ajDir+"/lemmes.la";
         _dirFr = _ajDir+"/lemmes.fr";
         _dirIrr = _ajDir+"/irregs.la";

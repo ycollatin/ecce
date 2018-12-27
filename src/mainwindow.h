@@ -72,12 +72,12 @@ class MainWindow : public QMainWindow
         QAction *actionQuitter;
         QAction *actionDiff;
         QAction *actionEchecSuiv;
-        QAction *actionModules;
         QAction *actionOuvrir;
         QAction *actionCopier;
 
         QWidget *centralWidget;
-        QVBoxLayout *verticalLayout_9;
+        QVBoxLayout *verticalLayout;
+        QLabel *labelInfo;
         QTabWidget *tabWidget;
 
         // onglet lexique
@@ -267,6 +267,7 @@ class MainWindow : public QMainWindow
         void        ajMorph();
         QString     cle(QString ligne);
         void        coche();
+        void        creerM();
         void        echec();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l="");

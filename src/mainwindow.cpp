@@ -23,12 +23,13 @@
    FIXME
 
    TODO
+   - La définition du chemin de chaque lexique appartient entièrement à 
+     mainwindow. LemCore obéît en recevant comme paramètre le chemin absolu
+     du lexique à charger ou décharger.
    - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
      et mettre en évidence le mot courant.
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
      lexical.
-     . ajouter un combo pour les modules lexicaux, avec possibilité de création
-       et checkbox de confirmation.
      . remplacer la constante "data" par le nom du module courant.
      . en l'absence de définition du module courant, "data" est utilisé.
 
@@ -48,20 +49,23 @@
 
 MainWindow::MainWindow()
 {
+    // actions
     actionQuant = new QAction(this);
     actionDiff = new QAction(this);
     actionEchecSuiv = new QAction(this);
-    actionModules = new QAction(this);
     actionOuvrir = new QAction(this);
     actionQuitter = new QAction(this);
 
     //  setupUi
     centralWidget = new QWidget(this);
-    verticalLayout_9 = new QVBoxLayout(centralWidget);
-    verticalLayout_9->setSpacing(6);
-    verticalLayout_9->setContentsMargins(11, 11, 11, 11);
+    verticalLayout = new QVBoxLayout(centralWidget);
+    verticalLayout->setSpacing(6);
+    verticalLayout->setContentsMargins(11, 11, 11, 11);
+    // label d'info sur les lexiques
+    labelInfo = new QLabel(centralWidget);
+    verticalLayout->addWidget(labelInfo);
+    // conteneur des onglets
     tabWidget = new QTabWidget(centralWidget);
-
     // onglet Lexique
     tabLexique = new QWidget();
     verticalLayout_Lex = new QVBoxLayout(tabLexique);
@@ -76,10 +80,8 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-
     labelContexte = new QLabel(frame);
     verticalLayout_3->addWidget(labelContexte);
-
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     labelLemme = new QLabel(frame);
@@ -90,23 +92,18 @@ MainWindow::MainWindow()
     labelLemme->setSizePolicy(sizePolicy);
     labelLemme->setMaximumSize(QSize(16777215, 50));
     horizontalLayout->addWidget(labelLemme);
-
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
     bHomon = new QPushButton(frame);
     horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
-    //bEchecSuiv = new QPushButton(frame);
     bEchecSuiv = new QToolButton();
     bEchecSuiv->setDefaultAction(actionEchecSuiv);
     horizontalLayout->addWidget(bEchecSuiv);
-
     verticalLayout_3->addLayout(horizontalLayout);
-
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_3->addItem(verticalSpacer_2);
-
     splitter->addWidget(frame);
     frame1 = new QFrame(splitter);
     frame1->setFrameShape(QFrame::Box);
@@ -117,70 +114,51 @@ MainWindow::MainWindow()
     formLayout->setSpacing(6);
     labelGrq = new QLabel(frame1);
     formLayout->setWidget(0, QFormLayout::LabelRole, labelGrq);
-
     horizontalLayout_grq = new QHBoxLayout();
     horizontalLayout_grq->setSpacing(6);
     lineEditGrq = new QLineEdit(frame1);
     horizontalLayout_grq->addWidget(lineEditGrq);
-
     checkBoxVb = new QCheckBox(frame1);
     horizontalLayout_grq->addWidget(checkBoxVb);
-
-
     formLayout->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
-
     labelModele = new QLabel(frame1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
     labelModele->setScaledContents(false);
     labelModele->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout->setWidget(1, QFormLayout::LabelRole, labelModele);
-
     comboBoxModele = new QComboBox(frame1);
     formLayout->setWidget(1, QFormLayout::FieldRole, comboBoxModele);
-
     labelPerfectum = new QLabel(frame1);
     formLayout->setWidget(2, QFormLayout::LabelRole, labelPerfectum);
-
     lineEditPerfectum = new QLineEdit(frame1);
     formLayout->setWidget(2, QFormLayout::FieldRole, lineEditPerfectum);
-
     labelSupin = new QLabel(frame1);
     labelSupin->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     formLayout->setWidget(3, QFormLayout::LabelRole, labelSupin);
-
     lineSupin = new QLineEdit(frame1);
     formLayout->setWidget(3, QFormLayout::FieldRole, lineSupin);
-
     labelMorpho = new QLabel(frame1);
     formLayout->setWidget(4, QFormLayout::LabelRole, labelMorpho);
-
     lineMorpho = new QLineEdit(frame1);
     formLayout->setWidget(4, QFormLayout::FieldRole, lineMorpho);
-
     labelTr = new QLabel(frame1);
     formLayout->setWidget(5, QFormLayout::LabelRole, labelTr);
-
     lineEditTr = new QLineEdit(frame1);
     formLayout->setWidget(5, QFormLayout::FieldRole, lineEditTr);
     verticalLayout_2->addLayout(formLayout);
-
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
     boutonEnr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonEnr);
-
     boutonSuppr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonSuppr);
     verticalLayout_2->addLayout(horizontalLayout_3);
-
     textEditFlexion = new QTextEdit(frame1);
     textEditFlexion->setReadOnly(true);
     verticalLayout_2->addWidget(textEditFlexion);
-
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
-
     // onglet variantes graphiques
     tabVarGraph = new QWidget();
     verticalLayout_5 = new QVBoxLayout(tabVarGraph);
@@ -258,7 +236,7 @@ MainWindow::MainWindow()
     splitterVarGraph->addWidget(splitter_2);
     verticalLayout_5->addWidget(splitterVarGraph);
     tabWidget->addTab(tabVarGraph, QString());
-    verticalLayout_9->addWidget(tabWidget);
+    verticalLayout->addWidget(tabWidget);
 
     // onglet irréguliers
     tabIrr = new QWidget();
@@ -405,7 +383,6 @@ MainWindow::MainWindow()
     //menu_Aide = new QMenu(menuBar);
     //menuBar->addAction(menu_Aide->menuAction());
     menuFichier->addSeparator();
-    menuFichier->addAction(actionModules);
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
@@ -482,7 +459,6 @@ void MainWindow::retranslateUi()
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
-    actionModules->setText("Modules");
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
@@ -490,10 +466,10 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
+    labelInfo->setText(QApplication::translate("MainWindow", "Ecce - module lexical", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
-    //bEchecSuiv->setText(QApplication::translate("MainWindow", "échec >", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
@@ -700,6 +676,16 @@ void MainWindow::ajMorph()
         lm.append(QString::number(n));
         lineEditNumMorpho->setText(lm.join(','));
     }
+}
+
+/**
+ * \fn void MainWindow::creerM()
+ * \brief Création d'un module lexical
+ */
+void MainWindow::creerM()
+{
+    QString nm = lineEditM->text().simplified();
+    if (nm.isEmpty()) return;
 }
 
 void MainWindow::echec()
