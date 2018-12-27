@@ -1037,6 +1037,12 @@ void MainWindow::majLinMorph()
 
 void MainWindow::peuple()
 {
+    // définir d'abord les répertoires de l'appli
+    // et le répertoire personnel, où sont les modules lexicaux
+    /*
+    resDir = 
+    ajDir = 
+    */
     lemcore = new LemCore(this);
     lemcore->setExtension(true);
     lemcore->setModuleLex(lemcore->dirLa());
