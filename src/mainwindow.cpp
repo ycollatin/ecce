@@ -254,32 +254,24 @@ MainWindow::MainWindow()
     formLayout_2->setSpacing(6);
     labelLemmeIrr = new QLabel(widget);
     formLayout_2->setWidget(0, QFormLayout::LabelRole, labelLemmeIrr);
-
     linLemmeIrr = new QLineEdit(widget);
     formLayout_2->setWidget(0, QFormLayout::FieldRole, linLemmeIrr);
-
     linIrreg = new QLineEdit(widget);
     formLayout_2->setWidget(1, QFormLayout::FieldRole, linIrreg);
-
     lineEditNumMorpho = new QLineEdit(widget);
     formLayout_2->setWidget(2, QFormLayout::FieldRole, lineEditNumMorpho);
     labelNumMorpho = new QLabel(widget);
     formLayout_2->setWidget(2, QFormLayout::LabelRole, labelNumMorpho);
-
     verticalLayout_Irr->addLayout(formLayout_2);
     listWidgetMorphos = new QListWidget(widget);
     listWidgetMorphos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     verticalLayout_Irr->addWidget(listWidgetMorphos);
-
     labelFormeIrr = new QLabel(widget);
     formLayout_2->setWidget(1, QFormLayout::LabelRole, labelFormeIrr);
-
     labelMorphoIrr = new QLabel(widget);
     formLayout_2->setWidget(3, QFormLayout::LabelRole, labelMorphoIrr);
-
     horizontalLayout_2 = new QHBoxLayout();
     horizontalLayout_2->setSpacing(6);
-
     btnPers = new QToolButton(widget);
     btnCas = new QToolButton(widget);
     btnGenre = new QToolButton(widget);
@@ -297,7 +289,6 @@ MainWindow::MainWindow()
     horizontalLayout_2->addWidget(btnVx);
     horizontalLayout_2->addWidget(btnAj);
     formLayout_2->setLayout(3, QFormLayout::FieldRole, horizontalLayout_2);
-
     splitterIrr->addWidget(widget);
     widgetM = new QWidget(splitterIrr);
     verticalLayoutIrrCentre = new QVBoxLayout(widgetM);
@@ -310,62 +301,55 @@ MainWindow::MainWindow()
     verticalLayoutIrrCentre->addWidget(bAjIrr);
     bsupprIrr = new QPushButton(widgetM);
     verticalLayoutIrrCentre->addWidget(bsupprIrr);
-
     spacerIrrBas = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayoutIrrCentre->addItem(spacerIrrBas);
-
     splitterIrr->addWidget(widgetM);
     listWidgetIrr = new QListWidget(splitterIrr);
     splitterIrr->addWidget(listWidgetIrr);
     verticalLayout_I->addWidget(splitterIrr);
-
     tabWidget->addTab(tabIrr, QString());
-    // fin irr
-
     // onglet Modules
     tabM = new QWidget();
-        verticalLayoutM = new QVBoxLayout(tabM);
-        verticalLayoutM->setSpacing(6);
-        verticalLayoutM->setContentsMargins(11, 11, 11, 11);
-        splitterM = new QSplitter(tabM);
-        splitterM->setOrientation(Qt::Horizontal);
-        widget = new QWidget(splitterM);
-        verticalLayoutLM = new QVBoxLayout(widget);
-        verticalLayoutLM->setSpacing(6);
-        verticalLayoutLM->setContentsMargins(11, 11, 11, 11);
-        verticalLayoutLM->setContentsMargins(0, 0, 0, 0);
-        labelM = new QLabel(widget);
-        verticalLayoutLM->addWidget(labelM);
-        listViewM = new QListView(widget);
-        verticalLayoutLM->addWidget(listViewM);
-        splitterM->addWidget(widget);
-        widgetM = new QWidget(splitterM);
-        verticalLayouM = new QVBoxLayout(widgetM);
-        verticalLayouM->setSpacing(6);
-        verticalLayouM->setContentsMargins(11, 11, 11, 11);
-        horizontalLayoutM = new QHBoxLayout();
-        horizontalLayoutM->setSpacing(6);
-        pushButtonCreeM = new QPushButton(widgetM);
-        horizontalLayoutM->addWidget(pushButtonCreeM);
-        lineEditM = new QLineEdit(widgetM);
-        horizontalLayoutM->addWidget(lineEditM);
-        verticalLayouM->addLayout(horizontalLayoutM);
-        pushButtonActM = new QPushButton(widgetM);
-        verticalLayouM->addWidget(pushButtonActM);
-        pushButtonDesactM = new QPushButton(widgetM);
-        verticalLayouM->addWidget(pushButtonDesactM);
-        pushButtonSupprM = new QPushButton(widgetM);
-        verticalLayouM->addWidget(pushButtonSupprM);
-        verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        verticalLayouM->addItem(verticalSpacerM);
-        splitterM->addWidget(widgetM);
-        verticalLayoutM->addWidget(splitterM);
-
+    verticalLayoutM = new QVBoxLayout(tabM);
+    verticalLayoutM->setSpacing(6);
+    verticalLayoutM->setContentsMargins(11, 11, 11, 11);
+    splitterM = new QSplitter(tabM);
+    splitterM->setOrientation(Qt::Horizontal);
+    widget = new QWidget(splitterM);
+    verticalLayoutLM = new QVBoxLayout(widget);
+    verticalLayoutLM->setSpacing(6);
+    verticalLayoutLM->setContentsMargins(11, 11, 11, 11);
+    verticalLayoutLM->setContentsMargins(0, 0, 0, 0);
+    labelM = new QLabel(widget);
+    verticalLayoutLM->addWidget(labelM);
+    listViewM = new QListView(widget);
+    verticalLayoutLM->addWidget(listViewM);
+    splitterM->addWidget(widget);
+    widgetM = new QWidget(splitterM);
+    verticalLayouM = new QVBoxLayout(widgetM);
+    verticalLayouM->setSpacing(6);
+    verticalLayouM->setContentsMargins(11, 11, 11, 11);
+    horizontalLayoutM = new QHBoxLayout();
+    horizontalLayoutM->setSpacing(6);
+    pushButtonCreeM = new QPushButton(widgetM);
+    horizontalLayoutM->addWidget(pushButtonCreeM);
+    lineEditM = new QLineEdit(widgetM);
+    horizontalLayoutM->addWidget(lineEditM);
+    verticalLayouM->addLayout(horizontalLayoutM);
+    pushButtonActM = new QPushButton(widgetM);
+    verticalLayouM->addWidget(pushButtonActM);
+    pushButtonDesactM = new QPushButton(widgetM);
+    verticalLayouM->addWidget(pushButtonDesactM);
+    pushButtonSupprM = new QPushButton(widgetM);
+    verticalLayouM->addWidget(pushButtonSupprM);
+    verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    verticalLayouM->addItem(verticalSpacerM);
+    splitterM->addWidget(widgetM);
+    verticalLayoutM->addWidget(splitterM);
     tabWidget->addTab(tabM, QString());
-
+    // intégration et index courant
     setCentralWidget(centralWidget);
     tabWidget->setCurrentIndex(0);
-
     // barre d'outils
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionOuvrir);
@@ -373,7 +357,6 @@ MainWindow::MainWindow()
     mainToolBar->addAction(actionEchecSuiv);
     mainToolBar->addAction(actionQuitter);
     addToolBar(Qt::TopToolBarArea, mainToolBar);
-
     // barre de menu
     menuBar = new QMenuBar(this);
     menuBar->setGeometry(QRect(0, 0, 1067, 19));
@@ -387,33 +370,11 @@ MainWindow::MainWindow()
     menuFichier->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
     menuFichier->addAction(actionQuitter);
-
     // bare d'état
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
     // textes
     retranslateUi();
-
-
-    // doc de l'onglet variantes graphiques
-    docVarGraph =
-    "!          vargraph.la\n"
-    "!\n"
-    "!  Dans ce fichier sont enregistrées les variantes\n"
-    "! graphiques du corpus traité. Chaque ligne est\n"
-    "! composée de deux chaînes séparées par le caractère\n"
-    "! ';' ou le caractère '>'.\n"
-    "! La première chaîne est la graphie classique, la\n"
-    "! seconde est la variante du corpus traité. Si\n"
-    "! la variante est systématiquement employée, et que\n"
-    "! la graphie classique disparaît, on utilise le\n"
-    "! séparateur '>'. Si les deux graphies coexistent,\n"
-    "! on utilise ';'. Par exemple, si la chaîne \"ae\"\n"
-    "! devient quelquefois \"e\", on note :\n"
-    "! ae;e\n"
-    "! Mais si \"ae\" devient toujours \"e\", on note :\n"
-    "! ae>e\n"
-    "!\n";
 
     // liste des lignes demandant des quantités
     lignes
@@ -972,7 +933,7 @@ QString MainWindow::ligneLa(QString modl)
     if (d.isDigit()) grq.append(d);
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
-    QString ret = GabaritLa
+    QString ret = gabaritLa
         .arg(grq)
         .arg(modl)
         .arg(lineEditPerfectum->text())

@@ -79,7 +79,6 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout;
         QLabel *labelInfo;
         QTabWidget *tabWidget;
-
         // onglet lexique
         QWidget *tabLexique;
         QVBoxLayout *verticalLayout_Lex;
@@ -115,7 +114,6 @@ class MainWindow : public QMainWindow
         QPushButton *boutonEnr;
         QPushButton *boutonSuppr;
         QTextEdit *textEditFlexion;
-
         // onglet variantes graphiques
         QWidget *tabVarGraph;
         QVBoxLayout *verticalLayout_5;
@@ -150,7 +148,6 @@ class MainWindow : public QMainWindow
         QPlainTextEdit *plainTextEditVariantes;
         QWidget *layoutWidget1;
         QPushButton *btnEnrVar;
-
         // onglet irréguliers
         QWidget *tabIrr;
         QVBoxLayout *verticalLayout_I;
@@ -182,7 +179,6 @@ class MainWindow : public QMainWindow
         QPushButton *bsupprIrr;
         QSpacerItem *spacerIrrBas;
         QListWidget *listWidgetIrr;
-
         // onglet modules lexicaux
         QWidget     *tabM;
         QVBoxLayout *verticalLayoutM;
@@ -200,7 +196,6 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonDesactM;
         QPushButton *pushButtonSupprM;
         QSpacerItem *verticalSpacerM;
-
         // menu et barrre d'état
         QMenuBar *menuBar;
         QMenu *menuFichier;
@@ -209,14 +204,32 @@ class MainWindow : public QMainWindow
 
         void retranslateUi();
 
+        // variables texte
         QStringList       aaa;
         QCompleter*       completeur;
         QCompleter*       completeurM;
         void              connecte();
-        QString           docVarGraph;
+        QString docVarGraph =
+            "!          vargraph.la\n"
+            "!\n"
+            "!  Dans ce fichier sont enregistrées les variantes\n"
+            "! graphiques du corpus traité. Chaque ligne est\n"
+            "! composée de deux chaînes séparées par le caractère\n"
+            "! ';' ou le caractère '>'.\n"
+            "! La première chaîne est la graphie classique, la\n"
+            "! seconde est la variante du corpus traité. Si\n"
+            "! la variante est systématiquement employée, et que\n"
+            "! la graphie classique disparaît, on utilise le\n"
+            "! séparateur '>'. Si les deux graphies coexistent,\n"
+            "! on utilise ';'. Par exemple, si la chaîne \"ae\"\n"
+            "! devient quelquefois \"e\", on note :\n"
+            "! ae;e\n"
+            "! Mais si \"ae\" devient toujours \"e\", on note :\n"
+            "! ae>e\n"
+            "!\n";
         QString           fichier; 
         Flexion*          flexion;
-        QString GabaritLa = "%1|%2|%3|%4|%5|%6";
+        QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         LemCore*          lemcore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
