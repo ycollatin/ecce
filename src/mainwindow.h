@@ -113,6 +113,7 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout_3;
         QPushButton *boutonEnr;
         QPushButton *boutonSuppr;
+        QPushButton* boutonLemSuiv;
         QTextEdit *textEditFlexion;
         // onglet variantes graphiques
         QWidget *tabVarGraph;
@@ -230,6 +231,8 @@ class MainWindow : public QMainWindow
         QString           fichier; 
         Flexion*          flexion;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
+        QString           hist;
+        int               iLemSuiv;
         LemCore*          lemcore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
@@ -239,6 +242,7 @@ class MainWindow : public QMainWindow
         Lemme*            lemme = 0;
         QStringList       lmodeles;
         void              majLinMorph();
+        MapLem            ml;
         QStringListModel* modele;
         QStringListModel* modeleIrr;
         QStringListModel* modeleM; // morphos
@@ -292,6 +296,7 @@ class MainWindow : public QMainWindow
         void        enrVar();
         int         indexOfInsert(QString s, QStringList l);
         void        insereLigne(QString l, QString f);
+        void        lemSuiv();
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);

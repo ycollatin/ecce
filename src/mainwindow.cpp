@@ -6,8 +6,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
- *  COLLATINVS is distributed in the hope that it will be useful,
+ * *  COLLATINVS is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -22,8 +21,10 @@
 /*
    FIXME
    - l'origine lem_ext n'est plus détectée
+   - lemmesuiv ->plantage
 
    TODO
+   - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
    - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
      et mettre en évidence le mot courant.
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
@@ -150,6 +151,8 @@ MainWindow::MainWindow()
     horizontalLayout_3->addWidget(boutonEnr);
     boutonSuppr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonSuppr);
+    boutonLemSuiv = new QPushButton(frame1); 
+    horizontalLayout_3->addWidget(boutonLemSuiv);
     verticalLayout_2->addLayout(horizontalLayout_3);
     textEditFlexion = new QTextEdit(frame1);
     textEditFlexion->setReadOnly(true);
@@ -438,6 +441,7 @@ void MainWindow::retranslateUi()
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
     boutonEnr->setText(QApplication::translate("MainWindow", "Enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
+    boutonLemSuiv->setText(QApplication::translate("MainWindow", "lemme suivant", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
                           QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
     label_3->setText(docVarGraph);
@@ -572,6 +576,7 @@ void MainWindow::connecte()
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv())); 
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     connect(actionEchecSuiv, SIGNAL(triggered()), this, SLOT(echec()));
@@ -649,19 +654,19 @@ void MainWindow::creerM()
 
 void MainWindow::echec()
 {
-    QString hist;
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
+    bool arret = false;
     QChar c;
     QString forme;
-    while(!fini)
+    while(!fini && !arret)
     {
         do
         {
             flux >> c;
             hist.append(c);
-            if (hist.size() > 100) hist.remove(0,1);
+            if (hist.size() > 200) hist.remove(0,1);
         }
         while (!flux.atEnd() && !c.isLetter());
         do
@@ -669,17 +674,15 @@ void MainWindow::echec()
             forme.append(c);
             flux >> c;
             hist.append(c);
-            if (hist.size() > 100) hist.remove(0,1);
+            if (hist.size() > 200) hist.remove(0,1);
         }
         while (!flux.atEnd() && c.isLetter());
-        MapLem ml = lemcore->lemmatiseM(forme);
+        ml = lemcore->lemmatiseM(forme);
         if (ml.isEmpty())
         {
             lineEditLemme->setText(forme);
-            labelContexte->setText(hist);
-            fini = true;
+            arret = true;
         }
-        //else if (ml.keys().at(0)->origin() == 1)
         else
         {
             // voir si une lemmatisation vient du lexique
@@ -687,16 +690,18 @@ void MainWindow::echec()
             for (int i=0;i<ml.keys().count();++i)
             {
                 Lemme* l = ml.keys().at(i);
-                fini = fini && l->origin() == 1;
-                if (!fini) break;
+                arret = fini && l->origin() == 1;
             }
-            if (fini)
+            if (arret)
             {
-                // la lemmatisation vient de lem_ext
-                lemme = ml.keys().at(0);
-                lineEditLemme->setText(lemme->cle());
                 labelContexte->setText(hist);
-                fini = true;
+                iLemSuiv = -1;
+                if (!ml.isEmpty()) lemSuiv();
+                /*
+                   lemme = ml.keys().at(0);
+                   lineEditLemme->setText(lemme->cle());
+                   labelContexte->setText(hist);
+                 */
             }
         }
         forme.clear();
@@ -917,6 +922,16 @@ void MainWindow::insereLigne(QString l, QString f)
     file.open(QFile::WriteOnly);
     QTextStream(&file) << lignes.join('\n');
     file.close();
+}
+
+void MainWindow::lemSuiv()
+{
+    ++iLemSuiv;
+    if (iLemSuiv >= ml.keys().count())
+        iLemSuiv = 0;
+    lemme = ml.keys().at(iLemSuiv);
+    lineEditLemme->setText(lemme->cle());
+    labelContexte->setText(hist);
 }
 
 QString MainWindow::ligneLa(QString modl)
