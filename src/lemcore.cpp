@@ -446,8 +446,6 @@ bool LemCore::estRomain(QString f)
  */
 void LemCore::ajRadicaux(Lemme *l)
 {
-    bool debog = l->cle() == "Aegyptus";
-    if (debog) qDebug()<<"ajRadicaux"<<l->gr();
     // ablŭo=ā̆blŭo|lego|ā̆blŭ|ā̆blūt|is, ere, lui, lutum
     //      0        1    2    3         4
     Modele *m = modele(l->grModele());
@@ -508,22 +506,27 @@ void LemCore::ajRadicaux(Lemme *l)
     }
 }
 
+/**
+ * \fn void LemCore::rmRadicaux(Lemme* l)
+ * \brief tous les radicaux du lemme l sont 
+ *        supprimés du QMultiMap _radicaux;
+ */
 void LemCore::rmRadicaux(Lemme* l)
 {
     QList<Radical*> lr = l->radicaux();
+    // supprimer tous les radicaux de l,
+    QList<Radical*> lrTmp;
     for (int i=0;i<lr.count();++i)
     {
         QString g = lr.at(i)->gr();
-        QList<Radical*> lrTmp;
         for (int j=0;j<_radicaux.values(g).count();++j)
         {
             Radical* r = _radicaux.values(g).at(j);
-            if (r->lemme() != l) lrTmp.append(r);
-        }
-        _radicaux.remove(g);
-        for (int i=0;i<lrTmp.count();++i)
-        {
-            _radicaux.insert(g,lrTmp.at(i));
+            if (r->lemme() == l)
+            {
+                _radicaux.remove(r->gr(), r);
+                delete r;
+            }
         }
     }
 }
@@ -1073,16 +1076,26 @@ void LemCore::lisFichierLexique(QString filepath)
     for (int i=0;i<_listeLemmesLa.count();++i)
     {
         QString lin = _listeLemmesLa.at(i);
-        QString k = lin.section(QRegExp("[|=]"),0,0);
+        QString k = Ch::atone(Ch::deramise(lin.section(QRegExp("[|=]"),0,0)));
         // détruire le lemme homonyme des listes précédentes
         Lemme* dl = lemme(k);
-        if (dl != 0 && dl->origin() != orig)
+        if (dl != 0)
         {
-            delete dl;
+            if (dl->origin() < orig)
+            {
+                rmRadicaux(dl);
+                delete dl; dl = 0;
+                Lemme* l = new Lemme(lin, orig, this, k);
+                _lemmes.insert(l->cle(), l);
+            }
+            else if (dl->origin() == orig)
+                std::cerr << qPrintable(k)<<" "<<orig<<" doublon\n";
         }
-        else if (dl != 0) return;
-        Lemme* l = new Lemme(lin, orig, this);
-        _lemmes.insert(l->cle(), l);
+        else
+        {
+            Lemme* l = new Lemme(lin, orig, this, k);
+            _lemmes.insert(l->cle(), l);
+        }
     }
 }
 

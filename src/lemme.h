@@ -82,8 +82,7 @@ class Lemme : public QObject
         QMap<QString,QString>       _traduction;
 
     public:
-        Lemme(const QString linea, const int origin, QObject* parent);
-        ~Lemme();
+        Lemme(const QString linea, const int origin, QObject* parent=0, QString k="");
         void                ajIrreg(Irreg* irr);
         void                ajNombre(int n);
         void                ajRadical(int i, Radical* r);

@@ -82,7 +82,7 @@ int Radical::numRad() { return _numero; }
  * \brief Constructeur de la classe Lemme à partir de la
  *        ligne linea. *parent est le lemmatiseur (classe Lemmat).
  */
-Lemme::Lemme(const QString linea, const int origin, QObject *parent)
+Lemme::Lemme(const QString linea, const int origin, QObject *parent, QString k)
 {
     // cădo|lego|cĕcĭd|cās|is, ere, cecidi, casum|687
     //   0 | 1  | 2   | 3 |     4                | 5
@@ -90,7 +90,9 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     QStringList eclats = linea.split('|');
     _champ0 = eclats.at(0);
     QStringList lg = _champ0.split('=');
-    _cle = Ch::atone(Ch::deramise(lg.at(0)));
+    if (k.isEmpty())
+        _cle = Ch::atone(Ch::deramise(lg.at(0)));
+    else _cle = k;
     _grd = oteNh(lg.at(0), _nh);
     if (lg.count() == 1)
         _grq = _grd;
@@ -156,18 +158,6 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent)
     }
     // nombre d'occurrences
     _nbOcc = eclats.at(5).toInt();
-}
-
-Lemme::~Lemme()
-{
-    QString k = _cle;
-    _lemmatiseur->rmRadicaux(this);
-    for (int i=0;i<_radicaux.count();++i)
-    {
-        QList<Radical*> lr = _radicaux.value(i);
-        qDeleteAll(lr);
-    }
-    //_radicaux.clear();
 }
 
 /**
