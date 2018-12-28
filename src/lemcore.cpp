@@ -49,14 +49,19 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
     if (resDir.isEmpty())
     {
         _resDir = Ch::chemin("collatinus/data",'d');
+        _ajDir = module;
     }
-    else _resDir = resDir;
+    else
+    {
+        _resDir = resDir;
+        _ajDir = Ch::chemin("collatinus/data/", 'p');
+    }
     if (!_resDir.endsWith('/')) _resDir.append('/');
-    _ajDir = Ch::chemin("collatinus/"+module, 'p');
-    _dirLa = _ajDir+"/lemmes.la";
-    _dirFr = _ajDir+"/lemmes.fr";
-    _dirIrr = _ajDir+"/irregs.la";
-    _dirVg = _ajDir+"/vargraph.la";
+    if (!_ajDir.endsWith('/')) _ajDir.append('/');
+    _dirLa = _ajDir+"lemmes.la";
+    _dirFr = _ajDir+"lemmes.fr";
+    _dirIrr = _ajDir+"irregs.la";
+    _dirVg = _ajDir+"vargraph.la";
     // options
     _extension = false;
     _extLoaded = false;
@@ -415,12 +420,9 @@ int LemCore::aRomano(QString f)
 void LemCore::ajDesinence(Desinence *d)
 {
     QString gr = d->gr();
-    //QList<RegleVG*> lr = lTransfVG(gr);
     bool excl = false;
-    //for (int i=0;i<lr.count();++i)
     for (int i=0;i<_reglesVG.count();++i)
     {
-        //RegleVG *r = lr.at(i);
         RegleVG *r = _reglesVG.at(i);
         gr = r->transf(gr);
         excl = excl || r->excl();
@@ -1203,37 +1205,6 @@ void LemCore::lisVarGraph()
         else continue;
         _reglesVG.append(new RegleVG(l));
     }
-}
-
-/**
- * \fn QList<RegleVG*> LemCore::lTransfVG(QString s)
- * \brief liste des règles de variante graphiques susceptibles
- *        de modifier la chaîne s.
-QList<RegleVG*> LemCore::lTransfVG(QString s)
-{
-    QList<RegleVG*> ret;
-    for (int i=0;i<_reglesVG.count();++i)
-    {
-        RegleVG* r = _reglesVG.at(i);
-        if (r->match(s))
-        {
-            ret.append(r);
-        }
-    }
-    return ret;
-}
- */
-
-QString LemCore::transfVG(QString s)
-{
-    //QList<RegleVG*> rr = lTransfVG(s);
-    for (int i=0;i<_reglesVG.count();++i)
-    {
-        //RegleVG* r = rr.at(i);
-        RegleVG* r = _reglesVG.at(i);
-        s = r->transf(s);
-    }
-    return s;
 }
 
 /**

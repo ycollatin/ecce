@@ -21,13 +21,10 @@
 
 /*
    FIXME
-   - vérifier les variantes graphiques
+   - Aeduus : traduction non enregistrée
+   - Aeduam, Aegiptus : Ae;e Aeduam ok, mais Aegiptus n'est pas lemmatisé.
 
    TODO
-   - listeLemmesLa inutile ?
-   - La définition du chemin de chaque lexique appartient entièrement à 
-     mainwindow. LemCore obéît en recevant comme paramètre le chemin absolu
-     du lexique à charger ou décharger.
    - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
      et mettre en évidence le mot courant.
    - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
@@ -1041,8 +1038,9 @@ void MainWindow::peuple()
     // définir d'abord les répertoires de l'appli
     // et le répertoire personnel, où sont les modules lexicaux
     resDir = Ch::chemin("collatinus/data",'d');
+    // TODO : création, et QSettings pour module
+    module = "data";
     ajDir = Ch::chemin("collatinus/"+module, 'p');
-    module = ajDir + "data";
     lemcore = new LemCore(this, resDir, module);
     lemcore->setExtension(true);
     lemcore->setModuleLex(lemcore->dirLa());
