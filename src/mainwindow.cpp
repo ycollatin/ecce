@@ -6,7 +6,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- * *  COLLATINVS is distributed in the hope that it will be useful,
+ *  EDITCOL is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -657,9 +657,9 @@ void MainWindow::echec()
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
-    bool arret = false;
     QChar c;
     QString forme;
+    bool arret = false;
     while(!fini && !arret)
     {
         do
@@ -678,10 +678,10 @@ void MainWindow::echec()
         }
         while (!flux.atEnd() && c.isLetter());
         ml = lemcore->lemmatiseM(forme);
+        arret = true;
         if (ml.isEmpty())
         {
             lineEditLemme->setText(forme);
-            arret = true;
         }
         else
         {
@@ -690,18 +690,13 @@ void MainWindow::echec()
             for (int i=0;i<ml.keys().count();++i)
             {
                 Lemme* l = ml.keys().at(i);
-                arret = fini && l->origin() == 1;
+                arret = arret && l->origin() == 1;
             }
             if (arret)
             {
                 labelContexte->setText(hist);
                 iLemSuiv = -1;
                 if (!ml.isEmpty()) lemSuiv();
-                /*
-                   lemme = ml.keys().at(0);
-                   lineEditLemme->setText(lemme->cle());
-                   labelContexte->setText(hist);
-                 */
             }
         }
         forme.clear();
