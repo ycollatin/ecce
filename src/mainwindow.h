@@ -235,8 +235,6 @@ class MainWindow : public QMainWindow
         QList<QLineEdit*> lignes;
         QStringList       lis();
         QStringList       listeGr;
-        QStringList       listeLemmesLa;
-        QStringList       listeLemmesFr;
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
@@ -263,6 +261,10 @@ class MainWindow : public QMainWindow
         int               iVx;
        
         // chemins
+        QString           resDir;
+        QString           ajDir;
+        QString           module;
+        // chemins d'enregistrement chez l'utilisateur
         QString           dirLa;
         QString           dirFr;
         QString           dirIrr;

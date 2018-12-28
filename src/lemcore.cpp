@@ -49,13 +49,14 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
     if (resDir.isEmpty())
     {
         _resDir = Ch::chemin("collatinus/data",'d');
-        if (!_resDir.endsWith('/')) _resDir.append('/');
-        _ajDir = Ch::chemin("collatinus/"+module, 'p');
-        _dirLa = _ajDir+"/lemmes.la";
-        _dirFr = _ajDir+"/lemmes.fr";
-        _dirIrr = _ajDir+"/irregs.la";
-        _dirVg = _ajDir+"/vargraph.la";
     }
+    else _resDir = resDir;
+    if (!_resDir.endsWith('/')) _resDir.append('/');
+    _ajDir = Ch::chemin("collatinus/"+module, 'p');
+    _dirLa = _ajDir+"/lemmes.la";
+    _dirFr = _ajDir+"/lemmes.fr";
+    _dirIrr = _ajDir+"/irregs.la";
+    _dirVg = _ajDir+"/vargraph.la";
     // options
     _extension = false;
     _extLoaded = false;
@@ -254,7 +255,11 @@ QStringList LemCore::lignesFichier(QString nf)
     if (!QFile::exists(nf))
         return retour;
     QFile f(nf);
-    f.open(QFile::ReadOnly);
+    if (!f.open(QFile::ReadOnly))
+    {
+        std::cerr << qPrintable(nf) << " introuvable\n";
+        return retour;
+    }
     QTextStream flux(&f);
     flux.setCodec("UTF-8"); // Pour windôze !
     while (!flux.atEnd())
@@ -1055,8 +1060,6 @@ void LemCore::lisIrreguliers()
 void LemCore::lisFichierLexique(QString filepath)
 {
     int orig = 0;
-    // trouver un moyen d'indentifier les données perso
-    // sous tous les OS.
     if (filepath.endsWith("ext.la")) orig = 1;
     else if (filepath.contains(".local/share")) orig = 2;
     _listeLemmesLa = lignesFichier(filepath);

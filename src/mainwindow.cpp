@@ -21,8 +21,10 @@
 
 /*
    FIXME
+   - vérifier les variantes graphiques
 
    TODO
+   - listeLemmesLa inutile ?
    - La définition du chemin de chaque lexique appartient entièrement à 
      mainwindow. LemCore obéît en recevant comme paramètre le chemin absolu
      du lexique à charger ou décharger.
@@ -797,7 +799,6 @@ void MainWindow::edLem(QString l)
                         if (ajouter != "0") g.append(ajouter);
                         if (g != grq)
                         {
-                            qDebug()<<g<<grq;
                             lineEditPerfectum->setText(grq);
                         }
                         break;
@@ -1039,11 +1040,10 @@ void MainWindow::peuple()
 {
     // définir d'abord les répertoires de l'appli
     // et le répertoire personnel, où sont les modules lexicaux
-    /*
-    resDir = 
-    ajDir = 
-    */
-    lemcore = new LemCore(this);
+    resDir = Ch::chemin("collatinus/data",'d');
+    ajDir = Ch::chemin("collatinus/"+module, 'p');
+    module = ajDir + "data";
+    lemcore = new LemCore(this, resDir, module);
     lemcore->setExtension(true);
     lemcore->setModuleLex(lemcore->dirLa());
     flexion = new Flexion(lemcore);
@@ -1059,8 +1059,6 @@ void MainWindow::peuple()
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
-    listeLemmesLa = lisLignes("data/lemmes.la");
-    listeLemmesFr = lisLignes("data/lemmes.fr");
     // compléteur lemmes
 	completeur = new QCompleter;
     modele = new QStringListModel(litems);
