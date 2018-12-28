@@ -427,8 +427,7 @@ void LemCore::ajDesinence(Desinence *d)
         gr = r->transf(gr);
         excl = excl || r->excl();
     }
-    if (!excl) _desinences.insert(Ch::deramise(d->gr()), d);
-    if (gr != d->gr()) _desinences.insert(Ch::deramise(gr), d);
+    _desinences.insert(Ch::deramise(gr), d);
 }
 
 bool LemCore::estRomain(QString f)
@@ -447,6 +446,8 @@ bool LemCore::estRomain(QString f)
  */
 void LemCore::ajRadicaux(Lemme *l)
 {
+    bool debog = l->cle() == "Aegyptus";
+    if (debog) qDebug()<<"ajRadicaux"<<l->gr();
     // ablŭo=ā̆blŭo|lego|ā̆blŭ|ā̆blūt|is, ere, lui, lutum
     //      0        1    2    3         4
     Modele *m = modele(l->grModele());
@@ -465,8 +466,7 @@ void LemCore::ajRadicaux(Lemme *l)
                 gr = regle->transf(gr);
                 excl = excl || regle->excl();
             }
-            if (!excl) _radicaux.insert(Ch::deramise(r->gr()), r);
-            else if (gr != r->gr()) _radicaux.insert(Ch::deramise(gr), r);
+            _radicaux.insert(Ch::deramise(gr), r);
         }
     }
     // pour chaque radical du modèle
@@ -503,8 +503,7 @@ void LemCore::ajRadicaux(Lemme *l)
                 gr = regle->transf(gr);
                 excl = excl || regle->excl();
             }
-            if (!excl)         _radicaux.insert(Ch::deramise(r->gr()), r);
-            if (gr != r->gr()) _radicaux.insert(Ch::deramise(gr), r);
+            _radicaux.insert(Ch::deramise(gr), r);
         }
     }
 }
@@ -828,6 +827,12 @@ bool LemCore::inv(Lemme *l, const MapLem ml)
  */
 MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
+    // appliquer les règles de variante graphique
+    for (int i=0;i<_reglesVG.count();++i)
+    {
+        RegleVG *regle = _reglesVG.at(i);
+        f = regle->transf(f);
+    }
     MapLem mm;
     //QString fVar = transfVG(f);
     //bool var = f != fVar;

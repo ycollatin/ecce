@@ -21,8 +21,7 @@
 
 /*
    FIXME
-   - Aeduus : traduction non enregistrée
-   - Aeduam, Aegiptus : Ae;e Aeduam ok, mais Aegiptus n'est pas lemmatisé.
+   - l'origine lem_ext n'est plus détectée
 
    TODO
    - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
