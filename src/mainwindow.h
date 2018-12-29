@@ -285,6 +285,7 @@ class MainWindow : public QMainWindow
         void        ajIrr();
         void        ajMorph();
         QString     cle(QString ligne);
+        void        closeEvent(QCloseEvent* event);
         void        coche();
         void        creerM();
         void        echec();
@@ -300,7 +301,7 @@ class MainWindow : public QMainWindow
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
-        void        ouvrir();
+        void        ouvrir(QString nf="");
         void        preAn();
         //void        reserve();
         void        rotQ();

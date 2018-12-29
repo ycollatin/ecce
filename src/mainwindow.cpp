@@ -20,25 +20,22 @@
 
 /*
    FIXME
-   - l'origine lem_ext n'est plus détectée
    - lemmesuiv ->plantage
+   - choix de modèle pour un mot nouveau non copié de lem_ext : plantage
 
    TODO
    - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
    - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
      et mettre en évidence le mot courant.
-   - Ajouter la création, dans ~/.local, de sous-répertoires, un par module
-     lexical.
-     . remplacer la constante "data" par le nom du module courant.
-     . en l'absence de définition du module courant, "data" est utilisé.
-
+   - écrire la création d'un module, son chagement et déchargement
    - Création des paquets de distribution du module lexical. Utiliser zip:
      apt install libquazip5-1 : ziper et déziper
+   - renommer Editcol Ecce.
+     ECCE (Ecce Collatinistarum Communitatis Editor)
    - Enregistrer dans QSettings le module lexical en cours,
      et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
-   - nom : ECCE (Ecce Collatinistarum Communitatis Editor)
    - rendre l'homonymie plus ergonomique
  */
 
@@ -376,6 +373,20 @@ MainWindow::MainWindow()
     setStatusBar(statusBar);
     // textes
     retranslateUi();
+    QSettings settings("Collatinus", "ecce");
+    // état de la fenêtre
+    settings.beginGroup("fenetre");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
+    settings.endGroup();
+    // dernier fichier chargé
+    settings.beginGroup("fichiers");
+    fichier = settings.value("fichier").toString();
+    if (!fichier.isEmpty())
+    {
+        ouvrir(fichier);
+    }
+    settings.endGroup();
 
     // liste des lignes demandant des quantités
     lignes
@@ -508,6 +519,16 @@ QString MainWindow::cle(QString ligne)
 {
     QString ret = ligne.section(QRegExp("[\\W]"),0,0);
     return Ch::atone(Ch::deramise(ret));
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("fenetre");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+    settings.endGroup();
+    QMainWindow::closeEvent(event);
 }
 
 /*
@@ -681,6 +702,7 @@ void MainWindow::echec()
         arret = true;
         if (ml.isEmpty())
         {
+            labelContexte->setText(hist);
             lineEditLemme->setText(forme);
         }
         else
@@ -694,7 +716,7 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                labelContexte->setText(hist);
+                //labelContexte->setText(hist);
                 iLemSuiv = -1;
                 if (!ml.isEmpty()) lemSuiv();
             }
@@ -993,14 +1015,22 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
     return retour;
 }
 
-void MainWindow::ouvrir()
+void MainWindow::ouvrir(QString nf)
 {
-    fichier = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
+    if (nf.isEmpty())
+    {
+        fichier = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
+    }
+    else fichier = nf;
     if (fichier.isEmpty()) return;
     fCorpus.close();
     fCorpus.setFileName(fichier);
     if (!fCorpus.open(QFile::ReadOnly)) return;
     posFC = 0;
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("fichiers");
+    settings.setValue("fichier", fichier);
+    settings.endGroup();
 }
 
 void MainWindow::majLinMorph()
