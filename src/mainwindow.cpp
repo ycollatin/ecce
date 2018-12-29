@@ -735,7 +735,7 @@ void MainWindow::echec()
                     flux >> cp;
                     post.append(cp);
                 }
-                hist.replace(forme,"<b>"+forme+"</b>");
+                hist.replace(forme, "*"+forme+"*");
                 labelContexte->setText(hist+post);
                 iLemSuiv = -1;
                 if (!ml.isEmpty()) lemSuiv();
