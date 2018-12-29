@@ -22,12 +22,11 @@
    FIXME
    - lemmesuiv ->plantage
    - choix de modèle pour un mot nouveau non copié de lem_ext : plantage
+   - la forme au lieu du canon dans lemmes.fr
 
    TODO
    - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
-   - devancer la lecture des mots, au moins d'une phrase après la phrase courante,
-     et mettre en évidence le mot courant.
-   - écrire la création d'un module, son chagement et déchargement
+   - écrire la création d'un module, son chargement et déchargement
    - Création des paquets de distribution du module lexical. Utiliser zip:
      apt install libquazip5-1 : ziper et déziper
    - renommer Editcol Ecce.
@@ -377,7 +376,7 @@ MainWindow::MainWindow()
     // état de la fenêtre
     settings.beginGroup("fenetre");
     restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
+    //restoreState(settings.value("windowState").toByteArray());
     settings.endGroup();
     // dernier fichier chargé
     settings.beginGroup("fichiers");
@@ -526,7 +525,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fenetre");
     settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    //settings.setValue("windowState", saveState());
     settings.endGroup();
     QMainWindow::closeEvent(event);
 }
@@ -681,6 +680,8 @@ void MainWindow::echec()
     QChar c;
     QString forme;
     bool arret = false;
+    qint64 fluxpos = flux.pos();
+    QString post;
     while(!fini && !arret)
     {
         do
@@ -700,9 +701,19 @@ void MainWindow::echec()
         while (!flux.atEnd() && c.isLetter());
         ml = lemcore->lemmatiseM(forme);
         arret = true;
+        fluxpos = flux.pos();
         if (ml.isEmpty())
         {
-            labelContexte->setText(hist);
+            fluxpos = flux.pos();
+            post.clear();
+            QChar cp;
+            for (int i=0;i<100||flux.atEnd();++i)
+            {
+                flux >> cp;
+                post.append(cp);
+            }
+            hist.replace(forme,"*"+forme+"*");
+            labelContexte->setText(hist+post);
             lineEditLemme->setText(forme);
         }
         else
@@ -716,14 +727,24 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                //labelContexte->setText(hist);
+                fluxpos = flux.pos();
+                post.clear();
+                QChar cp;
+                for (int i=0;i<100||flux.atEnd();++i)
+                {
+                    flux >> cp;
+                    post.append(cp);
+                }
+                hist.replace(forme,"<b>"+forme+"</b>");
+                labelContexte->setText(hist+post);
                 iLemSuiv = -1;
                 if (!ml.isEmpty()) lemSuiv();
             }
         }
         forme.clear();
     }
-    posFC = flux.pos();
+    //posFC = flux.pos();
+    posFC = fluxpos;
 }
 
 void MainWindow::editIrr(const QModelIndex &m)
@@ -948,7 +969,7 @@ void MainWindow::lemSuiv()
         iLemSuiv = 0;
     lemme = ml.keys().at(iLemSuiv);
     lineEditLemme->setText(lemme->cle());
-    labelContexte->setText(hist);
+    //labelContexte->setText(hist);
 }
 
 QString MainWindow::ligneLa(QString modl)
