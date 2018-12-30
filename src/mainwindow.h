@@ -269,6 +269,7 @@ class MainWindow : public QMainWindow
         QString           resDir;
         QString           ajDir;
         QString           module;
+        QString           modDir;
         // chemins d'enregistrement chez l'utilisateur
         QString           dirLa;
         QString           dirFr;

@@ -327,10 +327,10 @@ MainWindow::MainWindow()
     verticalLayouM->setContentsMargins(11, 11, 11, 11);
     horizontalLayoutM = new QHBoxLayout();
     horizontalLayoutM->setSpacing(6);
-    pushButtonCreeM = new QPushButton(widgetM);
-    horizontalLayoutM->addWidget(pushButtonCreeM);
     lineEditM = new QLineEdit(widgetM);
     horizontalLayoutM->addWidget(lineEditM);
+    pushButtonCreeM = new QPushButton(widgetM);
+    horizontalLayoutM->addWidget(pushButtonCreeM);
     verticalLayouM->addLayout(horizontalLayoutM);
     pushButtonActM = new QPushButton(widgetM);
     verticalLayouM->addWidget(pushButtonActM);
@@ -380,6 +380,9 @@ MainWindow::MainWindow()
     // dernier fichier chargé
     settings.beginGroup("fichiers");
     fichier = settings.value("fichier", "").toString();
+    settings.endGroup();
+    settings.beginGroup("lexique");
+    module = settings.value("module", "data").toString();
     if (!fichier.isEmpty())
     {
         ouvrir(fichier);
@@ -526,6 +529,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     settings.endGroup();
     settings.beginGroup("lexique");
     settings.setValue("module", module);
+    settings.endGroup();
     QMainWindow::closeEvent(event);
 }
 
@@ -672,9 +676,31 @@ void MainWindow::creerM()
 {
     QString nm = lineEditM->text().simplified();
     if (nm.isEmpty()) return;
+    new QListWidgetItem(nm, listWidgetM);
     // si le module existe déjà, erreur
     // créer le répertoire + les fichiers lemmes.la et lemmes.fr
+    nm.prepend(modDir);
+    nm.append('/');
+    qDebug()<<"creeM"<<nm;
+    if (!QFile::exists(nm))
+    {
+        QDir dir;
+        dir.mkpath(nm);
+    }
+    //QString nla = nm;
+    //nla.append("lemmes.la");
+    //qDebug()<<"nla"<<nla;
     // avec leur nom en commentaire
+    QFile fm(nm+"lemmes.la");
+    fm.open(QFile::WriteOnly);
+    QTextStream(&fm) << "!    lemmes.la\n";
+    fm.close();
+    QFile ff(nm+"lemmes.fr");
+    ff.open(QFile::WriteOnly);
+    QTextStream(&ff) << "!    lemmes.fr\n";
+    ff.close();
+    // affichage
+    // décharger et recharger les données
 }
 
 void MainWindow::echec()
@@ -1107,8 +1133,8 @@ void MainWindow::peuple()
     // et le répertoire personnel, où sont les modules lexicaux
     resDir = Ch::chemin("collatinus/data",'d');
     // TODO : création, et QSettings pour module
-    module = "data";
-    ajDir = Ch::chemin("collatinus/"+module, 'p');
+    modDir = Ch::chemin("collatinus/", 'p');
+    ajDir = modDir + module;
     lemcore = new LemCore(this, resDir, module);
     lemcore->setExtension(true);
     lemcore->setModuleLex(lemcore->dirLa());
@@ -1174,7 +1200,7 @@ void MainWindow::peuple()
 
     // modules
     // peupler la liste
-    QDir chModules(Ch::chemin("collatinus/", 'p'));
+    QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     qDebug()<<"modules"<<lm;
     for (int i=0;i<lm.count();++i)
