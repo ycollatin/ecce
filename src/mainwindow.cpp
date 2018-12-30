@@ -31,8 +31,6 @@
      apt install libquazip5-1 : ziper et déziper
    - renommer Editcol Ecce.
      ECCE (Ecce Collatinistarum Communitatis Editor)
-   - Enregistrer dans QSettings le module lexical en cours,
-     et pour chaque module, le texte analysé, la position de l'analyse,
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - rendre l'homonymie plus ergonomique
