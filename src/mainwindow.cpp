@@ -317,8 +317,9 @@ MainWindow::MainWindow()
     verticalLayoutLM->setContentsMargins(0, 0, 0, 0);
     labelM = new QLabel(widget);
     verticalLayoutLM->addWidget(labelM);
-    listViewM = new QListView(widget);
-    verticalLayoutLM->addWidget(listViewM);
+    //listViewM = new QListView(widget);
+    listWidgetM = new QListWidget(widget);
+    verticalLayoutLM->addWidget(listWidgetM);
     splitterM->addWidget(widget);
     widgetM = new QWidget(splitterM);
     verticalLayouM = new QVBoxLayout(widgetM);
@@ -1174,8 +1175,12 @@ void MainWindow::peuple()
     // modules
     // peupler la liste
     QDir chModules(Ch::chemin("collatinus/", 'p'));
-    QStringList lm = chModules.entryList(QStringList() << "*", QDir::Dirs);
+    QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     qDebug()<<"modules"<<lm;
+    for (int i=0;i<lm.count();++i)
+    {
+        new QListWidgetItem(lm.at(i), listWidgetM);
+    }
 }
 
 /*

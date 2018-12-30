@@ -187,7 +187,8 @@ class MainWindow : public QMainWindow
         QWidget     *widgetM;
         QVBoxLayout *verticalLayoutLM;
         QLabel      *labelM;
-        QListView   *listViewM;
+        //QListView   *listViewM;
+        QListWidget *listWidgetM;
         QWidget     *widgetLM;
         QVBoxLayout *verticalLayouM;
         QHBoxLayout *horizontalLayoutM;
