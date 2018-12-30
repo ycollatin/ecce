@@ -378,7 +378,7 @@ MainWindow::MainWindow()
     settings.endGroup();
     // dernier fichier chargé
     settings.beginGroup("fichiers");
-    fichier = settings.value("fichier").toString();
+    fichier = settings.value("fichier", "").toString();
     if (!fichier.isEmpty())
     {
         ouvrir(fichier);
@@ -407,8 +407,6 @@ MainWindow::MainWindow()
 
     peuple();
     connecte();
-    // initialiser le nom du fichier analysé
-    fichier.clear();
 }
 
 /*
@@ -637,6 +635,9 @@ void MainWindow::connecte()
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
     connect(bAjIrr, SIGNAL(clicked()), this, SLOT(ajIrr()));
     connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
+    // modules lexicaux
+    connect(pushButtonCreeM, SIGNAL(clicked()), this, SLOT(creerM()));
+
 }
 
 void MainWindow::ajIrr()
@@ -670,6 +671,9 @@ void MainWindow::creerM()
 {
     QString nm = lineEditM->text().simplified();
     if (nm.isEmpty()) return;
+    // si le module existe déjà, erreur
+    // créer le répertoire + les fichiers lemmes.la et lemmes.fr
+    // avec leur nom en commentaire
 }
 
 void MainWindow::echec()
@@ -1166,6 +1170,12 @@ void MainWindow::peuple()
     iPers = 0;
     iTps = 0;
     iVx = 0;
+
+    // modules
+    // peupler la liste
+    QDir chModules(Ch::chemin("collatinus/", 'p'));
+    QStringList lm = chModules.entryList(QStringList() << "*", QDir::Dirs);
+    qDebug()<<"modules"<<lm;
 }
 
 /*
