@@ -527,6 +527,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     settings.setValue("geometry", saveGeometry());
     //settings.setValue("windowState", saveState());
     settings.endGroup();
+    settings.beginGroup("lexique");
+    settings.setValue("module", module);
     QMainWindow::closeEvent(event);
 }
 
@@ -1051,6 +1053,9 @@ void MainWindow::ouvrir(QString nf)
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
+    settings.endGroup();
+    settings.beginGroup("lexique");
+    module = settings.value("module", "data").toString();
     settings.endGroup();
 }
 
