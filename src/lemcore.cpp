@@ -51,17 +51,13 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
         _resDir = Ch::chemin("collatinus/data",'d');
         _ajDir = module;
     }
-    else
-    {
-        _resDir = resDir;
-        _ajDir = Ch::chemin("collatinus/data/", 'p');
-    }
+    else _resDir = resDir;
     if (!_resDir.endsWith('/')) _resDir.append('/');
-    if (!_ajDir.endsWith('/')) _ajDir.append('/');
-    _dirLa = _ajDir+"lemmes.la";
-    _dirFr = _ajDir+"lemmes.fr";
-    _dirIrr = _ajDir+"irregs.la";
-    _dirVg = _ajDir+"vargraph.la";
+    //if (!_ajDir.endsWith('/')) _ajDir.append('/');
+    //_dirLa = _ajDir+"lemmes.la";
+    //_dirFr = _ajDir+"lemmes.fr";
+    //_dirIrr = _ajDir+"irregs.la";
+    //_dirVg = _ajDir+"vargraph.la";
     // options
     _extension = false;
     _extLoaded = false;
@@ -90,12 +86,12 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-    lisVarGraph();
+    lisVarGraph(_resDir+"vargraph.la");
     lisModeles();
     lisLexique();
     lisTags(false);
     lisTraductions(true, false);
-    lisIrreguliers();
+    lisIrreguliers(_resDir+"irregs.la");
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values()) {
         QString t = l->traduction("fr");
@@ -103,6 +99,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
 #endif
 }
 
+/*
 QString LemCore::ajDir()
 {
     return _ajDir;
@@ -127,6 +124,7 @@ QString LemCore::dirVg()
 {
     return _dirVg;
 }
+*/
 
 /**
  * @brief LemCore::lisTags
@@ -747,7 +745,6 @@ MapLem LemCore::lemmatise(QString f)
             if (l->origin() != 1)
                 res[l] = result[l];
         }
-
         if (!res.isEmpty()) result = res;
     }
     // romains
@@ -1027,15 +1024,13 @@ QStringList LemCore::lemmes(MapLem lm)
 /**
  * \fn void LemCore::lisIrreguliers()
  * \brief Chargement des formes irrégulières
- *        des fichier data/irregs.la
- *        et _dirIrr
+ *        du fichier nf
+ *        
  */
-void LemCore::lisIrreguliers()
+void LemCore::lisIrreguliers(QString nf)
 {
-    QStringList lignes = lignesFichier("irregs.la");
-    lignes.append(lignesFichier(_dirIrr));
+    QStringList lignes = lignesFichier(nf);
     for (int i=0;i<lignes.count();++i)
-    //foreach (QString lin, lignes)
     {
         QString lin = lignes.at(i);
         Irreg *irr = new Irreg(lin, this);
@@ -1067,9 +1062,10 @@ void LemCore::lisIrreguliers()
  * \brief Lecture des lemmes, synthèse et enregistrement
  *        de leurs radicaux
  */
-void LemCore::lisFichierLexique(QString filepath)
+void LemCore::lisFichierLexique(QString filepath, int orig)
 {
-    int orig = 0;
+    // TODO : changer la définition de orig
+    //int orig = 0;
     if (filepath.endsWith("ext.la")) orig = 1;
     else if (filepath.contains(".local/share")) orig = 2;
     _listeLemmesLa = lignesFichier(filepath);
@@ -1103,9 +1099,9 @@ void LemCore::lisFichierLexique(QString filepath)
  * \fn void LemCore::lisLexique()
  * \brief Lecture du fichier de lemmes de base
  */
-void LemCore::lisLexique()
+void LemCore::lisLexique(int orig)
 {
-    lisFichierLexique(_resDir + "lemmes.la");
+    lisFichierLexique(_resDir + "lemmes.la", orig);
 }
 
 /**
@@ -1198,10 +1194,10 @@ void LemCore::lisTraductions(bool base, bool extension)
     }
 }
 
-void LemCore::lisTraductions(QString chemin)
+void LemCore::lisTraductions(QString nf)
 {
-    QStringList lignes = lignesFichier(chemin);
-    QString suff = QFileInfo(chemin).suffix();
+    QStringList lignes = lignesFichier(nf);
+    QString suff = QFileInfo(nf).suffix();
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
@@ -1210,10 +1206,10 @@ void LemCore::lisTraductions(QString chemin)
     }
 }
 
-void LemCore::lisVarGraph()
+void LemCore::lisVarGraph(QString nf)
 {
-    QStringList lignes = lignesFichier(_dirVg);
-    lignes.append(lignesFichier(_dirVg));
+    QStringList lignes = lignesFichier(nf);
+    _reglesVG.clear();
     for (int i=0;i<lignes.count();++i)
     {
         QString l = lignes.at(i);
@@ -1375,9 +1371,10 @@ void LemCore::setExtension(bool e)
 
 void LemCore::setModuleLex(QString s)
 {
-    lisFichierLexique(s);
-    s.replace(".la", ".fr");
-    lisTraductions(s);
+    lisFichierLexique(s+"lemmes.la");
+    lisTraductions(s+"lemmes.fr");
+    lisIrreguliers(s+"irregs.la");
+    lisVarGraph(s+"vargraph.la");
 }
 
 /**

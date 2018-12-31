@@ -66,15 +66,15 @@ class LemCore : public QObject
     // Pour avoir une liste d'abréviation éditable...
     void ajContractions();
     int  aRomano(QString f);
-    void lisIrreguliers();
-    void lisFichierLexique(QString filepath);
-    void lisLexique();
+    void lisIrreguliers(QString dir);
+    void lisFichierLexique(QString filepath, int orig=0);
+    void lisLexique(int orig=0);
     void lisExtension();
     void lisModeles();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
-    void lisTraductions(QString chemin);
-    void lisVarGraph();
+    void lisTraductions(QString nf);
+    void lisVarGraph(QString nf);
     QStringList _listeLemmesLa;
     // variables et utils
     QMap<QString, QString> assims;
@@ -109,10 +109,12 @@ class LemCore : public QObject
 
     QString _resDir;          // Le chemin du répertoire de ressources
     QString _ajDir;           // chemin du répertoire des ajouts personnels
+    /*
     QString          _dirLa;  // chemins des fichiers ajouts personnels
     QString          _dirFr;  //            "
     QString          _dirIrr; //            "
     QString          _dirVg;  //            "
+    */
     bool _extLoaded; // = true après chargement de l'extension
     // Lorsque j'ai chargé l'extension, je dois pouvoir ignorer les analyses qui en viennent.
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.

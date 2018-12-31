@@ -19,14 +19,22 @@
  */
 
 /*
+
+
    FIXME
+   - La regleVG -ti- ne peut s'appliquer à r+d si le radical 
+     se termine avant le -i de la désinence. Or la forme en -ti- 
+     est, quant à elle, tranformée, d'où échec.
    - lemmesuiv ->plantage
+   - édition de la forme canonique : plantage
    - choix de modèle pour un mot nouveau non copié de lem_ext : plantage
    - la forme au lieu du canon dans lemmes.fr
 
    TODO
+   - Changer dans lisFichierLexique la définition de origin (paramètre !);
+   - geler le programme pendant le rechargement des données, et afficher un
+     message d'attente.
    - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
-   - écrire la création d'un module, son chargement et déchargement
    - Création des paquets de distribution du module lexical. Utiliser zip:
      apt install libquazip5-1 : ziper et déziper
    - renommer Editcol Ecce.
@@ -651,7 +659,7 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
-    insereLigne(lin, dirIrr);
+    insereLigne(lin, ajDir+"irregs.la");
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -676,31 +684,43 @@ void MainWindow::creerM()
 {
     QString nm = lineEditM->text().simplified();
     if (nm.isEmpty()) return;
-    new QListWidgetItem(nm, listWidgetM);
     // si le module existe déjà, erreur
     // créer le répertoire + les fichiers lemmes.la et lemmes.fr
+    QString moduletmp = nm;
     nm.prepend(modDir);
     nm.append('/');
-    qDebug()<<"creeM"<<nm;
     if (!QFile::exists(nm))
     {
         QDir dir;
         dir.mkpath(nm);
     }
-    //QString nla = nm;
-    //nla.append("lemmes.la");
-    //qDebug()<<"nla"<<nla;
     // avec leur nom en commentaire
     QFile fm(nm+"lemmes.la");
-    fm.open(QFile::WriteOnly);
+    if (!fm.open(QFile::WriteOnly)) return;
     QTextStream(&fm) << "!    lemmes.la\n";
     fm.close();
     QFile ff(nm+"lemmes.fr");
-    ff.open(QFile::WriteOnly);
+    if (!ff.open(QFile::WriteOnly)) return;
     QTextStream(&ff) << "!    lemmes.fr\n";
     ff.close();
+    module = moduletmp;
     // affichage
+    new QListWidgetItem(module, listWidgetM);
     // décharger et recharger les données
+    delete lemcore; 
+    litems.clear();
+    delete completeur;
+    delete modele;
+    itemsIrr.clear();
+    listWidgetM->clear();
+    // sauver le nom du nouveau module
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("lexique");
+    settings.setValue("module", module);
+    settings.endGroup();
+    // recharger toutes les données
+    posFC = 0;
+    peuple();
 }
 
 void MainWindow::echec()
@@ -743,6 +763,7 @@ void MainWindow::echec()
                 flux >> cp;
                 post.append(cp);
             }
+            hist.remove('*');
             hist.replace(forme,"*"+forme+"*");
             labelContexte->setText(hist+post);
             lineEditLemme->setText(forme);
@@ -774,7 +795,6 @@ void MainWindow::echec()
         }
         forme.clear();
     }
-    //posFC = flux.pos();
     posFC = fluxpos;
 }
 
@@ -943,12 +963,12 @@ void MainWindow::enr()
 
 void MainWindow::enrFr(QString l)
 {
-    insereLigne(l, lemcore->ajDir() + "/lemmes.fr");
+    insereLigne(l, ajDir + "/lemmes.fr");
 }
 
 void MainWindow::enrLa(QString l)
 {
-    insereLigne(l, lemcore->ajDir()+"/lemmes.la");
+    insereLigne(l, ajDir+"/lemmes.la");
 }
 
 int MainWindow::indexOfInsert(QString s, QStringList l)
@@ -1131,19 +1151,19 @@ void MainWindow::peuple()
 {
     // définir d'abord les répertoires de l'appli
     // et le répertoire personnel, où sont les modules lexicaux
-    resDir = Ch::chemin("collatinus/data",'d');
+    resDir = Ch::chemin("collatinus/"+module,'d');
     // TODO : création, et QSettings pour module
     modDir = Ch::chemin("collatinus/", 'p');
     ajDir = modDir + module;
+    if (!ajDir.endsWith('/')) ajDir.append('/');
     lemcore = new LemCore(this, resDir, module);
     lemcore->setExtension(true);
-    lemcore->setModuleLex(lemcore->dirLa());
+    lemcore->setModuleLex(ajDir);
     flexion = new Flexion(lemcore);
     // chemins pour enregistrement sur fichier
-    dirLa = lemcore->dirLa();
-    dirFr = lemcore->dirFr();
-    dirIrr = lemcore->dirIrr();
-    dirVg = lemcore->dirVg();
+    //dirFr = lemcore->dirFr();
+    //dirIrr = lemcore->dirIrr();
+    //dirVg = lemcore->dirVg();
     //peupleAjLemmes();
     //peupleAjTr();
     //peupleAjIrr();
@@ -1162,14 +1182,14 @@ void MainWindow::peuple()
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
     // irréguliers
-    itemsIrr = lisLignes("data/irregs.la", true);
+    itemsIrr = lisLignes(module+"/irregs.la", true);
     for (int i=0;i<itemsIrr.count();++i)
     {
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
     }
     // morphos
     lMorphos.clear();
-    QStringList listeM = lemcore->lignesFichier("data/morphos.fr");
+    QStringList listeM = lemcore->lignesFichier(module+"/morphos.fr");
     for (int i=0;i<listeM.count();++i)
     {
         QString lin = listeM.at(i).simplified();
@@ -1177,7 +1197,7 @@ void MainWindow::peuple()
         lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
     }
     // variantes graphiques
-    lvarGraph = lemcore->lignesFichier("data/vargraph.la");
+    lvarGraph = lemcore->lignesFichier(module+"/vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
@@ -1202,7 +1222,6 @@ void MainWindow::peuple()
     // peupler la liste
     QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
-    qDebug()<<"modules"<<lm;
     for (int i=0;i<lm.count();++i)
     {
         new QListWidgetItem(lm.at(i), listWidgetM);
@@ -1376,8 +1395,8 @@ void MainWindow::supprLa()
     QString cle = lemme->cle();
     // litems
     litems.removeAt(litems.indexOf(cle));
-    suppr(ligneLa(), lemcore->ajDir()+"/lemmes.la");
-    suppr(ligneFr(), lemcore->ajDir()+"/lemmes.fr");
+    suppr(ligneLa(), ajDir+"/lemmes.la");
+    suppr(ligneFr(), ajDir+"/lemmes.fr");
 }
 
 void MainWindow::supprIrr()

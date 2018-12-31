@@ -271,10 +271,8 @@ class MainWindow : public QMainWindow
         QString           module;
         QString           modDir;
         // chemins d'enregistrement chez l'utilisateur
-        QString           dirLa;
-        QString           dirFr;
-        QString           dirIrr;
-        QString           dirVg;
+        //QString           dirIrr;
+        //QString           dirVg;
         QFile             fCorpus;
         QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
