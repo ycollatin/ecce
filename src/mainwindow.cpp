@@ -31,7 +31,8 @@
    - la forme au lieu du canon dans lemmes.fr
 
    TODO
-   - Changer dans lisFichierLexique la définition de origin (paramètre !);
+   - Examiner la politique des chemins : comment répartir leur calcul entre
+     la classe LemCore et le programme qui l'utilise ?
    - geler le programme pendant le rechargement des données, et afficher un
      message d'attente.
    - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
@@ -45,7 +46,8 @@
  */
 
 #include <QFileDialog>
-#include <QVector>
+//#include <QVector>
+//#include <quazip/quazip.h>
 #include <mainwindow.h>
 
 MainWindow::MainWindow()
@@ -758,7 +760,7 @@ void MainWindow::echec()
             fluxpos = flux.pos();
             post.clear();
             QChar cp;
-            for (int i=0;i<100||flux.atEnd();++i)
+            for (int i=0;i<100 && !flux.atEnd();++i)
             {
                 flux >> cp;
                 post.append(cp);
@@ -782,7 +784,7 @@ void MainWindow::echec()
                 fluxpos = flux.pos();
                 post.clear();
                 QChar cp;
-                for (int i=0;i<100||flux.atEnd();++i)
+                for (int i=0;i<100 && !flux.atEnd();++i)
                 {
                     flux >> cp;
                     post.append(cp);
