@@ -22,15 +22,15 @@
 
 
    FIXME
-   - La regleVG -ti- ne peut s'appliquer à r+d si le radical 
-     se termine avant le -i de la désinence. Or la forme en -ti- 
-     est, quant à elle, tranformée, d'où échec.
-   - lemmesuiv ->plantage
    - édition de la forme canonique : plantage
    - choix de modèle pour un mot nouveau non copié de lem_ext : plantage
    - la forme au lieu du canon dans lemmes.fr
 
    TODO
+   - Il faut recalculer *tous* les radicaux lors d'un changement de module !
+     Donc, appeler directement le module à la création si QSettins le donne !
+   - nom du fichier, et du module en tête de hist.
+   - prendre les données dans LemCore plutôt que dans les fichiers.
    - Examiner la politique des chemins : comment répartir leur calcul entre
      la classe LemCore et le programme qui l'utilise ?
    - geler le programme pendant le rechargement des données, et afficher un

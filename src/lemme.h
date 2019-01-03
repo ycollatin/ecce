@@ -40,7 +40,7 @@ class Modele;
 
 class Radical : public QObject
 {
-    Q_OBJECT
+   Q_OBJECT
 
    private:
     QString _gr;

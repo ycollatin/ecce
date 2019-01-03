@@ -29,7 +29,7 @@
  * \brief Créateur de la classe Radical. g est la forme
  *        canonique avec ses quantités, n est le numéro du radical
  */
-Radical::Radical(QString g, int n, QObject *parent)
+Radical::Radical(QString g, int n, QObject *parent) 
 {
     _lemme = qobject_cast<Lemme *>(parent);
     _grq = Ch::communes(g);
