@@ -509,7 +509,7 @@ void LemCore::ajRadicaux(Lemme *l)
 
 /**
  * \fn void LemCore::rmRadicaux(Lemme* l)
- * \brief tous les radicaux du lemme l sont 
+ * \brief tous les radicaux du lemme l sont
  *        supprimés du QMultiMap _radicaux;
  */
 void LemCore::rmRadicaux(Lemme* l)
@@ -1019,7 +1019,7 @@ QStringList LemCore::lemmes(MapLem lm)
  * \fn void LemCore::lisIrreguliers()
  * \brief Chargement des formes irrégulières
  *        du fichier nf
- *        
+ *
  */
 void LemCore::lisIrreguliers(QString nf)
 {
@@ -1501,6 +1501,13 @@ QString LemCore::tag(Lemme *l, int m)
 int LemCore::tagOcc(QString t)
 {
     return _tagOcc[t];
+}
+
+QString LemCore::vg(QString c)
+{
+    for (int i=0;i<_reglesVG.count();++i)
+        c = _reglesVG.at(i)->transf(c);
+    return c;
 }
 
 /*

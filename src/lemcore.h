@@ -181,6 +181,7 @@ class LemCore : public QObject
     QString                tag(Lemme *l, int m);
     int                    tagOcc(QString t);
     int                    trigram(QString seq);
+    QString                vg(QString c);
 
    public slots:
     void                   setExtension(bool e);

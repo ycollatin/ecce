@@ -155,7 +155,7 @@ MainWindow::MainWindow()
     horizontalLayout_3->addWidget(boutonEnr);
     boutonSuppr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonSuppr);
-    boutonLemSuiv = new QPushButton(frame1); 
+    boutonLemSuiv = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonLemSuiv);
     verticalLayout_2->addLayout(horizontalLayout_3);
     textEditFlexion = new QTextEdit(frame1);
@@ -609,7 +609,7 @@ void MainWindow::connecte()
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
-    connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv())); 
+    connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     connect(actionEchecSuiv, SIGNAL(triggered()), this, SLOT(echec()));
@@ -709,7 +709,7 @@ void MainWindow::creerM()
     // affichage
     new QListWidgetItem(module, listWidgetM);
     // décharger et recharger les données
-    delete lemcore; 
+    delete lemcore;
     litems.clear();
     delete completeur;
     delete modele;
