@@ -27,8 +27,8 @@
    - la forme au lieu du canon dans lemmes.fr
 
    TODO
-   - Il faut recalculer *tous* les radicaux lors d'un changement de module !
-     Donc, appeler directement le module à la création si QSettins le donne !
+   - Charger dans l'ordre le module, lemmes et lem_ext : si le lemme existe
+     déjà, continuer.
    - nom du fichier, et du module en tête de hist.
    - prendre les données dans LemCore plutôt que dans les fichiers.
    - Examiner la politique des chemins : comment répartir leur calcul entre
@@ -777,7 +777,7 @@ void MainWindow::echec()
             for (int i=0;i<ml.keys().count();++i)
             {
                 Lemme* l = ml.keys().at(i);
-                arret = arret && l->origin() == 1;
+                arret = arret && l->origin() == 3;
             }
             if (arret)
             {
@@ -830,7 +830,7 @@ void MainWindow::edLem(QString l)
     else
     {
         if (lemme == 0) lemme = lemcore->lemme(l);
-        if (lemme != 0 && lemme->origin() > 0)
+        if (lemme != 0 && lemme->origin() == 3)
             boutonEnr->setText("enregistrer (de lem_ext)");
         else boutonEnr->setText("enregistrer");
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
@@ -937,7 +937,7 @@ void MainWindow::enr()
         .arg(lc)
         .arg(ltr);
     Lemme* lem = lemcore->lemme(lc);
-    if (lem == 0 || lem->origin() > 0)
+    if (lem == 0 || lem->origin() == 3)
     {
         lem = nLemme;
         // ajouter le lemme à la map _lemmes
@@ -1158,18 +1158,9 @@ void MainWindow::peuple()
     modDir = Ch::chemin("collatinus/", 'p');
     ajDir = modDir + module;
     if (!ajDir.endsWith('/')) ajDir.append('/');
-    lemcore = new LemCore(this, resDir, module);
+    lemcore = new LemCore(this, resDir, ajDir);
     lemcore->setExtension(true);
-    lemcore->setModuleLex(ajDir);
     flexion = new Flexion(lemcore);
-    // chemins pour enregistrement sur fichier
-    //dirFr = lemcore->dirFr();
-    //dirIrr = lemcore->dirIrr();
-    //dirVg = lemcore->dirVg();
-    //peupleAjLemmes();
-    //peupleAjTr();
-    //peupleAjIrr();
-    //peupleAjVg();
     // lemmes
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
@@ -1229,41 +1220,6 @@ void MainWindow::peuple()
         new QListWidgetItem(lm.at(i), listWidgetM);
     }
 }
-
-/*
-void MainWindow::peupleAjLemmes()
-{
-    QStringList ll = lisLignes(dirLa, true);
-    for (int i=0;i<ll.count();++i)
-    {
-        Lemme *l = new Lemme(ll.at(i),2, lemcore);
-        Lemme *lc = lemcore->lemme(l->cle());
-        if (lc != 0)
-            lemcore->remplaceLemme(lc, l);
-        else lemcore->ajLemme(l);
-    }
-}
-
-void MainWindow::peupleAjTr()
-{
-    QStringList ll = lisLignes(dirFr, true);
-    for (int i=0;i<ll.count();++i)
-    {
-        QString lin = ll.at(i);
-        Lemme *l = lemcore->lemme(lin.section(':',0,0));
-        if (l != 0)
-            l->ajTrad(lin.section(':',1), "fr");
-    }
-}
-
-void MainWindow::peupleAjIrr()
-{
-}
-
-void MainWindow::peupleAjVg()
-{
-}
-*/
 
 void MainWindow::rotQ()
 {

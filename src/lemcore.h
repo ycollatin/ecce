@@ -120,7 +120,7 @@ class LemCore : public QObject
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.
 
    public:
-    LemCore(QObject *parent = 0, QString resDir="", QString module="data");
+    LemCore(QObject *parent = 0, QString resDir="", QString ajDir="");
     void                   ajDesinence(Desinence *d);
     QString                ajDir();  // accesseurs chemins
     QString                dirLa();  //     " ...
@@ -150,6 +150,7 @@ class LemCore : public QObject
     QStringList            lemmes(MapLem ml);
     // Lit les lignes d'un fichier. Est devenu public.
     QStringList            lignesFichier(QString nf);
+    void                   lisModule();
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
     QStringList            listeLemmesLa();
@@ -169,7 +170,6 @@ class LemCore : public QObject
     QString                modes(int i);
     QString                nombre(int i);
     void                   remplaceLemme(Lemme* l);
-    void                   rmRadicaux(Lemme* l);
     QString                temps(int i);
     QString                voix(int i);
 
@@ -185,7 +185,6 @@ class LemCore : public QObject
 
    public slots:
     void                   setExtension(bool e);
-    void                   setModuleLex(QString m);
 };
 
 #endif // LEMCORE_H

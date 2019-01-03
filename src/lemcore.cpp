@@ -32,7 +32,7 @@
 #include <QDebug>
 
 // #include <QElapsedTimer>
-#define DEBOG
+// #define DEBOG
 // #define VERIF_TRAD
 
 /**
@@ -44,21 +44,19 @@
  * de lecture des données : modèles, lexique,
  * traductions et irréguliers.
  */
-LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(parent)
+LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(parent)
 {
     if (resDir.isEmpty())
     {
         _resDir = Ch::chemin("collatinus/data",'d');
-        _ajDir = module;
+        if (!_resDir.endsWith('/')) _resDir.append('/');
     }
     else _resDir = resDir;
-    if (!_resDir.endsWith('/')) _resDir.append('/');
-    //if (!_ajDir.endsWith('/')) _ajDir.append('/');
-    //_dirLa = _ajDir+"lemmes.la";
-    //_dirFr = _ajDir+"lemmes.fr";
-    //_dirIrr = _ajDir+"irregs.la";
-    //_dirVg = _ajDir+"vargraph.la";
-    // options
+    if (!ajDir.isEmpty())
+    {
+        _ajDir = ajDir;
+        if (!_ajDir.endsWith('/')) _ajDir.append('/');
+    }
     _extension = false;
     _extLoaded = false;
     _nbrLoaded = false;
@@ -86,11 +84,13 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-    lisVarGraph(_resDir+"vargraph.la");
+    lisVarGraph(_ajDir+"vargraph.la");
     lisModeles();
-    lisLexique(0);
+    lisModule(); 
+    lisLexique(1);
     lisTags(false);
     lisTraductions(true, false);
+    if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
     lisIrreguliers(_resDir+"irregs.la");
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values()) {
@@ -98,33 +98,6 @@ LemCore::LemCore(QObject *parent, QString resDir, QString module) : QObject(pare
     }
 #endif
 }
-
-/*
-QString LemCore::ajDir()
-{
-    return _ajDir;
-}
-
-QString LemCore::dirLa()
-{
-    return _dirLa;
-}
-
-QString LemCore::dirFr()
-{
-    return _dirFr;
-}
-
-QString LemCore::dirIrr()
-{
-    return _dirIrr;
-}
-
-QString LemCore::dirVg()
-{
-    return _dirVg;
-}
-*/
 
 /**
  * @brief LemCore::lisTags
@@ -417,15 +390,9 @@ int LemCore::aRomano(QString f)
  */
 void LemCore::ajDesinence(Desinence *d)
 {
-    QString gr = d->gr();
-    //bool excl = false;
-    for (int i=0;i<_reglesVG.count();++i)
-    {
-        RegleVG *r = _reglesVG.at(i);
-        gr = r->transf(gr);
-        //excl = excl || r->excl();
-    }
-    _desinences.insert(Ch::deramise(gr), d);
+    QString gr = Ch::deramise(d->gr());
+    gr = vg(gr);
+    _desinences.insert(gr, d);
 }
 
 bool LemCore::estRomain(QString f)
@@ -444,8 +411,6 @@ bool LemCore::estRomain(QString f)
  */
 void LemCore::ajRadicaux(Lemme *l)
 {
-    bool debog = l->cle()=="Aegyptus";
-    if (debog) qDebug()<<"ajRadicaux"<<l->cle()<<l->origin();
     // ablŭo=ā̆blŭo|lego|ā̆blŭ|ā̆blūt|is, ere, lui, lutum
     //      0        1    2    3         4
     Modele *m = modele(l->grModele());
@@ -456,14 +421,7 @@ void LemCore::ajRadicaux(Lemme *l)
         QList<Radical *> lr = l->radical(i);
         foreach (Radical *r, lr)
         {
-            QString gr = r->gr();
-            //bool excl = false;
-            for (int i=0;i<_reglesVG.count();++i)
-            {
-                RegleVG *regle = _reglesVG.at(i);
-                gr = regle->transf(gr);
-                //excl = excl || regle->excl();
-            }
+            QString gr = vg(r->gr());
             _radicaux.insert(Ch::deramise(gr), r);
         }
     }
@@ -493,33 +451,10 @@ void LemCore::ajRadicaux(Lemme *l)
                 }
             }
             l->ajRadical(i, r);
-            QString gr = r->gr();
-            if (debog) qDebug()<<"gr avant"<<gr<<_reglesVG.count()<<"règles";
-            for (int i=0;i<_reglesVG.count();++i)
-            {
-                RegleVG *regle = _reglesVG.at(i);
-                gr = regle->transf(gr);
-                //excl = excl || regle->excl();
-            }
-            if (debog) qDebug()<<"gr"<<gr;
-            _radicaux.insert(Ch::deramise(gr), r);
+            QString gr = Ch::deramise(r->gr());
+            gr = vg(gr);
+            _radicaux.insert(gr, r);
         }
-    }
-}
-
-/**
- * \fn void LemCore::rmRadicaux(Lemme* l)
- * \brief tous les radicaux du lemme l sont
- *        supprimés du QMultiMap _radicaux;
- */
-void LemCore::rmRadicaux(Lemme* l)
-{
-    QList<Radical*> lr = l->radicaux();
-    for (int i=0;i<lr.count();++i)
-    {
-        Radical* r = lr.at(i);
-        QMap<QString,Radical*>::iterator it = _radicaux.find(r->gr(), r);
-        if (it != _radicaux.end()) _radicaux.erase(it);
     }
 }
 
@@ -822,11 +757,7 @@ bool LemCore::inv(Lemme *l, const MapLem ml)
 MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
     // appliquer les règles de variante graphique
-    for (int i=0;i<_reglesVG.count();++i)
-    {
-        RegleVG *regle = _reglesVG.at(i);
-        f = regle->transf(f);
-    }
+    f = Ch::deramise(vg(f));
     MapLem mm;
     //QString fVar = transfVG(f);
     //bool var = f != fVar;
@@ -1030,17 +961,9 @@ void LemCore::lisIrreguliers(QString nf)
         Irreg *irr = new Irreg(lin, this);
         if (irr != 0 && irr->lemme() != 0)
         {
-            QString gr = irr->gr();
-            //bool excl = false;
-            for (int i=0;i<_reglesVG.count();++i)
-            {
-                RegleVG *r = _reglesVG.at(i);
-                gr = r->transf(gr);
-                //excl = excl || r->excl();
-            }
-            //if (!excl) _irregs.insert(Ch::deramise(irr->gr()), irr);
-            //else if (gr != irr->gr()) _irregs.insert(Ch::deramise(gr), irr);
-            _irregs.insert(Ch::deramise(gr), irr);
+            QString gr = Ch::deramise(irr->gr());
+            gr = vg(gr);
+            _irregs.insert(gr, irr);
         }
 #ifdef DEBOG
         else
@@ -1072,16 +995,8 @@ void LemCore::lisFichierLexique(QString filepath, int orig)
         Lemme* dl = lemme(k);
         if (dl != 0)
         {
-            if (dl->origin() < orig)
-            {
-                rmRadicaux(dl);
-                delete dl; dl = 0;
-                Lemme* l = new Lemme(lin, orig, this, k);
-                _lemmes.insert(l->cle(), l);
-            }
 #ifdef DEBOG
-            else if (dl->origin() == orig)
-                std::cerr << qPrintable(k)<<" "<<orig<<" doublon\n";
+            std::cerr << qPrintable(k)<<" "<<orig<<" doublon\n";
 #endif
         }
         else
@@ -1107,7 +1022,7 @@ void LemCore::lisLexique(int orig)
  */
 void LemCore::lisExtension()
 {
-    lisFichierLexique(_resDir + "lem_ext.la", 1);
+    lisFichierLexique(_resDir + "lem_ext.la", 3);
 }
 
 /**
@@ -1362,12 +1277,12 @@ void LemCore::setExtension(bool e)
     }
 }
 
-void LemCore::setModuleLex(QString s)
+void LemCore::lisModule()
 {
-    lisVarGraph(s+"vargraph.la");
-    lisFichierLexique(s+"lemmes.la", 2);
-    lisTraductions(s+"lemmes.fr");
-    lisIrreguliers(s+"irregs.la");
+    lisVarGraph(_ajDir+"vargraph.la");
+    lisFichierLexique(_ajDir+"lemmes.la", 0);
+    lisTraductions(_ajDir+"lemmes.fr");
+    // lisIrreguliers sera appelé en dernier
 }
 
 /**
@@ -1402,27 +1317,6 @@ void LemCore::remplaceLemme(Lemme* l)
 {
     _lemmes[l->cle()] = l;
 }
-
-/*
-QString LemCore::transfVarGraph(QString s, bool rad)
-{
-    if (s.isEmpty()) return s;
-    bool maj = s.at(0).isUpper();
-    s = s.toLower();
-    for (int i=0;i<_reglesVG.count();++i)
-    {
-        RegleVG *r = _reglesVG.at(i);
-        if (!r->excl()) s.replace(r->a(), r->b());
-        else if (rad)
-        {
-            QString rs = r->b();
-            s.replace(r->a(), rs);
-        }
-    }
-    if (maj) s[0] = s[0].toUpper();
-    return s;
-}
-*/
 
 /**
  * @brief LemCore::tag
