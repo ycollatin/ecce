@@ -421,6 +421,7 @@ void LemCore::ajRadicaux(Lemme *l)
         QList<Radical *> lr = l->radical(i);
         foreach (Radical *r, lr)
         {
+            if (r == 0) continue;
             QString gr = vg(r->gr());
             _radicaux.insert(Ch::deramise(gr), r);
         }
