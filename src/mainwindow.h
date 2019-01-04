@@ -292,10 +292,9 @@ class MainWindow : public QMainWindow
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l="");
         void        enr();
-        void        enrFr(QString l);
-        void        enrLa(QString l);
+        //void        enrFr(QString l);
+        //void        enrLa(QString l);
         void        enrVar();
-        int         indexOfInsert(QString s, QStringList l);
         void        insereLigne(QString l, QString f);
         void        lemSuiv();
         QString     ligneLa(QString modl="");

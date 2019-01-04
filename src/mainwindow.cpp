@@ -22,17 +22,12 @@
 
 
    FIXME
-   - édition de la forme canonique : plantage
-   - choix de modèle pour un mot nouveau non copié de lem_ext : plantage
-   - la forme au lieu du canon dans lemmes.fr
+   - échecs : christus, sitiens
+   - choix du modèle par clavier : plantage
 
    TODO
-   - Charger dans l'ordre le module, lemmes et lem_ext : si le lemme existe
-     déjà, continuer.
    - nom du fichier, et du module en tête de hist.
-   - prendre les données dans LemCore plutôt que dans les fichiers.
-   - Examiner la politique des chemins : comment répartir leur calcul entre
-     la classe LemCore et le programme qui l'utilise ?
+   - prendre les listes dans LemCore plutôt que dans les fichiers.
    - geler le programme pendant le rechargement des données, et afficher un
      message d'attente.
    - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
@@ -832,7 +827,11 @@ void MainWindow::edLem(QString l)
         if (lemme == 0) lemme = lemcore->lemme(l);
         if (lemme != 0 && lemme->origin() == 3)
             boutonEnr->setText("enregistrer (de lem_ext)");
-        else boutonEnr->setText("enregistrer");
+        else
+        {
+            boutonEnr->setText("enregistrer");
+            return;
+        }
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
@@ -929,6 +928,7 @@ void MainWindow::edLem(QString l)
 
 void MainWindow::enr()
 {
+    if (nLemme == 0) return;
     // radicaux et morphologie
     QString lc = lineEditLemme->text();
     QString linLa = ligneLa();
@@ -936,33 +936,34 @@ void MainWindow::enr()
     QString linFr = QString("%1:%2")
         .arg(lc)
         .arg(ltr);
-    Lemme* lem = lemcore->lemme(lc);
-    if (lem == 0 || lem->origin() == 3)
-    {
-        lem = nLemme;
+    //Lemme* lem = lemcore->lemme(lc);
+    //if (lem == 0 || lem->origin() == 3)
+    //{
+    //    lem = nLemme;
         // ajouter le lemme à la map _lemmes
-        lemcore->ajLemme(lem);
         // màj des clés et des lignes à enregistrer
         // latin
-        enrLa(linLa);
+        //enrLa(linLa);
+        insereLigne(linLa, ajDir+"/lemmes.la");
         // français
-        enrFr(linFr);
+        //enrFr(linFr);
+        insereLigne(linFr, ajDir + "/lemmes.fr");
         // màj du compléteur
         litems.append(lc);
         modele = new QStringListModel(litems);
         modele->setStringList(litems);
         completeur->setModel(modele);
-        return;
-    }
-    if (nLemme == 0) return;
-    if (lemme != 0 && nLemme != 0)
+        //return;
+    //}
+    if (lemme != 0)
     {
         lemcore->remplaceLemme(lemme, nLemme);
         lemme = nLemme;
     }
-    QString tr = lem->traduction("fr");
+    else lemcore->ajLemme(nLemme);
 }
 
+/*
 void MainWindow::enrFr(QString l)
 {
     insereLigne(l, ajDir + "/lemmes.fr");
@@ -972,21 +973,7 @@ void MainWindow::enrLa(QString l)
 {
     insereLigne(l, ajDir+"/lemmes.la");
 }
-
-int MainWindow::indexOfInsert(QString s, QStringList l)
-{
-    s = s.toLower();
-    for (int i=0;i<l.count();++i)
-    {
-        QString lin = l.at(i);
-		if (lin.startsWith("!")) continue;
-        lin = Ch::atone(lin).toLower();
-        if (lin >= s)
-            return i;
-    }
-    return l.count();
-}
-
+*/
 
 void MainWindow::insereLigne(QString l, QString f)
 {
@@ -998,7 +985,7 @@ void MainWindow::insereLigne(QString l, QString f)
         int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
         if (c == 0)
         {
-            std::cerr << qPrintable(l+" est un doublon dans "+f);
+            std::cerr << qPrintable(l+" est un doublon dans "+f+"\n");
             break;
         }
         else if (c > 0)
@@ -1032,8 +1019,16 @@ QString MainWindow::ligneLa(QString modl)
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
     QString grq = lineEditGrq->text();
     if (grq.isEmpty()) return "";
-    QChar d = Ch::der(grq);
-    if (d.isDigit()) grq.append(d);
+    //QChar d = Ch::der(grq);
+    QString lel = lineEditLemme->text().simplified();
+    if (lel.isEmpty()) return "";
+    QChar d = Ch::der(lel);
+    if (d.isDigit())
+    {
+        int p = grq.indexOf('=');
+        if (p < 0) grq.append(d);
+        else grq.insert(p, d);
+    }
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
     QString ret = gabaritLa
@@ -1043,8 +1038,8 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    nLemme = new Lemme(ret, 0, lemcore);
-    nLemme->setCle(lineEditLemme->text());
+    nLemme = new Lemme(ret, 0, lemcore, lineEditLemme->text());
+    //nLemme->setCle(lineEditLemme->text());
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
 }
