@@ -22,7 +22,7 @@
 
 
    FIXME
-   - échecs : christus, sitiens
+   - plantage : "Agonizat"
    - choix du modèle par clavier : plantage
 
    TODO
