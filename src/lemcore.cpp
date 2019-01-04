@@ -760,7 +760,6 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     // appliquer les règles de variante graphique
     f = Ch::deramise(vg(f));
     MapLem mm;
-    //QString fVar = transfVG(f);
     //bool var = f != fVar;
     if (f.isEmpty()) return mm;
     if ((etape > 3) || (etape <0)) // Condition terminale
@@ -774,6 +773,14 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
             {
                 mm.insert(nl, nmm.value(nl));
             }
+            // cas des mots entièrement en majuscules
+            nf[0] = nf[0].toUpper();
+            nmm = lemmatise(vg(nf));
+            for (int i=0;i<nmm.count();++i)
+            {
+                Lemme* nl = nmm.keys().at(i);
+                mm.insert(nl, nmm.value(nl));
+            }
         }
         return mm;
     }
@@ -783,113 +790,113 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     QString fd; // On ne peut pas créer une variable QString à l'intérieur d'un switch.
     switch (etape)
     { // ensuite diverses manipulations sur la forme
-    case 3:
-        // contractions
-        fd = f;
-        foreach (QString cle, _contractions.keys())
-            if (fd.endsWith(cle))
+        case 3:
+            // contractions
+            fd = f;
+            foreach (QString cle, _contractions.keys())
+                if (fd.endsWith(cle))
+                {
+                    fd.chop(cle.length());
+                    if ((fd.contains("v") || fd.contains("V")))
+                        fd.append(_contractions.value(cle));
+                    else
+                        fd.append(Ch::deramise(_contractions.value(cle)));
+                    MapLem nmm = lemmatiseM(fd, debPhr, 4);
+                    foreach (Lemme *nl, nmm.keys())
+                    {
+                        int diff = _contractions.value(cle).size() - cle.size();
+                        // nombre de lettres que je dois supprimer
+                        for (int i = 0; i < nmm[nl].count(); ++i)
+                        {
+                            int position = f.size() - cle.size() + 1;
+                            // position de la 1ère lettre à supprimer
+                            if (fd.size() != nmm[nl][i].grq.size())
+                            {
+                                // il y a une (ou des) voyelle(s) commune(s)
+                                QString debut = nmm[nl][i].grq.left(position + 2);
+                                position += debut.count("\u0306"); // Faut-il vérifier que je suis sur le "v".
+                            }
+                            nmm[nl][i].grq = nmm[nl][i].grq.remove(position, diff);
+                        }
+                        mm.insert(nl, nmm.value(nl));
+                    }
+                }
+            break;
+        case 2:
+            // Assimilation du préfixe
+            fd = assim(f);
+            if (fd != f)
             {
-                fd.chop(cle.length());
-                if ((fd.contains("v") || fd.contains("V")))
-                    fd.append(_contractions.value(cle));
-                else
-                    fd.append(Ch::deramise(_contractions.value(cle)));
-                MapLem nmm = lemmatiseM(fd, debPhr, 4);
+                MapLem nmm = lemmatiseM(fd, debPhr, 3);
+                // désassimiler les résultats
                 foreach (Lemme *nl, nmm.keys())
                 {
-                    int diff = _contractions.value(cle).size() - cle.size();
-                    // nombre de lettres que je dois supprimer
                     for (int i = 0; i < nmm[nl].count(); ++i)
-                    {
-                        int position = f.size() - cle.size() + 1;
-                        // position de la 1ère lettre à supprimer
-                        if (fd.size() != nmm[nl][i].grq.size())
-                        {
-                            // il y a une (ou des) voyelle(s) commune(s)
-                            QString debut = nmm[nl][i].grq.left(position + 2);
-                            position += debut.count("\u0306"); // Faut-il vérifier que je suis sur le "v".
-                        }
-                        nmm[nl][i].grq = nmm[nl][i].grq.remove(position, diff);
-                    }
+                        nmm[nl][i].grq = desassimq(nmm[nl][i].grq);
                     mm.insert(nl, nmm.value(nl));
                 }
+                return mm;
             }
-        break;
-    case 2:
-        // Assimilation du préfixe
-        fd = assim(f);
-        if (fd != f)
-        {
-            MapLem nmm = lemmatiseM(fd, debPhr, 3);
-            // désassimiler les résultats
-            foreach (Lemme *nl, nmm.keys())
+            fd = desassim(f);
+            if (fd != f)
             {
-                for (int i = 0; i < nmm[nl].count(); ++i)
-                    nmm[nl][i].grq = desassimq(nmm[nl][i].grq);
-                mm.insert(nl, nmm.value(nl));
-            }
-            return mm;
-        }
-        fd = desassim(f);
-        if (fd != f)
-        {
-            MapLem nmm = lemmatiseM(fd, debPhr, 3);
-            foreach (Lemme *nl, nmm.keys())
-            {
-                for (int i = 0; i < nmm[nl].count(); ++i)
-                    nmm[nl][i].grq = assimq(nmm[nl][i].grq);
-                mm.insert(nl, nmm.value(nl));
-            }
-            return mm;
-        }
-        break;
-    case 1:
-        // suffixes
-        if (mm.isEmpty())
-            // Je ne cherche une solution sufixée que si la forme entière
-            // n'a pas été lemmatisée.
-        foreach (QString suf, suffixes.keys())
-        {
-            if (mm.empty() && f.endsWith(suf))
-            {
-                QString sf = f;
-                sf.chop(suf.length());
-                // TODO : aequeque est la seule occurrence
-                // de -queque dans le corpus classique
-                mm = lemmatiseM(sf, debPhr, 1);
-                // L'appel est récursif car je peux avoir (rarement) plusieurs suffixes.
-                // L'exemple que j'ai trouvé au LASLA est "modoquest".
-                bool sst = false;
-                if (mm.isEmpty() && (suf == "st"))
-                { // Ce test mm.isEmpty() empêche la lemmatisation d'amatust
-                    // comme "amatus"+"st".
-                    sf += "s";
-                    mm = lemmatiseM(sf, debPhr, 1);
-                    sst = true;
-                }
-                foreach (Lemme *l, mm.keys())
+                MapLem nmm = lemmatiseM(fd, debPhr, 3);
+                foreach (Lemme *nl, nmm.keys())
                 {
-                    QList<SLem> ls = mm.value(l);
-                    for (int i = 0; i < ls.count(); ++i)
-                        if (sst) mm[l][i].sufq = "t";
-                        else mm[l][i].sufq += suffixes.value(suf); // Pour modoquest
-                    // TODO : corriger la longueur de la dernière voyelle si le suffixe est st.
-                    // Attention, elle peut être dans sufq, s'il n'est pas vide, ou dans grq.
+                    for (int i = 0; i < nmm[nl].count(); ++i)
+                        nmm[nl][i].grq = assimq(nmm[nl][i].grq);
+                    mm.insert(nl, nmm.value(nl));
                 }
+                return mm;
             }
-        }
-        break;
-    case 0:
-        // Pour les sauvages qui auraient ôté la majuscule initiale des noms propres.
-        if (mm.empty() && f[0].isLower())
-        { // À faire seulement si je n'ai pas de solution.
-            f[0] = f.at(0).toUpper();
-            return lemmatiseM(f, false, 1);
-            // Il n'est pas utile d'enlever la majuscule que je viens de mettre
-        }
-        break;
-    default:
-        break;
+            break;
+        case 1:
+            // suffixes
+            if (mm.isEmpty())
+                // Je ne cherche une solution sufixée que si la forme entière
+                // n'a pas été lemmatisée.
+                foreach (QString suf, suffixes.keys())
+                {
+                    if (mm.empty() && f.endsWith(suf))
+                    {
+                        QString sf = f;
+                        sf.chop(suf.length());
+                        // TODO : aequeque est la seule occurrence
+                        // de -queque dans le corpus classique
+                        mm = lemmatiseM(sf, debPhr, 1);
+                        // L'appel est récursif car je peux avoir (rarement) plusieurs suffixes.
+                        // L'exemple que j'ai trouvé au LASLA est "modoquest".
+                        bool sst = false;
+                        if (mm.isEmpty() && (suf == "st"))
+                        { // Ce test mm.isEmpty() empêche la lemmatisation d'amatust
+                            // comme "amatus"+"st".
+                            sf += "s";
+                            mm = lemmatiseM(sf, debPhr, 1);
+                            sst = true;
+                        }
+                        foreach (Lemme *l, mm.keys())
+                        {
+                            QList<SLem> ls = mm.value(l);
+                            for (int i = 0; i < ls.count(); ++i)
+                                if (sst) mm[l][i].sufq = "t";
+                                else mm[l][i].sufq += suffixes.value(suf); // Pour modoquest
+                            // TODO : corriger la longueur de la dernière voyelle si le suffixe est st.
+                            // Attention, elle peut être dans sufq, s'il n'est pas vide, ou dans grq.
+                        }
+                    }
+                }
+            break;
+        case 0:
+            // Pour les sauvages qui auraient ôté la majuscule initiale des noms propres.
+            if (mm.empty() && f[0].isLower())
+            { // À faire seulement si je n'ai pas de solution.
+                f[0] = f.at(0).toUpper();
+                return lemmatiseM(f, false, 1);
+                // Il n'est pas utile d'enlever la majuscule que je viens de mettre
+            }
+            break;
+        default:
+            break;
     }
     return mm;
 }
