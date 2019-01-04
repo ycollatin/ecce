@@ -486,9 +486,10 @@ QString Lemme::pos()
  * \fn QList<Radical*> Lemme::radical (int r)
  * \brief Renvoie le radical numéro r du lemme.
  */
-QList<Radical *> Lemme::radical(int r)
+QList<Radical*> Lemme::radical(int r)
 {
-    return _radicaux.value(r);
+    QList<Radical*> ret;
+    return _radicaux.value(r, ret);
 }
 
 QList<Radical*> Lemme::radicaux()
