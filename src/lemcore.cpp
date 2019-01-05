@@ -1233,7 +1233,8 @@ QString LemCore::motsClefs(int m)
     if (_motsClefs.keys().contains(_cible.mid(0,2))) l = _cible.mid(0,2);
     else if ((_cible.size() > 4) && (_motsClefs.keys().contains(_cible.mid(3,2))))
         l = _cible.mid(3,2);
-    return _motsClefs[l].at(m);
+    if (m < _motsClefs[l].count()) return _motsClefs[l].at(m);
+    return "introuvable";
 }
 
 /**
