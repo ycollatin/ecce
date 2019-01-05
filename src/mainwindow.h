@@ -73,7 +73,7 @@ class MainWindow : public QMainWindow
         QAction *actionDiff;
         QAction *actionEchecSuiv;
         QAction *actionOuvrir;
-        QAction *actionCopier;
+        //QAction *actionCopier;
 
         QWidget *centralWidget;
         QVBoxLayout *verticalLayout;
@@ -270,9 +270,6 @@ class MainWindow : public QMainWindow
         QString           ajDir;
         QString           module;
         QString           modDir;
-        // chemins d'enregistrement chez l'utilisateur
-        //QString           dirIrr;
-        //QString           dirVg;
         QFile             fCorpus;
         QStringList       itemsIrr;
         QMap<int,QString> lMorphos;
@@ -292,8 +289,6 @@ class MainWindow : public QMainWindow
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l="");
         void        enr();
-        //void        enrFr(QString l);
-        //void        enrLa(QString l);
         void        enrVar();
         void        insereLigne(QString l, QString f);
         void        lemSuiv();
@@ -314,6 +309,7 @@ class MainWindow : public QMainWindow
         void        suppr(QString l, QString f);
         void        supprLa();
         void        supprIrr();
+        void        supprM();
 };
 
 #endif

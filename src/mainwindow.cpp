@@ -22,10 +22,12 @@
 
 
    FIXME
-   - plantage : "Agonizat"
+   - ti/ci dans vargraph.la : provoque des échecs (martyr) et plantage !
+   - plantage aléatoire : "Agonizat"
    - choix du modèle par clavier : plantage
 
    TODO
+   - première utilisation : ouvrir l'onglet module, donner une marche à suivre.
    - nom du fichier, et du module en tête de hist.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
    - geler le programme pendant le rechargement des données, et afficher un
@@ -322,7 +324,6 @@ MainWindow::MainWindow()
     verticalLayoutLM->setContentsMargins(0, 0, 0, 0);
     labelM = new QLabel(widget);
     verticalLayoutLM->addWidget(labelM);
-    //listViewM = new QListView(widget);
     listWidgetM = new QListWidget(widget);
     verticalLayoutLM->addWidget(listWidgetM);
     splitterM->addWidget(widget);
@@ -387,7 +388,7 @@ MainWindow::MainWindow()
     fichier = settings.value("fichier", "").toString();
     settings.endGroup();
     settings.beginGroup("lexique");
-    module = settings.value("module", "data").toString();
+    module = settings.value("module", "").toString();
     if (!fichier.isEmpty())
     {
         ouvrir(fichier);
@@ -538,58 +539,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QMainWindow::closeEvent(event);
 }
 
-/*
-void MainWindow::copier()
-{
-
-	// vider data/
-    QDir folder("data");
-    folder.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
-	QFileInfoList entrees = folder.entryInfoList();
-    foreach(QFileInfo fileInfo, folder.entryInfoList())
-	    for (int i=0;i<entrees.count();++i)
-        {
-		    QFileInfo fileInfo = entrees.at(i);
-            if(fileInfo.isFile())
-            {
-                if(!QFile::remove(fileInfo.filePath()))
-                    continue;
-            }
-        }
-	// copie
-    QString nfc = QFileDialog::getExistingDirectory(this, "Collatinus - données à copier", "../");
-    if (nfc.isEmpty()) return;
-    QFile::copy(nfc+"/lemmes.la", "data/lemmes.la");
-    QFile::copy(nfc+"/lemmes.fr", "data/lemmes.fr");
-    QFile::copy(nfc+"/assimilations.la", "data/assimilations.la");
-    QFile::copy(nfc+"/contractions.la", "data/contractions.la");
-    QFile::copy(nfc+"/irregs.la", "data/irregs.la");
-    QFile::copy(nfc+"/modeles.la", "data/modeles.la");
-    QFile::copy(nfc+"/morphos.fr", "data/morphos.fr");
-    if (QFile::exists(nfc+"/vargraph.la"))
-        QFile::copy(nfc+"/vargraph.la", "data/vargraph.la");
-    else
-    {
-        QFile fv("data/vargraph.la");
-        fv.open(QFile::WriteOnly);
-        QTextStream flux(&fv);
-        flux << docVarGraph;
-        fv.close();
-    }
-
-    //
-    // réinitialiser
-    listeLemmesLa.clear();
-    listeLemmesFr.clear();
-    litems.clear();
-    lmodeles.clear();
-    comboBoxModele->clear();
-    delete lemcore;
-    delete completeur;
-    peuple();
-}
-*/
-
 void MainWindow::connecte()
 {
     // fichier
@@ -647,6 +596,7 @@ void MainWindow::connecte()
     connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
     // modules lexicaux
     connect(pushButtonCreeM, SIGNAL(clicked()), this, SLOT(creerM()));
+    connect(pushButtonSupprM, SIGNAL(clicked()), this, SLOT(supprM()));
 
 }
 
@@ -936,17 +886,9 @@ void MainWindow::enr()
     QString linFr = QString("%1:%2")
         .arg(lc)
         .arg(ltr);
-    //Lemme* lem = lemcore->lemme(lc);
-    //if (lem == 0 || lem->origin() == 3)
-    //{
-    //    lem = nLemme;
-        // ajouter le lemme à la map _lemmes
-        // màj des clés et des lignes à enregistrer
         // latin
-        //enrLa(linLa);
         insereLigne(linLa, ajDir+"/lemmes.la");
         // français
-        //enrFr(linFr);
         insereLigne(linFr, ajDir + "/lemmes.fr");
         // màj du compléteur
         litems.append(lc);
@@ -962,18 +904,6 @@ void MainWindow::enr()
     }
     else lemcore->ajLemme(nLemme);
 }
-
-/*
-void MainWindow::enrFr(QString l)
-{
-    insereLigne(l, ajDir + "/lemmes.fr");
-}
-
-void MainWindow::enrLa(QString l)
-{
-    insereLigne(l, ajDir+"/lemmes.la");
-}
-*/
 
 void MainWindow::insereLigne(QString l, QString f)
 {
@@ -1004,12 +934,16 @@ void MainWindow::insereLigne(QString l, QString f)
 
 void MainWindow::lemSuiv()
 {
+    //qDebug()<<"lemSuiv";
     ++iLemSuiv;
+    //qDebug()<<"   lemSuiv, iLemSuiv"<<iLemSuiv;
     if (iLemSuiv >= ml.keys().count())
         iLemSuiv = 0;
+    //qDebug()<<"   lemSuiv2, iLemSuiv"<<iLemSuiv;
     lemme = ml.keys().at(iLemSuiv);
+    //qDebug()<<"   lemSuiv3, cle"<<lemme->cle();
     lineEditLemme->setText(lemme->cle());
-    //labelContexte->setText(hist);
+    //qDebug()<<"   lemSuiv, fin";
 }
 
 QString MainWindow::ligneLa(QString modl)
@@ -1101,7 +1035,7 @@ void MainWindow::ouvrir(QString nf)
     settings.setValue("fichier", fichier);
     settings.endGroup();
     settings.beginGroup("lexique");
-    module = settings.value("module", "data").toString();
+    module = settings.value("module", "").toString();
     settings.endGroup();
 }
 
@@ -1149,10 +1083,20 @@ void MainWindow::peuple()
     // définir d'abord les répertoires de l'appli
     // et le répertoire personnel, où sont les modules lexicaux
     resDir = Ch::chemin("collatinus/"+module,'d');
+    if (!resDir.endsWith('/')) resDir.append('/');
     // TODO : création, et QSettings pour module
     modDir = Ch::chemin("collatinus/", 'p');
-    ajDir = modDir + module;
-    if (!ajDir.endsWith('/')) ajDir.append('/');
+    if (!modDir.endsWith('/')) modDir.append('/');
+    if (!module.isEmpty())
+    {
+        ajDir = modDir + module;
+        if (!ajDir.endsWith('/')) ajDir.append('/');
+    }
+    else
+    {
+        ajDir.clear();
+        tabWidget->setCurrentIndex(3);
+    }
     lemcore = new LemCore(this, resDir, ajDir);
     lemcore->setExtension(true);
     flexion = new Flexion(lemcore);
@@ -1359,4 +1303,13 @@ void MainWindow::supprIrr()
     {
         listWidgetIrr->removeItemWidget(liste.at(i));
     }
+}
+
+void MainWindow::supprM()
+{
+    QListWidgetItem* item = listWidgetM->currentItem();
+    QString nf = modDir + item->text();
+    qDebug()<<"supprM, nf"<<nf;
+    // QDir rep;
+    // rep.rmDir(nf); 
 }
