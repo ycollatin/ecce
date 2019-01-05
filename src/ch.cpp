@@ -134,7 +134,6 @@ QString Ch::chemin(QString f, char t)
         // si un data/ existe à côté de l'exécutable, le retourner
         QString adpd = qApp->applicationDirPath()+"/data/";
         if (QFile::exists(adpd)) return adpd;
-        //QString dir = QStandardPaths::locate(QStandardPaths::AppDataLocation,
         QString dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                              f, QStandardPaths::LocateDirectory);
         return dir;
@@ -142,7 +141,6 @@ QString Ch::chemin(QString f, char t)
     QString ret;
     if (t == 'p')
     {
-        //ret = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         ret = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
         if (!ret.endsWith('/')) ret.append('/');
         ret.append(f);
