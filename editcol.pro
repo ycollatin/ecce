@@ -21,6 +21,8 @@ OBJECTS_DIR= obj/
 MOC_DIR = moc/
 QMAKE_DISTCLEAN += $${DESTDIR}/editcol
 
+LIBS += -lquazip5
+
 # Input
 HEADERS += src/ch.h \
            src/flexion.h \
