@@ -197,10 +197,8 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonActM;
         QPushButton *pushButtonDesactM;
         QPushButton *pushButtonSupprM;
-        
         QPushButton *pushButtonPaquet;
         QPushButton *pushButtonInstM;
-
         QSpacerItem *verticalSpacerM;
         // menu et barrre d'état
         QMenuBar *menuBar;
@@ -233,7 +231,7 @@ class MainWindow : public QMainWindow
             "! Mais si \"ae\" devient toujours \"e\", on note :\n"
             "! ae>e\n"
             "!\n";
-        QString           fichier; 
+        QString           fichier;
         Flexion*          flexion;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         QString           hist;
@@ -268,7 +266,7 @@ class MainWindow : public QMainWindow
         int               iTps;
         QStringList       lVx;
         int               iVx;
-       
+
         // chemins
         QString           resDir;
         QString           ajDir;
@@ -308,10 +306,10 @@ class MainWindow : public QMainWindow
         void        siCas();
         void        siGenre();
         void        siMod();
-        void        siNb(); 
+        void        siNb();
         void        siPers();
         void        siTps();
-        void        siVx(); 
+        void        siVx();
         void        suppr(QString l, QString f);
         void        supprLa();
         void        supprIrr();

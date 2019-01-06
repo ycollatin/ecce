@@ -26,8 +26,10 @@
    - choix du modèle par clavier : plantage
 
    TODO
-   - implémenter la génération et l'installation de paquets;
-   - première utilisation : ouvrir l'onglet module, donner une marche à suivre.
+   - implémenter l'installation de paquets;
+   - ajouter un Label d'info sur la location des paquets (home et Download ?)
+   - première utilisation : ouvrir l'onglet module, donner une marche à
+     suivre dans le label d'info.
    - nom du fichier, et du module en tête de hist.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
    - geler le programme pendant le rechargement des données, et afficher un
@@ -44,7 +46,8 @@
 
 #include <QFileDialog>
 //#include <QVector>
-//#include <quazip/quazip.h>
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
 #include <mainwindow.h>
 
 MainWindow::MainWindow()
@@ -943,6 +946,7 @@ void MainWindow::insereLigne(QString l, QString f)
 
 void MainWindow::instM()
 {
+    qDebug()<<"instM";
 }
 
 void MainWindow::lemSuiv()
@@ -1093,6 +1097,33 @@ void MainWindow::majLinMorph()
 
 void MainWindow::paquet()
 {
+    QListWidgetItem* item = listWidgetM->currentItem();
+    QString nom = item->text();
+    QString rep = nom;
+    rep.prepend(modDir);
+    QDir dir(rep);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
+    QString sortie = QString("%1/%2.col")
+        .arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
+        .arg(nom);
+    QuaZip zip(sortie);
+    zip.open(QuaZip::mdCreate);
+    QuaZipFile out(&zip);
+    QFile in;
+    char c;
+	QFileInfoList entrees = dir.entryInfoList();
+	for (int i=0;i<entrees.count();++i)
+    {
+        QString n = QString("%1/%2").arg(rep).arg(entrees.at(i).fileName());
+	    in.setFileName(n);
+        in.open(QIODevice::ReadOnly);
+        out.open(QIODevice::WriteOnly,
+                 QuaZipNewInfo(in.fileName(),
+                               in.fileName()));
+        while(in.getChar(&c) && out.putChar(c));
+        out.close();
+        in.close();
+    }
 }
 
 void MainWindow::peuple()
@@ -1328,5 +1359,5 @@ void MainWindow::supprM()
     QString nf = modDir + item->text();
     qDebug()<<"supprM, nf"<<nf;
     // QDir rep;
-    // rep.rmDir(nf); 
+    // rep.rmDir(nf);
 }
