@@ -22,11 +22,11 @@
 
 
    FIXME
-   - ti/ci dans vargraph.la : provoque des échecs (martyr) et plantage !
-   - plantage aléatoire : "Agonizat"
+   - Correction du lemme après enregistrement : crée un doublon dans lemmes.la
    - choix du modèle par clavier : plantage
 
    TODO
+   - implémenter la génération et l'installation de paquets;
    - première utilisation : ouvrir l'onglet module, donner une marche à suivre.
    - nom du fichier, et du module en tête de hist.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -81,6 +81,7 @@ MainWindow::MainWindow()
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
     labelContexte = new QLabel(frame);
+    labelContexte->setWordWrap(true);
     verticalLayout_3->addWidget(labelContexte);
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
@@ -344,6 +345,10 @@ MainWindow::MainWindow()
     verticalLayouM->addWidget(pushButtonDesactM);
     pushButtonSupprM = new QPushButton(widgetM);
     verticalLayouM->addWidget(pushButtonSupprM);
+    pushButtonPaquet = new QPushButton(widgetM);
+    verticalLayouM->addWidget(pushButtonPaquet);
+    pushButtonInstM = new QPushButton(widgetM);
+    verticalLayouM->addWidget(pushButtonInstM);
     verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayouM->addItem(verticalSpacerM);
     splitterM->addWidget(widgetM);
@@ -502,12 +507,14 @@ void MainWindow::retranslateUi()
                           QApplication::translate("MainWindow", "&irr\303\251guliers", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabM),
                           QApplication::translate("MainWindow", "Modules lexicaux", Q_NULLPTR));
-        labelM->setText(QApplication::translate("MainWindow", "modules", Q_NULLPTR));
-        pushButtonCreeM->setText(QApplication::translate("MainWindow", "Cr\303\251er un module ", Q_NULLPTR));
-        pushButtonActM->setText(QApplication::translate("MainWindow", "activer ce module", Q_NULLPTR));
-        pushButtonDesactM->setText(QApplication::translate("MainWindow",
-                                                           "d\303\251sactiver le module courant", Q_NULLPTR));
-        pushButtonSupprM->setText(QApplication::translate("MainWindow", "supprimer ce module", Q_NULLPTR));
+    labelM->setText(QApplication::translate("MainWindow", "modules", Q_NULLPTR));
+    pushButtonCreeM->setText(QApplication::translate("MainWindow", "Cr\303\251er un module ", Q_NULLPTR));
+    pushButtonActM->setText(QApplication::translate("MainWindow", "activer ce module", Q_NULLPTR));
+    pushButtonDesactM->setText(QApplication::translate("MainWindow",
+                                                       "d\303\251sactiver le module courant", Q_NULLPTR));
+    pushButtonSupprM->setText(QApplication::translate("MainWindow", "supprimer ce module", Q_NULLPTR));
+    pushButtonPaquet->setText(QApplication::translate("MainWindow", "générer un paquet", Q_NULLPTR));
+    pushButtonInstM->setText(QApplication::translate("MainWindow", "installer un paquet", Q_NULLPTR));
 
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
@@ -597,6 +604,8 @@ void MainWindow::connecte()
     // modules lexicaux
     connect(pushButtonCreeM, SIGNAL(clicked()), this, SLOT(creerM()));
     connect(pushButtonSupprM, SIGNAL(clicked()), this, SLOT(supprM()));
+    connect(pushButtonPaquet, SIGNAL(clicked()), this, SLOT(paquet()));
+    connect(pushButtonInstM, SIGNAL(clicked()), this, SLOT(instM()));
 
 }
 
@@ -932,6 +941,10 @@ void MainWindow::insereLigne(QString l, QString f)
     file.close();
 }
 
+void MainWindow::instM()
+{
+}
+
 void MainWindow::lemSuiv()
 {
     //qDebug()<<"lemSuiv";
@@ -1076,6 +1089,10 @@ void MainWindow::majLinMorph()
         if (QRegExp(mm).exactMatch(lin))
             new QListWidgetItem(lin, listWidgetMorphos);
     }
+}
+
+void MainWindow::paquet()
+{
 }
 
 void MainWindow::peuple()

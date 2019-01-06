@@ -197,6 +197,10 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonActM;
         QPushButton *pushButtonDesactM;
         QPushButton *pushButtonSupprM;
+        
+        QPushButton *pushButtonPaquet;
+        QPushButton *pushButtonInstM;
+
         QSpacerItem *verticalSpacerM;
         // menu et barrre d'état
         QMenuBar *menuBar;
@@ -291,11 +295,13 @@ class MainWindow : public QMainWindow
         void        enr();
         void        enrVar();
         void        insereLigne(QString l, QString f);
+        void        instM();
         void        lemSuiv();
         QString     ligneLa(QString modl="");
         void        lignesVisibles(bool v);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        ouvrir(QString nf="");
+        void        paquet();
         void        preAn();
         //void        reserve();
         void        rotQ();
