@@ -762,7 +762,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     MapLem mm;
     //bool var = f != fVar;
     if (f.isEmpty()) return mm;
-    if ((etape > 3) || (etape <0)) // Condition terminale
+    if ((etape > 4) || (etape <0)) // Condition terminale
     {
         mm = lemmatise(f);
         if (debPhr && f.at(0).isUpper())
@@ -789,7 +789,24 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     // J'essaie d'abord l'étape suivante
     QString fd; // On ne peut pas créer une variable QString à l'intérieur d'un switch.
     switch (etape)
-    { // ensuite diverses manipulations sur la forme
+    { 
+        case 4:
+            {
+                if (f.contains("ci"))
+                {
+                    fd = f;
+                    fd.replace("ci", "ti");
+                    MapLem nmm = lemmatiseM(fd);
+                    for (int i=0;i<nmm.count();++i)
+                    {
+                        Lemme *lem = nmm.keys().at(i);
+                        mm.insert(lem, nmm.value(lem));
+                    }
+                    return mm; 
+                }
+                break;
+            }
+        // ensuite diverses manipulations sur la forme
         case 3:
             // contractions
             fd = f;
@@ -853,7 +870,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
         case 1:
             // suffixes
             if (mm.isEmpty())
-                // Je ne cherche une solution sufixée que si la forme entière
+                // Je ne cherche une solution suffixée que si la forme entière
                 // n'a pas été lemmatisée.
                 foreach (QString suf, suffixes.keys())
                 {
