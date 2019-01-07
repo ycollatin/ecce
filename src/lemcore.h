@@ -74,7 +74,6 @@ class LemCore : public QObject
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
     void lisTraductions(QString nf);
-    void lisVarGraph(QString nf);
     QStringList _listeLemmesLa;
     // variables et utils
     QMap<QString, QString> assims;
@@ -151,6 +150,7 @@ class LemCore : public QObject
     // Lit les lignes d'un fichier. Est devenu public.
     QStringList            lignesFichier(QString nf);
     void                   lisModule();
+    void                   lisVarGraph(QString nf);
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
     QStringList            listeLemmesLa();
