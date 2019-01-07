@@ -24,9 +24,6 @@
  * \brief module de lemmatisation des formes latines
  */
 
-// TODO
-// apt install libquazip5-1 : ziper et déziper
-
 #include "lemcore.h"
 
 #include <QDebug>
