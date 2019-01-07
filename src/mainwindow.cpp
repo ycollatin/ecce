@@ -24,11 +24,16 @@
    FIXME
    - Correction du lemme après enregistrement : crée un doublon dans lemmes.la
    - choix du modèle par clavier : plantage
+   - les lemmes de .local et de lemmes n'apparaissent pas pour correction
+   - Les vargraph saisies ne sont pas enregistrées dans local
 
    TODO
+   - création de module : créer un fichier vargraph
+   - activer un module.
    - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
-     dernière occurrence de -ci-.
-   - ajouter un Label d'info sur la location des paquets (home et Download ?)
+     dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
+     transformation dans vargraph.la
+   - ajouter un Label d'info sur l'emplacement des paquets (home et Download ?)
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - nom du fichier, et du module en tête de hist.
@@ -607,10 +612,24 @@ void MainWindow::connecte()
     connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
     // modules lexicaux
     connect(pushButtonCreeM, SIGNAL(clicked()), this, SLOT(creerM()));
+    connect(pushButtonActM, SIGNAL(clicked()), this, SLOT(activerM()));
     connect(pushButtonSupprM, SIGNAL(clicked()), this, SLOT(supprM()));
     connect(pushButtonPaquet, SIGNAL(clicked()), this, SLOT(paquet()));
     connect(pushButtonInstM, SIGNAL(clicked()), this, SLOT(instM()));
 
+}
+
+void MainWindow::activerM()
+{
+    QListWidgetItem* item = listWidgetM->currentItem();
+    module = item->text();
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("lexique");
+    settings.setValue("module", module);
+    settings.endGroup();
+    // recharger toutes les données
+    posFC = 0;
+    peuple();
 }
 
 void MainWindow::ajIrr()
@@ -663,6 +682,10 @@ void MainWindow::creerM()
     if (!ff.open(QFile::WriteOnly)) return;
     QTextStream(&ff) << "!    lemmes.fr\n";
     ff.close();
+    QFile fv(nm+"vargraph.la");
+    if (!fv.open(QFile::WriteOnly)) return;
+    QTextStream(&fv) << docVarGraph;
+    fv.close();
     module = moduletmp;
     // affichage
     new QListWidgetItem(module, listWidgetM);

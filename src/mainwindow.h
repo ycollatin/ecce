@@ -218,18 +218,7 @@ class MainWindow : public QMainWindow
             "!\n"
             "!  Dans ce fichier sont enregistrées les variantes\n"
             "! graphiques du corpus traité. Chaque ligne est\n"
-            "! composée de deux chaînes séparées par le caractère\n"
-            "! ';' ou le caractère '>'.\n"
-            "! La première chaîne est la graphie classique, la\n"
-            "! seconde est la variante du corpus traité. Si\n"
-            "! la variante est systématiquement employée, et que\n"
-            "! la graphie classique disparaît, on utilise le\n"
-            "! séparateur '>'. Si les deux graphies coexistent,\n"
-            "! on utilise ';'. Par exemple, si la chaîne \"ae\"\n"
-            "! devient quelquefois \"e\", on note :\n"
-            "! ae;e\n"
-            "! Mais si \"ae\" devient toujours \"e\", on note :\n"
-            "! ae>e\n"
+            "! composée de deux chaînes séparées par le caractère ';'\n"
             "!\n";
         QString           fichier;
         Flexion*          flexion;
@@ -281,6 +270,7 @@ class MainWindow : public QMainWindow
         qint64            posFC;
 
     private slots:
+        void        activerM();
         void        ajIrr();
         void        ajMorph();
         QString     cle(QString ligne);
