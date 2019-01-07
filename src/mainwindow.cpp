@@ -22,6 +22,7 @@
 
 
    FIXME
+   - générer un fichier irregs.la, avec entête
 
    TODO
    - récrire la préanalyse, en supprimant temporairement ti/ci
@@ -69,6 +70,7 @@ MainWindow::MainWindow()
     verticalLayout->setContentsMargins(11, 11, 11, 11);
     // label d'info sur les lexiques
     labelInfo = new QLabel(centralWidget);
+    //labelInfo->setTextFormat(Qt::RichText);
     verticalLayout->addWidget(labelInfo);
     // conteneur des onglets
     tabWidget = new QTabWidget(centralWidget);
@@ -444,7 +446,7 @@ void MainWindow::reserve()
 
 void MainWindow::retranslateUi()
 {
-    setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+    setWindowTitle(QApplication::translate("Collatinus", "Ecce", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
@@ -455,7 +457,8 @@ void MainWindow::retranslateUi()
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
     //actionCopier->setText(QApplication::translate("MainWindow", "copier un jeu de donn\303\251es", Q_NULLPTR));
-    labelInfo->setText(QApplication::translate("MainWindow", "Ecce - module lexical", Q_NULLPTR));
+    labelInfo->setText(QApplication::translate("MainWindow",
+                                               "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
     bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
@@ -1223,7 +1226,7 @@ void MainWindow::peuple()
     }
     // morphos
     lMorphos.clear();
-    QStringList listeM = lemcore->lignesFichier(ajDir+"morphos.fr");
+    QStringList listeM = lemcore->lignesFichier(resDir+"morphos.fr");
     for (int i=0;i<listeM.count();++i)
     {
         QString lin = listeM.at(i).simplified();
@@ -1259,7 +1262,8 @@ void MainWindow::peuple()
     for (int i=0;i<lm.count();++i)
     {
         new QListWidgetItem(lm.at(i), listWidgetM);
-    }
+    }  
+    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong>");
 }
 
 void MainWindow::rotQ()
