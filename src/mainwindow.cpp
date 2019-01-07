@@ -22,17 +22,13 @@
 
 
    FIXME
-   - plantage au chargement des variantes graphiques
-   - Correction du lemme après enregistrement : crée un doublon dans lemmes.la
-   - choix du modèle par clavier : plantage
-   - les lemmes de .local et de lemmes n'apparaissent pas pour correction
-     voir ::edLem()
 
    TODO
+   - récrire la préanalyse, en supprimant temporairement ti/ci
+   - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
    - vérifier le chargement immédiat des vargraph après préanalyse
    - sélectionner le module courant dans son QListWidget
    - historique des positions des mots en échec non résolu
-   - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
      dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
      transformation dans vargraph.la
    - ajouter un Label d'info sur l'emplacement des paquets (home et Download ?)
@@ -42,7 +38,6 @@
    - prendre les listes dans LemCore plutôt que dans les fichiers.
    - geler le programme pendant le rechargement des données, et afficher un
      message d'attente.
-   - la distinction ';' '>' n'a plus lieu d'être dans les variantes graphiques
    - Création des paquets de distribution du module lexical. Utiliser zip:
      apt install libquazip5-1 : ziper et déziper
    - renommer Editcol Ecce.
@@ -794,8 +789,6 @@ void MainWindow::editIrr(const QModelIndex &m)
 
 void MainWindow::edLem(QString l)
 {
-    //bool contient = litems.contains(l) || l == "-reserve";
-    //if (!contient)
     if (!litems.contains(l))
     {
         lemme = 0;
@@ -818,7 +811,7 @@ void MainWindow::edLem(QString l)
         else
         {
             boutonEnr->setText("enregistrer");
-            return;
+            //return;
         }
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
         textEditFlexion->setText(flexion->tableau(lemme));
@@ -1017,16 +1010,11 @@ void MainWindow::instM()
 
 void MainWindow::lemSuiv()
 {
-    //qDebug()<<"lemSuiv";
     ++iLemSuiv;
-    //qDebug()<<"   lemSuiv, iLemSuiv"<<iLemSuiv;
     if (iLemSuiv >= ml.keys().count())
         iLemSuiv = 0;
-    //qDebug()<<"   lemSuiv2, iLemSuiv"<<iLemSuiv;
     lemme = ml.keys().at(iLemSuiv);
-    //qDebug()<<"   lemSuiv3, cle"<<lemme->cle();
     lineEditLemme->setText(lemme->cle());
-    //qDebug()<<"   lemSuiv, fin";
 }
 
 QString MainWindow::ligneLa(QString modl)
@@ -1243,7 +1231,6 @@ void MainWindow::peuple()
         lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
     }
     // variantes graphiques
-    qDebug()<<"variantes graphiques :"<<ajDir+"vargraph.la";
     lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
 
@@ -1424,7 +1411,6 @@ void MainWindow::supprM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
     QString nf = modDir + item->text();
-    qDebug()<<"supprM, nf"<<nf;
     // QDir rep;
     // rep.rmDir(nf);
 }
