@@ -22,14 +22,16 @@
 
 
    FIXME
+   - plantage au chargement des variantes graphiques
    - Correction du lemme après enregistrement : crée un doublon dans lemmes.la
    - choix du modèle par clavier : plantage
    - les lemmes de .local et de lemmes n'apparaissent pas pour correction
-   - Les vargraph saisies ne sont pas enregistrées dans local
+     voir ::edLem()
 
    TODO
-   - création de module : créer un fichier vargraph
-   - activer un module.
+   - vérifier le chargement immédiat des vargraph après préanalyse
+   - sélectionner le module courant dans son QListWidget
+   - historique des positions des mots en échec non résolu
    - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
      dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
      transformation dans vargraph.la
@@ -995,7 +997,13 @@ void MainWindow::instM()
         zipFile.close();
     }
     while (zip.goToNextFile());
+    // ajouter le paquet à la liste et le sélectionner
+    module = nmod;
+    QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
+    listWidgetM->setCurrentItem(item);
     // charger le paquet
+    activerM();
+    /*
     module = nmod;
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("lexique");
@@ -1004,6 +1012,7 @@ void MainWindow::instM()
     // recharger toutes les données
     posFC = 0;
     peuple();
+    */
 }
 
 void MainWindow::lemSuiv()
@@ -1226,7 +1235,7 @@ void MainWindow::peuple()
     }
     // morphos
     lMorphos.clear();
-    QStringList listeM = lemcore->lignesFichier(module+"/morphos.fr");
+    QStringList listeM = lemcore->lignesFichier(ajDir+"morphos.fr");
     for (int i=0;i<listeM.count();++i)
     {
         QString lin = listeM.at(i).simplified();
@@ -1234,7 +1243,8 @@ void MainWindow::peuple()
         lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
     }
     // variantes graphiques
-    lvarGraph = lemcore->lignesFichier(module+"/vargraph.la");
+    qDebug()<<"variantes graphiques :"<<ajDir+"vargraph.la";
+    lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
 
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
