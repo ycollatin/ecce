@@ -251,7 +251,7 @@ void MainWindow::coche()
 
 void MainWindow::enrVar()
 {
-    QFile f("data/vargraph.la");
+    QFile f(ajDir + "vargraph.la");
     f.remove();
     f.open(QFile::WriteOnly);
     QTextStream flux(&f);
