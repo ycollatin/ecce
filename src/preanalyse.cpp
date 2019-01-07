@@ -251,11 +251,13 @@ void MainWindow::coche()
 
 void MainWindow::enrVar()
 {
-    QFile f(ajDir + "vargraph.la");
+    QString nf = ajDir+"vargraph.la";
+    QFile f(nf);
     f.remove();
     f.open(QFile::WriteOnly);
     QTextStream flux(&f);
     flux << docVarGraph;
     flux << plainTextEditVariantes->toPlainText();
     f.close();
+    lemcore->lisVarGraph("nf");
 }
