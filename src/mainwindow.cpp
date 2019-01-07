@@ -26,7 +26,8 @@
    - choix du modèle par clavier : plantage
 
    TODO
-   - implémenter l'installation de paquets;
+   - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
+     dernière occurrence de -ci-.
    - ajouter un Label d'info sur la location des paquets (home et Download ?)
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -946,7 +947,40 @@ void MainWindow::insereLigne(QString l, QString f)
 
 void MainWindow::instM()
 {
-    qDebug()<<"instM";
+    QString ch = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    QString chp = QFileDialog::getOpenFileName(this,
+                                               "paquet du module à installer",
+                                               ch, "paquets Collatinus (*.col)");
+    if (chp.isEmpty()) return;
+    QFileInfo info(chp);
+    QString nmod= info.baseName();
+    QDir dir(modDir);
+    dir.mkdir(nmod);
+    QuaZip zip(chp);
+    zip.open(QuaZip::mdUnzip);
+    zip.goToFirstFile();
+    do
+    {
+        QuaZipFile zipFile(&zip);
+        if (!zipFile.open(QIODevice::ReadOnly)) continue;
+        QFile out(zipFile.getActualFileName());
+        if (!out.open(QIODevice::WriteOnly)) continue;;
+        char c;
+        while (zipFile.getChar(&c)) out.putChar(c);      
+        out.flush();
+        out.close();
+        zipFile.close();
+    }
+    while (zip.goToNextFile());
+    // charger le paquet
+    module = nmod;
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("lexique");
+    settings.setValue("module", module);
+    settings.endGroup();
+    // recharger toutes les données
+    posFC = 0;
+    peuple();
 }
 
 void MainWindow::lemSuiv()
