@@ -759,7 +759,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     MapLem mm;
     //bool var = f != fVar;
     if (f.isEmpty()) return mm;
-    if ((etape > 4) || (etape <0)) // Condition terminale
+    if ((etape > 3) || (etape <0)) // Condition terminale
     {
         mm = lemmatise(f);
         if (debPhr && f.at(0).isUpper())
@@ -787,6 +787,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     QString fd; // On ne peut pas créer une variable QString à l'intérieur d'un switch.
     switch (etape)
     { 
+        /*
         case 4:
             {
                 if (f.contains("ci"))
@@ -803,6 +804,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
                 }
                 break;
             }
+        */
         // ensuite diverses manipulations sur la forme
         case 3:
             // contractions
@@ -1147,7 +1149,9 @@ void LemCore::lisVarGraph(QString nf)
     for (int i=0;i<lignes.count();++i)
     {
         QString l = lignes.at(i);
-        _reglesVG.append(new RegleVG(l));
+        if (l.contains('>'))
+             _reglesCi.append(new RegleVG(l));
+        else _reglesVG.append(new RegleVG(l));
     }
 }
 
@@ -1418,6 +1422,17 @@ QString LemCore::tag(Lemme *l, int m)
 int LemCore::tagOcc(QString t)
 {
     return _tagOcc[t];
+}
+
+// calcul d'une variante graphique en amont de lemmatiseM()
+QString LemCore::ti(QString f)
+{
+    for (int i=0;i<_reglesCi.count();++i)
+    {
+        RegleVG* r = _reglesCi.at(i);
+        f = r->transf(f);
+    }
+    return f;
 }
 
 QString LemCore::vg(QString c)

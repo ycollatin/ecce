@@ -22,6 +22,7 @@
 
 
    FIXME
+   - Ouverture de texte inopérante
 
    TODO
    - dans le label info supérieur : texte analysé.
@@ -735,6 +736,12 @@ void MainWindow::echec()
         }
         while (!flux.atEnd() && c.isLetter());
         ml = lemcore->lemmatiseM(forme);
+        if (ml.isEmpty())
+        {
+            // essayer avec les règles de réécriture
+            QString nforme = lemcore->ti(forme);
+            if (nforme != forme) ml = lemcore->lemmatiseM(nforme);
+        }
         arret = true;
         fluxpos = flux.pos();
         if (ml.isEmpty())
@@ -1103,7 +1110,11 @@ void MainWindow::ouvrir(QString nf)
     if (fichier.isEmpty()) return;
     fCorpus.close();
     fCorpus.setFileName(fichier);
-    if (!fCorpus.open(QFile::ReadOnly)) return;
+    if (!fCorpus.open(QFile::ReadOnly))
+    {
+        std::cerr << qPrintable(" ne peux ouvrir "+nf);
+        return;
+    }
     posFC = 0;
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");

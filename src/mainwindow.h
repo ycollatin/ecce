@@ -215,12 +215,23 @@ class MainWindow : public QMainWindow
         QCompleter*       completeurM;
         void              connecte();
         QString docVarGraph =
-            "!          vargraph.la\n"
-            "!\n"
-            "!  Dans ce fichier sont enregistrées les variantes\n"
-            "! graphiques du corpus traité. Chaque ligne est\n"
-            "! composée de deux chaînes séparées par le caractère ';'\n"
-            "!\n";
+        "!          vargraph.la\n"
+        "!\n"
+        "!  Dans ce fichier sont enregistrées les variantes\n"
+        "! graphiques du corpus traité. Chaque ligne est\n"
+        "! composée de deux chaînes séparées\n"
+        "! - soit par le caractère ';' :\n"
+        "!   à gauche, la graphie classique, à droite la graphie\n"
+        "!   alternative, même si elle n'est pas toujours utilisée.\n" 
+        "!   Les désinences et les radicaux sont calculés en\n" 
+        "!   fonction de ces transformations, et les formes du\n"
+        "!   texte sont elles aussi transformées.\n"
+        "! - soit par le caractère '>' : à gauche une expression\n"
+        "!   rationnelle qui permet de retrouver la graphie\n"
+        "!   classique, à droite du '>'. On recourt à cette transfor-\n"
+        "!   mation dans les cas où la chaîne à changer peut se\n"
+        "!   trouver à cheval entre radical et désinence.\n"
+        "!\n";
         QString           fichier;
         Flexion*          flexion;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";

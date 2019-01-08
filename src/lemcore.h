@@ -94,6 +94,7 @@ class LemCore : public QObject
     QMap<QString,QStringList> _voix;
     QMap<QString,QStringList> _motsClefs;
     QList<RegleVG*>           _reglesVG;
+    QList<RegleVG*>           _reglesCi;
     // Les morphos doivent pouvoir être données en anglais !
     QMultiMap<QString, Radical*> _radicaux;
     QMap<QString, QString> _variables;
@@ -180,6 +181,7 @@ class LemCore : public QObject
     int                    fraction(QString listTags);
     QString                tag(Lemme *l, int m);
     int                    tagOcc(QString t);
+    QString                ti(QString f);
     int                    trigram(QString seq);
     QString                vg(QString c);
 
