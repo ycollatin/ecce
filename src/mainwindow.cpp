@@ -22,7 +22,6 @@
 
 
    FIXME
-   - générer un fichier irregs.la, avec entête
 
    TODO
    - récrire la préanalyse, en supprimant temporairement ti/ci
@@ -49,7 +48,6 @@
  */
 
 #include <QFileDialog>
-//#include <QVector>
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
 #include <mainwindow.h>
@@ -216,10 +214,10 @@ MainWindow::MainWindow()
     formLayoutCochesVar->setWidget(5, QFormLayout::LabelRole, checkBox_UV);
     checkBox_uv = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(5, QFormLayout::FieldRole, checkBox_uv);
-    checkBox_TICI = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
-    checkBox_tici = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(6, QFormLayout::FieldRole, checkBox_tici);
+    //checkBox_TICI = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
+    //checkBox_tici = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(6, QFormLayout::FieldRole, checkBox_tici);
     checkBox_MPN = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(7, QFormLayout::LabelRole, checkBox_MPN);
     checkBox_mpn = new QCheckBox(layoutWidget);
@@ -487,8 +485,8 @@ void MainWindow::retranslateUi()
     checkBox_ij->setText(QString());
     checkBox_UV->setText(QApplication::translate("MainWindow", "U > V", Q_NULLPTR));
     checkBox_uv->setText(QString());
-    checkBox_TICI->setText(QApplication::translate("MainWindow", "ti > ci", Q_NULLPTR));
-    checkBox_tici->setText(QString());
+    //checkBox_TICI->setText(QApplication::translate("MainWindow", "ti > ci", Q_NULLPTR));
+    //checkBox_tici->setText(QString());
     checkBox_MPN->setText(QApplication::translate("MainWindow", "mn > mpn", Q_NULLPTR));
     checkBox_mpn->setText(QString());
     checkBox_PH->setText(QApplication::translate("MainWindow", "ph > f", Q_NULLPTR));
@@ -591,8 +589,8 @@ void MainWindow::connecte()
     connect(checkBox_ij, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_UV, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_uv, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_TICI, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_tici, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_TICI, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_tici, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_MPN, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
@@ -682,6 +680,10 @@ void MainWindow::creerM()
     if (!ff.open(QFile::WriteOnly)) return;
     QTextStream(&ff) << "!    lemmes.fr\n";
     ff.close();
+    QFile fi(nm+"irregs.la");
+    if (!fi.open(QFile::WriteOnly)) return;
+    QTextStream(&fi) << "!    irregs.la\n";
+    fi.close();
     QFile fv(nm+"vargraph.la");
     if (!fv.open(QFile::WriteOnly)) return;
     QTextStream(&fv) << docVarGraph;

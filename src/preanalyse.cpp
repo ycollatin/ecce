@@ -50,32 +50,21 @@ void MainWindow::preAn()
 
     // ae > e
     int ae = txt.count("ae");
-    if (ae == 0) listeGr.append("ae>e");
-    else
-    {
-        double aed = ae / (len + 0.0);
-        if (aed < 0.003) listeGr.append("ae;e");
-    }
+    double aed = ae / (len + 0.0);
+    if (aed < 0.003) listeGr.append("ae;e");
 
     // h H
     int nh = txt.count(QRegExp("\\b[Hh]"));
-    if (nh == 0) listeGr.append("h>");
-    else
-    {
-        double nhd = nh / (len+0.0);
-        if (nhd < 0.003) listeGr.append("h;");
-    }
+    double nhd = nh / (len+0.0);
+    if (nhd < 0.003) listeGr.append("h;");
 
     // ph f
     int nph = txt.count("ph");
-    int nbf = txt.count("f");
-    if (nph == 0 && nbf > 0) listeGr.append("ph>f");
-    else
-    {
-        double phd = nph / (len+0.0);
-        if (phd < 0.003) listeGr.append("ph;f");
-    }
+    //int nbf = txt.count("f");
+    double phd = nph / (len+0.0);
+    if (phd < 0.003) listeGr.append("ph;f");
 
+    /*
     // ci
     int nti = txt.count(QRegExp("ti[aeu]"));
     int nci = txt.count(QRegExp("ci[aeu]"));
@@ -83,21 +72,15 @@ void MainWindow::preAn()
         listeGr.append("ti>ci");
     else if (nti > 0 && nci > 0)
         listeGr.append("ti;ci");
+    */
 
     // mn/mpn
     int nmpn = txt.count(QRegExp("[aey]mpn"));
-    int nmn = txt.count(QRegExp("[aey]mn"));
-    if (nmn == 0 && nmpn > 0) listeGr.append("mn>mpn");
-    else if (nmpn > 0) listeGr.append("mn;mpn");
+    if (nmpn > 0) listeGr.append("mn;mpn");
 
     // michi
     int nmichi = txt.count(QRegExp("\\bmichi\\b"));
-    int nmihi = txt.count(QRegExp("\\bmihi\\b"));
-    if (nmichi > 0)
-    {
-        if (nmihi > 0) listeGr.append("mihi;michi");
-        else if (nmihi == 0) listeGr.append("mihi>michi");
-    }
+    if (nmichi > 0) listeGr.append("mihi;michi");
 
     // vider les cases à cocher
     checkBoxAe->setChecked(false);
@@ -110,8 +93,8 @@ void MainWindow::preAn()
     checkBox_ij->setChecked(false);
     checkBox_UV->setChecked(false);
     checkBox_uv->setChecked(false);
-    checkBox_TICI->setChecked(false);
-    checkBox_tici->setChecked(false);
+    //checkBox_TICI->setChecked(false);
+    //checkBox_tici->setChecked(false);
     checkBox_MPN->setChecked(false);
     checkBox_mpn->setChecked(false);
     checkBox_PH->setChecked(false);
@@ -150,12 +133,14 @@ void MainWindow::preAn()
             if (lin.contains(">"))
                 checkBox_uv->setChecked(true);
         }
+        /*
         else if (lin.startsWith("ti"))
         {
             checkBox_TICI->setChecked(true);
             if (lin.contains(">"))
                 checkBox_tici->setChecked(true);
         }
+        */
         else if (lin.startsWith("mn"))
         {
             checkBox_MPN->setChecked(true);
@@ -221,6 +206,7 @@ void MainWindow::coche()
         else tv.append(";");
         tv.append("V\n");
     }
+    /*
     if (checkBox_TICI->isChecked())
     {
         tv.append("ti");
@@ -229,6 +215,7 @@ void MainWindow::coche()
         else tv.append(";");
         tv.append("ci\n");
     }
+    */
     if (checkBox_MPN->isChecked())
     {
         tv.append("mn");

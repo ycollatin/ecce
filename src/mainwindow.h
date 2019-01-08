@@ -138,8 +138,8 @@ class MainWindow : public QMainWindow
         QCheckBox *checkBox_ij;
         QCheckBox *checkBox_UV;
         QCheckBox *checkBox_uv;
-        QCheckBox *checkBox_TICI;
-        QCheckBox *checkBox_tici;
+        //QCheckBox *checkBox_TICI;
+        //QCheckBox *checkBox_tici;
         QCheckBox *checkBox_MPN;
         QCheckBox *checkBox_mpn;
         QCheckBox *checkBox_PH;
