@@ -24,22 +24,17 @@
    FIXME
 
    TODO
-   - récrire la préanalyse, en supprimant temporairement ti/ci
+   - après génération d'un paquet, afficher un message donnant son chemin d'atterrissage.
    - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
-   - vérifier le chargement immédiat des vargraph après préanalyse
-   - sélectionner le module courant dans son QListWidget
-   - historique des positions des mots en échec non résolu
      dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
      transformation dans vargraph.la
+   - faire un historique des positions des mots en échec non résolu
    - ajouter un Label d'info sur l'emplacement des paquets (home et Download ?)
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
-   - nom du fichier, et du module en tête de hist.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
    - geler le programme pendant le rechargement des données, et afficher un
      message d'attente.
-   - Création des paquets de distribution du module lexical. Utiliser zip:
-     apt install libquazip5-1 : ziper et déziper
    - renommer Editcol Ecce.
      ECCE (Ecce Collatinistarum Communitatis Editor)
    - suppression d'un lemme : trouver une syntaxe
@@ -332,6 +327,7 @@ MainWindow::MainWindow()
     labelM = new QLabel(widget);
     verticalLayoutLM->addWidget(labelM);
     listWidgetM = new QListWidget(widget);
+    listWidgetM->setSelectionMode(QAbstractItemView::SingleSelection);
     verticalLayoutLM->addWidget(listWidgetM);
     splitterM->addWidget(widget);
     widgetM = new QWidget(splitterM);
@@ -690,7 +686,7 @@ void MainWindow::creerM()
     fv.close();
     module = moduletmp;
     // affichage
-    new QListWidgetItem(module, listWidgetM);
+    QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     // décharger et recharger les données
     delete lemcore;
     litems.clear();
@@ -706,6 +702,7 @@ void MainWindow::creerM()
     // recharger toutes les données
     posFC = 0;
     peuple();
+    listWidgetM->setCurrentItem(item);
 }
 
 void MainWindow::echec()
@@ -1110,9 +1107,11 @@ void MainWindow::ouvrir(QString nf)
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
     settings.endGroup();
+    /*
     settings.beginGroup("lexique");
     module = settings.value("module", "").toString();
     settings.endGroup();
+    */
 }
 
 void MainWindow::majLinMorph()
@@ -1261,11 +1260,14 @@ void MainWindow::peuple()
     // peupler la liste
     QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
+    QListWidgetItem* item = 0;
     for (int i=0;i<lm.count();++i)
     {
-        new QListWidgetItem(lm.at(i), listWidgetM);
+        QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
+        if (ni->text() == module) item = ni;
     }  
     labelInfo->setText("ecce - module actuel <strong>"+module+"</strong>");
+    if (item != 0) listWidgetM->setCurrentItem(item);
 }
 
 void MainWindow::rotQ()
