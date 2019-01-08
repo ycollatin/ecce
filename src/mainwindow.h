@@ -190,7 +190,7 @@ class MainWindow : public QMainWindow
         //QListView   *listViewM;
         QListWidget *listWidgetM;
         QWidget     *widgetLM;
-        QVBoxLayout *verticalLayouM;
+        QVBoxLayout *verticalLayoutD;
         QHBoxLayout *horizontalLayoutM;
         QPushButton *pushButtonCreeM;
         QLineEdit   *lineEditM;
@@ -199,6 +199,7 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonSupprM;
         QPushButton *pushButtonPaquet;
         QPushButton *pushButtonInstM;
+        QLabel      *labelInfoM;
         QSpacerItem *verticalSpacerM;
         // menu et barrre d'état
         QMenuBar *menuBar;

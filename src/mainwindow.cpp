@@ -24,12 +24,11 @@
    FIXME
 
    TODO
-   - après génération d'un paquet, afficher un message donnant son chemin d'atterrissage.
+   - dans le label info supérieur : texte analysé.
    - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
      dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
      transformation dans vargraph.la
    - faire un historique des positions des mots en échec non résolu
-   - ajouter un Label d'info sur l'emplacement des paquets (home et Download ?)
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -331,28 +330,30 @@ MainWindow::MainWindow()
     verticalLayoutLM->addWidget(listWidgetM);
     splitterM->addWidget(widget);
     widgetM = new QWidget(splitterM);
-    verticalLayouM = new QVBoxLayout(widgetM);
-    verticalLayouM->setSpacing(6);
-    verticalLayouM->setContentsMargins(11, 11, 11, 11);
+    verticalLayoutD = new QVBoxLayout(widgetM);
+    verticalLayoutD->setSpacing(6);
+    verticalLayoutD->setContentsMargins(11, 11, 11, 11);
     horizontalLayoutM = new QHBoxLayout();
     horizontalLayoutM->setSpacing(6);
     lineEditM = new QLineEdit(widgetM);
     horizontalLayoutM->addWidget(lineEditM);
     pushButtonCreeM = new QPushButton(widgetM);
     horizontalLayoutM->addWidget(pushButtonCreeM);
-    verticalLayouM->addLayout(horizontalLayoutM);
+    verticalLayoutD->addLayout(horizontalLayoutM);
     pushButtonActM = new QPushButton(widgetM);
-    verticalLayouM->addWidget(pushButtonActM);
+    verticalLayoutD->addWidget(pushButtonActM);
     pushButtonDesactM = new QPushButton(widgetM);
-    verticalLayouM->addWidget(pushButtonDesactM);
+    verticalLayoutD->addWidget(pushButtonDesactM);
     pushButtonSupprM = new QPushButton(widgetM);
-    verticalLayouM->addWidget(pushButtonSupprM);
+    verticalLayoutD->addWidget(pushButtonSupprM);
     pushButtonPaquet = new QPushButton(widgetM);
-    verticalLayouM->addWidget(pushButtonPaquet);
+    verticalLayoutD->addWidget(pushButtonPaquet);
     pushButtonInstM = new QPushButton(widgetM);
-    verticalLayouM->addWidget(pushButtonInstM);
+    verticalLayoutD->addWidget(pushButtonInstM);
+    labelInfoM = new QLabel(widgetM);
+    verticalLayoutD->addWidget(labelInfoM);
     verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    verticalLayouM->addItem(verticalSpacerM);
+    verticalLayoutD->addItem(verticalSpacerM);
     splitterM->addWidget(widgetM);
     verticalLayoutM->addWidget(splitterM);
     tabWidget->addTab(tabM, QString());
@@ -518,6 +519,7 @@ void MainWindow::retranslateUi()
     pushButtonSupprM->setText(QApplication::translate("MainWindow", "supprimer ce module", Q_NULLPTR));
     pushButtonPaquet->setText(QApplication::translate("MainWindow", "générer un paquet", Q_NULLPTR));
     pushButtonInstM->setText(QApplication::translate("MainWindow", "installer un paquet", Q_NULLPTR));
+    labelInfoM->setText("info modules");
 
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
@@ -1182,6 +1184,11 @@ void MainWindow::paquet()
         out.close();
         in.close();
     }
+    QString info;
+    QTextStream(&info)
+        << "Le paquet "<<sortie
+        << " a été enregisré.";
+    labelInfoM->setText(info.toLatin1());
 }
 
 void MainWindow::peuple()
@@ -1266,7 +1273,8 @@ void MainWindow::peuple()
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
         if (ni->text() == module) item = ni;
     }  
-    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong>");
+    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
+                       "texte analysé : <strong>"+fichier+"</strong>.");
     if (item != 0) listWidgetM->setCurrentItem(item);
 }
 
