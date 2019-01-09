@@ -64,15 +64,13 @@ void MainWindow::preAn()
     double phd = nph / (len+0.0);
     if (phd < 0.003) listeGr.append("ph;f");
 
-    /*
     // ci
-    int nti = txt.count(QRegExp("ti[aeu]"));
+    //int nti = txt.count(QRegExp("ti[aeu]"));
     int nci = txt.count(QRegExp("ci[aeu]"));
-    if (nti == 0 && nci > 0) 
-        listeGr.append("ti>ci");
-    else if (nti > 0 && nci > 0)
-        listeGr.append("ti;ci");
-    */
+    if (nci > 0) 
+        listeGr.append("([aeiourl])ci([aeiourl])>\1ti\2");
+    //else if (nti > 0 && nci > 0)
+    //    listeGr.append("ti;ci");
 
     // mn/mpn
     int nmpn = txt.count(QRegExp("[aey]mpn"));
@@ -84,21 +82,21 @@ void MainWindow::preAn()
 
     // vider les cases à cocher
     checkBoxAe->setChecked(false);
-    checkBox_ae->setChecked(false);
+    //checkBox_ae->setChecked(false);
     checkBox_H->setChecked(false);
-    checkBox_h->setChecked(false);
+    //checkBox_h->setChecked(false);
     checkBox_Mihi->setChecked(false);
-    checkBox_mihi->setChecked(false);
+    //checkBox_mihi->setChecked(false);
     checkBox_IJ->setChecked(false);
-    checkBox_ij->setChecked(false);
+    //checkBox_ij->setChecked(false);
     checkBox_UV->setChecked(false);
-    checkBox_uv->setChecked(false);
-    //checkBox_TICI->setChecked(false);
+    //checkBox_uv->setChecked(false);
+    checkBox_TICI->setChecked(false);
     //checkBox_tici->setChecked(false);
     checkBox_MPN->setChecked(false);
-    checkBox_mpn->setChecked(false);
+    //checkBox_mpn->setChecked(false);
     checkBox_PH->setChecked(false);
-    checkBox_ph->setChecked(false);
+    //checkBox_ph->setChecked(false);
     // cocher
     for (int i=0;i<listeGr.count();++i)
     {
@@ -106,58 +104,56 @@ void MainWindow::preAn()
         if (lin.startsWith("ae"))
         {
             checkBoxAe->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_ae->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_ae->setChecked(true);
         }
         else if (lin.startsWith("h"))
         {
             checkBox_H->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_h->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_h->setChecked(true);
         }
         else if (lin.startsWith("mihi"))
         {
             checkBox_Mihi->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_mihi->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_mihi->setChecked(true);
         }
         else if (lin.startsWith("I"))
         {
             checkBox_IJ->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_ij->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_ij->setChecked(true);
         }
         else if (lin.startsWith("U"))
         {
             checkBox_UV->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_uv->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_uv->setChecked(true);
         }
-        /*
         else if (lin.startsWith("ti"))
         {
             checkBox_TICI->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_tici->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_tici->setChecked(true);
         }
-        */
         else if (lin.startsWith("mn"))
         {
             checkBox_MPN->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_mpn->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_mpn->setChecked(true);
         }
         else if (lin.startsWith("ph"))
         {
             checkBox_PH->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_ph->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_ph->setChecked(true);
         }
         else if (lin.startsWith("mihi"))
         {
             checkBox_Mihi->setChecked(true);
-            if (lin.contains(">"))
-                checkBox_mihi->setChecked(true);
+            //if (lin.contains(">"))
+            //    checkBox_mihi->setChecked(true);
         }
     }
     coche();
@@ -169,68 +165,80 @@ void MainWindow::coche()
     plainTextEditVariantes->clear();
     if (checkBoxAe->isChecked())
     {
-        tv.append("ae");
-        if (checkBox_ae->isChecked())
-            tv.append(">");
-        else tv.append(";");
-        tv.append("e\n");
+        tv.append("ae;e\n");
+        //if (checkBox_ae->isChecked())
+        //    tv.append(">");
+        //else tv.append(";");
+        //tv.append("e\n");
     }
     if (checkBox_H->isChecked())
     {
-        tv.append("h");
+        tv.append("h;\n");
+        /*
         if (checkBox_h->isChecked())
             tv.append(">\n");
         else tv.append(";\n");
+        */
     }
     if (checkBox_Mihi->isChecked())
     {
-        tv.append("mihi");
+        tv.append("mihi;michi\n");
+        /*
         if (checkBox_mihi->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("michi\n");
+        */
     }
     if (checkBox_IJ->isChecked())
     {
-        tv.append("I");
+        tv.append("I;J\n");
+        /*
         if (checkBox_ij->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("J\n");
+        */
     }
     if (checkBox_UV->isChecked())
     {
-        tv.append("U");
+        tv.append("U;V\n");
+        /*
         if (checkBox_uv->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("V\n");
+        */
     }
-    /*
     if (checkBox_TICI->isChecked())
     {
-        tv.append("ti");
+        tv.append("([aeiourl])ci([aeiourl]);\\1ti\\2\n");
+        /*
         if (checkBox_tici->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("ci\n");
+        */
     }
-    */
     if (checkBox_MPN->isChecked())
     {
-        tv.append("mn");
+        tv.append("mn;mpn\n");
+        /*
         if (checkBox_mpn->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("mpn\n");
+        */
     }
     if (checkBox_PH->isChecked())
     {
-        tv.append("ph");
+        tv.append("ph;f\n");
+        /*
         if (checkBox_ph->isChecked())
             tv.append(">");
         else tv.append(";");
         tv.append("f\n");
+        */
     }
     plainTextEditVariantes->setPlainText(tv);
     enrVar();

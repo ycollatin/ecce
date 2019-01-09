@@ -15,20 +15,19 @@
  *  along with EDITCOL; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * © Yves Ouvrard, 2009 - 2016
+ * © Yves Ouvrard, 2009 - 2019
  */
 
 /*
 
 
    FIXME
-   - Ouverture de texte inopérante
+   - Après un changement de module, l'affichage est doublé.
 
    TODO
-   - dans le label info supérieur : texte analysé.
-   - déplacer la transformation ti/ci. remplacer, dans la forme, seulement la 
-     dernière occurrence de -ci-. Trouver une syntaxe pour exprimer cette 
-     transformation dans vargraph.la
+   - Donner systématiquement l'origine du lemme proposé
+   - Rétablir ti/ci dans la préanalyse, et changer la syntaxe 
+   - Supprimer les coches "toujours utilisée"
    - faire un historique des positions des mots en échec non résolu
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -191,38 +190,38 @@ MainWindow::MainWindow()
     formLayoutCochesVar->setWidget(0, QFormLayout::LabelRole, labelVariante);
     checkBoxAe = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(1, QFormLayout::LabelRole, checkBoxAe);
-    checkBox_ae = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(1, QFormLayout::FieldRole, checkBox_ae);
+    //checkBox_ae = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(1, QFormLayout::FieldRole, checkBox_ae);
     checkBox_H = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(2, QFormLayout::LabelRole, checkBox_H);
-    checkBox_h = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(2, QFormLayout::FieldRole, checkBox_h);
+    //checkBox_h = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(2, QFormLayout::FieldRole, checkBox_h);
     checkBox_Mihi = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(3, QFormLayout::LabelRole, checkBox_Mihi);
-    checkBox_mihi = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_mihi);
+    //checkBox_mihi = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(3, QFormLayout::FieldRole, checkBox_mihi);
     checkBox_IJ = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(4, QFormLayout::LabelRole, checkBox_IJ);
-    checkBox_ij = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(4, QFormLayout::FieldRole, checkBox_ij);
+    //checkBox_ij = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(4, QFormLayout::FieldRole, checkBox_ij);
     checkBox_UV = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(5, QFormLayout::LabelRole, checkBox_UV);
-    checkBox_uv = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(5, QFormLayout::FieldRole, checkBox_uv);
-    //checkBox_TICI = new QCheckBox(layoutWidget);
-    //formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
+    //checkBox_uv = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(5, QFormLayout::FieldRole, checkBox_uv);
+    checkBox_TICI = new QCheckBox(layoutWidget);
+    formLayoutCochesVar->setWidget(6, QFormLayout::LabelRole, checkBox_TICI);
     //checkBox_tici = new QCheckBox(layoutWidget);
     //formLayoutCochesVar->setWidget(6, QFormLayout::FieldRole, checkBox_tici);
     checkBox_MPN = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(7, QFormLayout::LabelRole, checkBox_MPN);
-    checkBox_mpn = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(7, QFormLayout::FieldRole, checkBox_mpn);
+    //checkBox_mpn = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(7, QFormLayout::FieldRole, checkBox_mpn);
     checkBox_PH = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(8, QFormLayout::LabelRole, checkBox_PH);
-    checkBox_ph = new QCheckBox(layoutWidget);
-    formLayoutCochesVar->setWidget(8, QFormLayout::FieldRole, checkBox_ph);
-    label_tju = new QLabel(layoutWidget);
-    formLayoutCochesVar->setWidget(0, QFormLayout::FieldRole, label_tju);
+    //checkBox_ph = new QCheckBox(layoutWidget);
+    //formLayoutCochesVar->setWidget(8, QFormLayout::FieldRole, checkBox_ph);
+    //label_tju = new QLabel(layoutWidget);
+    //formLayoutCochesVar->setWidget(0, QFormLayout::FieldRole, label_tju);
     verticalLayoutConf->addLayout(formLayoutCochesVar);
     splitterVarGraph->addWidget(layoutWidget);
     splitter_2 = new QSplitter(splitterVarGraph);
@@ -474,22 +473,22 @@ void MainWindow::retranslateUi()
     btnPre->setText(QApplication::translate("MainWindow", "Pr\303\251analyse", Q_NULLPTR));
     labelVariante->setText(QApplication::translate("MainWindow", "variante", Q_NULLPTR));
     checkBoxAe->setText(QApplication::translate("MainWindow", "ae > e", Q_NULLPTR));
-    checkBox_ae->setText(QString());
+    //checkBox_ae->setText(QString());
     checkBox_H->setText(QApplication::translate("MainWindow", "h > -", Q_NULLPTR));
-    checkBox_h->setText(QString());
+    //checkBox_h->setText(QString());
     checkBox_Mihi->setText(QApplication::translate("MainWindow", "mihi > michi", Q_NULLPTR));
-    checkBox_mihi->setText(QString());
+    //checkBox_mihi->setText(QString());
     checkBox_IJ->setText(QApplication::translate("MainWindow", "I > J", Q_NULLPTR));
-    checkBox_ij->setText(QString());
+    //checkBox_ij->setText(QString());
     checkBox_UV->setText(QApplication::translate("MainWindow", "U > V", Q_NULLPTR));
-    checkBox_uv->setText(QString());
-    //checkBox_TICI->setText(QApplication::translate("MainWindow", "ti > ci", Q_NULLPTR));
+    //checkBox_uv->setText(QString());
+    checkBox_TICI->setText(QApplication::translate("MainWindow", "ti > ci", Q_NULLPTR));
     //checkBox_tici->setText(QString());
     checkBox_MPN->setText(QApplication::translate("MainWindow", "mn > mpn", Q_NULLPTR));
-    checkBox_mpn->setText(QString());
+    //checkBox_mpn->setText(QString());
     checkBox_PH->setText(QApplication::translate("MainWindow", "ph > f", Q_NULLPTR));
-    checkBox_ph->setText(QString());
-    label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
+    //checkBox_ph->setText(QString());
+    //label_tju->setText(QApplication::translate("MainWindow", "toujours utilis\303\251e", Q_NULLPTR));
     btnEnrVar->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabVarGraph),
                           QApplication::translate("MainWindow", "Variantes graphiques", Q_NULLPTR));
@@ -579,21 +578,21 @@ void MainWindow::connecte()
     // préanalyse et variantes
     connect(btnPre, SIGNAL(clicked()), this, SLOT(preAn()));
     connect(checkBoxAe, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_ae, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_ae, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_H, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_h, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_h, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_Mihi, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_mihi, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_mihi, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_IJ, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_ij, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_ij, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_UV, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_uv, SIGNAL(clicked()), this, SLOT(coche()));
-    //connect(checkBox_TICI, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_uv, SIGNAL(clicked()), this, SLOT(coche()));
+    connect(checkBox_TICI, SIGNAL(clicked()), this, SLOT(coche()));
     //connect(checkBox_tici, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_MPN, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_mpn, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
-    connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
+    //connect(checkBox_ph, SIGNAL(clicked()), this, SLOT(coche()));
     connect(btnEnrVar, SIGNAL(clicked()), this, SLOT(enrVar()));
     // irréguliers
     connect(btnPers, SIGNAL(clicked()), this, SLOT(siPers()));
@@ -741,6 +740,13 @@ void MainWindow::echec()
             // essayer avec les règles de réécriture
             QString nforme = lemcore->ti(forme);
             if (nforme != forme) ml = lemcore->lemmatiseM(nforme);
+        }
+        if (ml.isEmpty())
+        {
+            // essayer avec les chiffres romains
+            QString nforme = forme.toUpper();
+            if (lemcore->estRomain(nforme))
+                ml = lemcore->lemmatiseM(nforme);
         }
         arret = true;
         fluxpos = flux.pos();
