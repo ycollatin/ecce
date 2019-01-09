@@ -22,7 +22,7 @@
 
 
    FIXME
-   - Après un changement de module, l'affichage est doublé.
+   - ti/ci mal préanalysé
 
    TODO
    - Donner systématiquement l'origine du lemme proposé
@@ -1126,11 +1126,15 @@ void MainWindow::ouvrir(QString nf)
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
     settings.endGroup();
-    /*
-    settings.beginGroup("lexique");
-    module = settings.value("module", "").toString();
-    settings.endGroup();
-    */
+    majInfo();
+    //labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
+    //                   "texte analysé : <strong>"+fichier+"</strong>.");
+}
+
+void MainWindow::majInfo()
+{
+    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
+                       "texte analysé : <strong>"+fichier+"</strong>.");
 }
 
 void MainWindow::majLinMorph()
@@ -1285,14 +1289,16 @@ void MainWindow::peuple()
     QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     QListWidgetItem* item = 0;
+    listWidgetM->clear();
     for (int i=0;i<lm.count();++i)
     {
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
         if (ni->text() == module) item = ni;
     }  
-    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
-                       "texte analysé : <strong>"+fichier+"</strong>.");
     if (item != 0) listWidgetM->setCurrentItem(item);
+    //labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
+    //                   "texte analysé : <strong>"+fichier+"</strong>.");
+    majInfo();
 }
 
 void MainWindow::rotQ()

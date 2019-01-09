@@ -245,6 +245,7 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
+        void              majInfo();
         void              majLinMorph();
         MapLem            ml;
         QStringListModel* modele;
