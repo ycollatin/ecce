@@ -66,7 +66,8 @@ void MainWindow::preAn()
 
     // ci
     //int nti = txt.count(QRegExp("ti[aeu]"));
-    int nci = txt.count(QRegExp("ci[aeu]"));
+    int nci = txt.count(QRegExp("[aiu]cione"));
+    if (nci == 0) nci = txt.count(" eciam");
     if (nci > 0) 
         listeGr.append("([aeiourl])ci([aeiourl])>\1ti\2");
     //else if (nti > 0 && nci > 0)
