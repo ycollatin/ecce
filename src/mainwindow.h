@@ -253,6 +253,8 @@ class MainWindow : public QMainWindow
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
         void              peuple();
+        void              reinit();
+
         // irréguliers
         QStringList       lCas;
         int               iCas;
@@ -295,6 +297,7 @@ class MainWindow : public QMainWindow
         void        edLem(QString l="");
         void        enr();
         void        enrVar();
+        void        initCoches(QStringList lv);
         void        insereLigne(QString l, QString f);
         void        instM();
         void        lemSuiv();

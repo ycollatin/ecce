@@ -22,20 +22,16 @@
 
 
    FIXME
-   - ti/ci mal préanalysé : utiliser -acio-
-   - texte du bouton enregistrer le lemme : mal rafraichi
+   - il y a aussi des ci écrits ti en médiéval !
+   - Germaniae, dans le module raban, n'est pas lemmatisé
 
    TODO
-   - Donner systématiquement l'origine du lemme proposé
-   - Possibilité de revenir à l'échec précédent : une liste chaînée
-     des échecs : précédent, actuel, suivant, ou une liste simple
-     avec un pointeur ?
+   - message de reinitialisation de lemcore, et gel de l'appli.
    - faire un historique des positions des mots en échec non résolu
+     afin de pouvoir revenir en arrière.
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
-   - geler le programme pendant le rechargement des données, et afficher un
-     message d'attente.
    - renommer Editcol Ecce.
      ECCE (Ecce Collatinistarum Communitatis Editor)
    - suppression d'un lemme : trouver une syntaxe
@@ -560,6 +556,7 @@ void MainWindow::connecte()
     connect(checkBox_MPN, SIGNAL(clicked()), this, SLOT(coche()));
     connect(checkBox_PH, SIGNAL(clicked()), this, SLOT(coche()));
     connect(btnEnrVar, SIGNAL(clicked()), this, SLOT(enrVar()));
+    // irréguliers
     connect(btnPers, SIGNAL(clicked()), this, SLOT(siPers()));
     connect(btnCas, SIGNAL(clicked()), this, SLOT(siCas()));
     connect(btnGenre, SIGNAL(clicked()), this, SLOT(siGenre()));
@@ -589,8 +586,7 @@ void MainWindow::activerM()
     settings.setValue("module", module);
     settings.endGroup();
     // recharger toutes les données
-    posFC = 0;
-    peuple();
+    reinit();
 }
 
 void MainWindow::ajIrr()
@@ -654,21 +650,13 @@ void MainWindow::creerM()
     module = moduletmp;
     // affichage
     QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
-    // décharger et recharger les données
-    delete lemcore;
-    litems.clear();
-    delete completeur;
-    delete modele;
-    itemsIrr.clear();
-    listWidgetM->clear();
     // sauver le nom du nouveau module
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("lexique");
     settings.setValue("module", module);
     settings.endGroup();
     // recharger toutes les données
-    posFC = 0;
-    peuple();
+    reinit();
     listWidgetM->setCurrentItem(item);
 }
 
@@ -713,10 +701,10 @@ void MainWindow::echec()
             if (lemcore->estRomain(nforme))
                 ml = lemcore->lemmatiseM(nforme);
         }
-        arret = true;
         fluxpos = flux.pos();
         if (ml.isEmpty())
         {
+            arret = true;
             fluxpos = flux.pos();
             post.clear();
             QChar cp;
@@ -737,7 +725,7 @@ void MainWindow::echec()
             for (int i=0;i<ml.keys().count();++i)
             {
                 Lemme* l = ml.keys().at(i);
-                arret = arret && l->origin() == 3;
+                arret = arret && l->origin() > 1;
             }
             if (arret)
             {
@@ -749,6 +737,7 @@ void MainWindow::echec()
                     flux >> cp;
                     post.append(cp);
                 }
+                hist.remove('*');
                 hist.replace(forme, "*"+forme+"*");
                 labelContexte->setText(hist+post);
                 iLemSuiv = -1;
@@ -788,25 +777,26 @@ void MainWindow::edLem(QString l)
     else
     {
         if (lemme == 0) lemme = lemcore->lemme(l);
-        if (lemme != 0 && lemme->origin() == 3)
-            boutonEnr->setText("enregistrer (de lem_ext)");
-        else
+        if (lemme != 0)
         {
-            boutonEnr->setText("enregistrer");
-            //return;
+            QString t = "enregistrer ";
+            QStringList lo;
+            lo << "module"<<"class."<<"ext.";
+            t.append(lo.at(lemme->origin()));
+            boutonEnr->setText(t);
+            // si lem est issu de lem_ext, modifier l'intitulé du bouton
+            textEditFlexion->setText(flexion->tableau(lemme));
+            lineEditGrq->setText(lemme->champ0());
+            comboBoxModele->show();
+            comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
+            lineMorpho->setText(lemme->indMorph());
+            lineEditTr->setText(lemme->traduction("fr"));
+            // vider les lignes
+            labelPerfectum->hide();
+            lineEditPerfectum->hide();
+            labelSupin->hide();
+            lineSupin->hide();
         }
-        // si lem est issu de lem_ext, modifier l'intitulé du bouton
-        textEditFlexion->setText(flexion->tableau(lemme));
-        lineEditGrq->setText(lemme->champ0());
-        comboBoxModele->show();
-        comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
-        lineMorpho->setText(lemme->indMorph());
-        lineEditTr->setText(lemme->traduction("fr"));
-        // vider les lignes
-        labelPerfectum->hide();
-        lineEditPerfectum->hide();
-        labelSupin->hide();
-        lineSupin->hide();
         // radicaux
         for (int i=0;i<lemme->nbRadicaux();++i)
         {
@@ -980,6 +970,7 @@ void MainWindow::instM()
 
 void MainWindow::lemSuiv()
 {
+    if (ml.isEmpty()) return;
     ++iLemSuiv;
     if (iLemSuiv >= ml.keys().count())
         iLemSuiv = 0;
@@ -1217,7 +1208,10 @@ void MainWindow::peuple()
     // variantes graphiques
     lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
+    // cocher les cases correspondantes
+    initCoches(lvarGraph);
 
+    // listes pour les morphos irregs
     lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
         <<"génitif"<<"datif"<<"ablatif"<<"locatif";
     lGenre << "" << "masculin" << "féminin" << "neutre";
@@ -1236,8 +1230,7 @@ void MainWindow::peuple()
     iTps = 0;
     iVx = 0;
 
-    // modules
-    // peupler la liste
+    // modules, peupler la liste
     QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     QListWidgetItem* item = 0;
@@ -1249,6 +1242,21 @@ void MainWindow::peuple()
     }  
     if (item != 0) listWidgetM->setCurrentItem(item);
     majInfo();
+}
+
+void MainWindow::reinit()
+{
+    plainTextEditVariantes->clear();
+    delete lemcore;
+    litems.clear();
+    delete completeur;
+    delete modele;
+    itemsIrr.clear();
+    listWidgetM->clear();
+    lvarGraph.clear();
+    // recharger toutes les données
+    posFC = 0;
+    peuple();
 }
 
 void MainWindow::rotQ()
