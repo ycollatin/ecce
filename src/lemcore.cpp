@@ -81,7 +81,6 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-    lisVarGraph(_ajDir+"vargraph.la");
     lisModeles();
     lisModule(); 
     lisLexique(1);
@@ -669,7 +668,7 @@ MapLem LemCore::lemmatise(QString f)
         MapLem res;
         foreach (Lemme *l, result.keys())
         {
-            if (l->origin() != 1)
+            if (l->origin() != 2)
                 res[l] = result[l];
         }
         if (!res.isEmpty()) result = res;
@@ -1046,7 +1045,7 @@ void LemCore::lisLexique(int orig)
  */
 void LemCore::lisExtension()
 {
-    lisFichierLexique(_resDir + "lem_ext.la", 3);
+    lisFichierLexique(_resDir + "lem_ext.la", 2);
 }
 
 /**
