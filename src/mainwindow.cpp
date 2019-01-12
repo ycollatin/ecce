@@ -24,9 +24,9 @@
    FIXME
 
    TODO
+   - lemcore->setCible("fr"); ??
    - changement dans les variantes graphiques : relancer seulement
      le calcul des radicaux.
-   - message de reinitialisation de lemcore, et gel de l'appli.
    - faire un historique des positions des mots en échec non résolu
      afin de pouvoir revenir en arrière.
    - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
@@ -956,7 +956,7 @@ void MainWindow::instM()
         QFile out(zipFile.getActualFileName());
         if (!out.open(QIODevice::WriteOnly)) continue;;
         char c;
-        while (zipFile.getChar(&c)) out.putChar(c);      
+        while (zipFile.getChar(&c)) out.putChar(c);
         out.flush();
         out.close();
         zipFile.close();
@@ -1235,13 +1235,14 @@ void MainWindow::peuple()
     {
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
         if (ni->text() == module) item = ni;
-    }  
+    }
     if (item != 0) listWidgetM->setCurrentItem(item);
     majInfo();
 }
 
 void MainWindow::reinit()
 {
+    qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     plainTextEditVariantes->clear();
     delete lemcore;
     litems.clear();
@@ -1253,6 +1254,7 @@ void MainWindow::reinit()
     // recharger toutes les données
     posFC = 0;
     peuple();
+    qApp->restoreOverrideCursor();
 }
 
 void MainWindow::rotQ()
