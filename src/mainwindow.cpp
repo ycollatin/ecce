@@ -22,13 +22,15 @@
 
 
    FIXME
-   - il y a aussi des ci écrits ti en médiéval !
-   - Germaniae, dans le module raban, n'est pas lemmatisé
 
    TODO
+   - changement dans les variantes graphiques : relancer seulement
+     le calcul des radicaux.
    - message de reinitialisation de lemcore, et gel de l'appli.
    - faire un historique des positions des mots en échec non résolu
      afin de pouvoir revenir en arrière.
+   - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
+   - il y a aussi des ci écrits ti en médiéval !
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -1212,23 +1214,17 @@ void MainWindow::peuple()
     initCoches(lvarGraph);
 
     // listes pour les morphos irregs
-    lCas <<""<<"nominatif"<<"vocatif"<<"accusatif"
-        <<"génitif"<<"datif"<<"ablatif"<<"locatif";
-    lGenre << "" << "masculin" << "féminin" << "neutre";
-    lMod << "" << "indicatif" << "subjonctif"<<"impératif"
-        <<"infinitif"<<"participe"<<"gérondif"<<"adjectif verbal";
-    lNb << "" << "singulier" << "pluriel";
-    lPers << ""<<"1ère"<<"2ème"<<"3ème";
-    lTps << "" << "présent" << "futur" << "imparfait"
-        << "parfait" << "futur antérieur" << "PQP";
-    lVx << "" << "actif" << "passif";
-    iCas = 0;
-    iGenre = 0;
-    iMod = 0;
-    iNb = 0;
-    iPers = 0;
-    iTps = 0;
-    iVx = 0;
+    lCas << ""; lGenre << ""; lMod << ""; lNb << "";
+    lPers << ""; lTps<<""; lVx << "";
+    for (int i=0;i<6;++i) lCas   << lemcore->cas(i);
+    for (int i=0;i<3;++i) lGenre << lemcore->genre(i);
+    for (int i=0;i<3;++i) lMod   << lemcore->modes(i);
+    for (int i=0;i<2;++i) lNb    << lemcore->nombre(i);
+    lPers <<""<<"1ère"<<"2ème"<<"3ème";
+    for (int i=0;i<6;++i) lTps   << lemcore->temps(i);
+    for (int i=0;i<2;++i) lTps   << lemcore->voix(i);
+    iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
+    iTps = 0; iVx = 0;
 
     // modules, peupler la liste
     QDir chModules(modDir);
