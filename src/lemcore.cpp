@@ -83,7 +83,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
     }
     lisVarGraph(_ajDir+"vargraph.la");
     lisModeles();
-    lisModule(); 
+    lisModule();
     lisLexique(1);
     lisTags(false);
     lisTraductions(true, false);
@@ -505,7 +505,10 @@ QString LemCore::cible()
  * \fn void LemCore::setCible(QString c)
  * \brief Permet de changer la langue cible.
  */
-void LemCore::setCible(QString c) { _cible = c; }
+void LemCore::setCible(QString c)
+{
+    _cible = c;
+}
 
 /**
  * \fn QMap<QString,QString> LemCore::cibles()
@@ -786,25 +789,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     // J'essaie d'abord l'étape suivante
     QString fd; // On ne peut pas créer une variable QString à l'intérieur d'un switch.
     switch (etape)
-    { 
-        /*
-        case 4:
-            {
-                if (f.contains("ci"))
-                {
-                    fd = f;
-                    fd.replace("ci", "ti");
-                    MapLem nmm = lemmatiseM(fd);
-                    for (int i=0;i<nmm.count();++i)
-                    {
-                        Lemme *lem = nmm.keys().at(i);
-                        mm.insert(lem, nmm.value(lem));
-                    }
-                    return mm; 
-                }
-                break;
-            }
-        */
+    {
         // ensuite diverses manipulations sur la forme
         case 3:
             // contractions
@@ -1114,7 +1099,6 @@ void LemCore::lisTraductions(bool base, bool extension)
         {
             // lire le nom de la langue
             QString lang = lignes.takeFirst();
-            //lang = lang.mid(1).simplified();
             _cibles[suff] = lang;
         }
 
