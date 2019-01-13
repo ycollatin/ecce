@@ -1173,7 +1173,7 @@ void LemCore::reinitRads()
         for (int j=0;j<lr.count();++j)
         {
             Radical* r = lr.at(j);
-            QString k = vg(Ch::atone(Ch::deramise(r->lemme()->gr())));
+            QString k = vg(Ch::atone(r->lemme()->gr()));
             mmap.insert(k, r);
         }
     }
