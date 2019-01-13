@@ -45,10 +45,8 @@ void MainWindow::preAn()
     // I > J
     checkBox_IJ->setChecked(!txt.contains('I') && txt.contains('J'));
     // ae > e
-    int ae = txt.count("ae");
-    double aed = ae / (len + 0.0);
-    qDebug()<<"aed"<<aed;
-    checkBoxAe->setChecked(aed < 0.003);
+    int ae = txt.count(QRegExp("ee\\b"));
+    checkBoxAe->setChecked(ae > 0);
     // h H
     int nh = txt.count(QRegExp("\\b[Hh]"));
     double nhd = nh / (len+0.0);
@@ -99,6 +97,8 @@ void MainWindow::enrVar()
     flux << docVarGraph;
     flux << plainTextEditVariantes->toPlainText();
     f.close();
+    //lemcore->lisModeles();
+    //lemcore->reinitRads();
     reinit();
 }
 
