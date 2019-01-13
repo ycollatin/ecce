@@ -72,7 +72,10 @@ Modele *Radical::modele() { return _lemme->modele(); }
  * \fn int Radical::numRad ()
  * \brief Le numéro du radical.
  */
-int Radical::numRad() { return _numero; }
+int Radical::numRad()
+{
+    return _numero;
+}
 ///////////
 // LEMME //
 ///////////
@@ -514,10 +517,12 @@ bool Lemme::renvoi()
     return _indMorph.contains("cf. ");
 }
 
+/*
 void Lemme::setCle(QString c)
 {
     _cle = c;
 }
+*/
 
 /**
  * \fn QString Lemme::traduction(QString l)
@@ -569,27 +574,6 @@ void Lemme::setHyphen(QString h)
 {
     _hyphen = h;
 }
-
-/**
- * \fn QString Lemme::toString()
- * \brief rétablit la ligne de lemmes.la à partir
- *        de laquelle le lemme a été créé.
-QString Lemme::toString()
-{
-    //abdōmĕn=ābdōmĕn|corpus|ābdōmĭn||inis, n.|8
-    qЅtring ch0; = _champ0;
-    bool egal (grq != _champ0);
-    if (_nh > 1) ch0.append(QString::number(_nh));
-    if (egal) ch0.append('=' + grq;
-    return "%1|%2|%3|%4|%5|%6"
-        .arg(ch0)
-        .arg(_grModele)
-        .arg()
-        .arg()
-        .arg()
-        .arg();
-}
-*/
 
 /**
  * @brief Lemme::getHyphen
