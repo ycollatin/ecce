@@ -97,9 +97,11 @@ void MainWindow::enrVar()
     flux << docVarGraph;
     flux << plainTextEditVariantes->toPlainText();
     f.close();
-    //lemcore->lisModeles();
-    //lemcore->reinitRads();
-    reinit();
+    qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
+    lemcore->lisModeles();
+    lemcore->reinitRads();
+    //reinit();
+    qApp->restoreOverrideCursor();
 }
 
 // fonction provisoire très fragile. À surveiller

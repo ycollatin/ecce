@@ -50,6 +50,7 @@ class Radical : public QObject
 
    public:
     Radical(QString g, int n, QObject* parent);
+    //QString cle();
     QString gr();
     QString grq() const;
     Lemme* lemme();

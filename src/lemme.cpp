@@ -37,6 +37,13 @@ Radical::Radical(QString g, int n, QObject *parent)
     _numero = n;
 }
 
+/*
+QString Radical::cle()
+{
+    return Ch::deramise(Ch::atone(_lemme->gr()));
+}
+*/
+
 /**
  * \fn QString Radical::gr ()
  * \brief Renvoie la graphie du radical
@@ -453,7 +460,7 @@ int Lemme::origin()
 /**
  * \fn QString Lemme::oteNh (QString g, int &nh)
  * \brief Supprime le dernier caractère de g si c'est
- *        un nombre et revoie le résultat après avoir
+ *        un nombre et renvoie le résultat après avoir
  *        donné la valeur de ce nombre à nh.
  */
 QString Lemme::oteNh(QString g, int &nh)
