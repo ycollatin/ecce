@@ -22,6 +22,7 @@
 
 
    FIXME
+    - La correction d'un lemme dans .local s'ajoute au lieu de remplacer
     - Ebreos échec : Hebraeus > ebraeus > ebreus.
 
    TODO
@@ -53,6 +54,7 @@ MainWindow::MainWindow()
     // actions
     actionQuant = new QAction(this);
     actionDiff = new QAction(this);
+    actionEchecPrec = new QAction(this);
     actionEchecSuiv = new QAction(this);
     actionOuvrir = new QAction(this);
     actionQuitter = new QAction(this);
@@ -101,6 +103,9 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
+    bEchecPrec = new QToolButton();
+    bEchecPrec->setDefaultAction(actionEchecPrec);
+    horizontalLayout->addWidget(bEchecPrec);
     bEchecSuiv = new QToolButton();
     bEchecSuiv->setDefaultAction(actionEchecSuiv);
     horizontalLayout->addWidget(bEchecSuiv);
@@ -348,7 +353,7 @@ MainWindow::MainWindow()
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
-    mainToolBar->addAction(actionEchecSuiv);
+    //mainToolBar->addAction(actionEchecSuiv);
     mainToolBar->addAction(actionQuitter);
     addToolBar(Qt::TopToolBarArea, mainToolBar);
     // barre de menu
@@ -427,6 +432,8 @@ void MainWindow::retranslateUi()
 {
     setWindowTitle(QApplication::translate("Collatinus", "Ecce", Q_NULLPTR));
     actionDiff->setText(QApplication::translate("MainWindow", "G\303\251n\303\251rer un fichier diff", Q_NULLPTR));
+    actionEchecPrec->setText(QApplication::translate("MainWindow", "\303\251chec précédent", Q_NULLPTR));
+    actionEchecPrec->setShortcut(QApplication::translate("MainWindow", "Ctrl+P", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
@@ -542,6 +549,7 @@ void MainWindow::connecte()
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
+    connect(actionEchecPrec, SIGNAL(triggered()), this, SLOT(echecPrec()));
     connect(actionEchecSuiv, SIGNAL(triggered()), this, SLOT(echec()));
     // màj de la flexion
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
@@ -666,6 +674,7 @@ void MainWindow::creerM()
 
 void MainWindow::echec()
 {
+    echecs.append(posFC);
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
@@ -751,6 +760,15 @@ void MainWindow::echec()
         forme.clear();
     }
     posFC = fluxpos;
+}
+
+void MainWindow::echecPrec()
+{
+    qDebug()<<"lpos"<<echecs;
+    if (!echecs.isEmpty()) echecs.removeLast();
+    if (!echecs.isEmpty()) echecs.removeLast();
+    else posFC = 0; 
+    echec();
 }
 
 void MainWindow::editIrr(const QModelIndex &m)

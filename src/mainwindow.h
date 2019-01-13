@@ -71,6 +71,7 @@ class MainWindow : public QMainWindow
         QAction *actionQuant;
         QAction *actionQuitter;
         QAction *actionDiff;
+        QAction *actionEchecPrec;
         QAction *actionEchecSuiv;
         QAction *actionOuvrir;
         //QAction *actionCopier;
@@ -91,6 +92,7 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditLemme;
         QPushButton *bHomon;
         QPushButton *bSuppr;
+        QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
@@ -283,6 +285,7 @@ class MainWindow : public QMainWindow
         // variantes graphiques
         QStringList       lvarGraph;
         qint64            posFC;
+        QList<qint64>     echecs;  // liste des positions d'échec
 
     private slots:
         void        activerM();
@@ -293,6 +296,7 @@ class MainWindow : public QMainWindow
         void        coche();
         void        creerM();
         void        echec();
+        void        echecPrec();
         void        editIrr(const QModelIndex &m);
         void        edLem(QString l="");
         void        enr();
