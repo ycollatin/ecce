@@ -70,7 +70,6 @@ class LemCore : public QObject
     void lisFichierLexique(QString filepath, int orig=0);
     void lisLexique(int orig=0);
     void lisExtension();
-    void lisModeles();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);
     void lisTraductions(QString nf);
@@ -150,6 +149,7 @@ class LemCore : public QObject
     QStringList            lemmes(MapLem ml);
     // Lit les lignes d'un fichier. Est devenu public.
     QStringList            lignesFichier(QString nf);
+    void                   lisModeles();
     void                   lisModule();
     void                   lisVarGraph(QString nf);
     // Lire un fichier de césures étymologiques (non-phonétiques)
@@ -158,6 +158,7 @@ class LemCore : public QObject
     QStringList            lModeles();
     Modele*                modele(QString m);
     QString                morpho(int i);
+    void                   reinitRads();
     void                   remplaceLemme(Lemme* l, Lemme* nl);
     QString                resDir();
     QMap<QString, QString> suffixes;

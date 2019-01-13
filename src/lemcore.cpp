@@ -986,8 +986,7 @@ void LemCore::lisIrreguliers(QString nf)
 
 /**
  * \fn void LemCore::lisFichierLexique(filepath)
- * \brief Lecture des lemmes, synthèse et enregistrement
- *        de leurs radicaux
+ * \brief Lecture des lemmes
  */
 void LemCore::lisFichierLexique(QString filepath, int orig)
 {
@@ -1037,6 +1036,7 @@ void LemCore::lisExtension()
  */
 void LemCore::lisModeles()
 {
+    _modeles.clear();
     QStringList lignes = lignesFichier(_resDir + "modeles.la");
     int max = lignes.count()-1;
     QStringList sl;
@@ -1159,6 +1159,17 @@ QString LemCore::morpho(int m)
         return "morpho, "+QString::number(m)+" : erreur d'indice";
     if (m == _morphos[l].count()) return "-";
     return _morphos[l].at(m - 1);
+}
+
+void LemCore::reinitRads()
+{
+    _radicaux.clear();
+    for (int i=0;i<_lemmes.keys().count();++i)
+    {
+        QString cle = _lemmes.keys().at(i);
+        for (int j=0;j<_lemmes.count(cle);++j)
+           ajRadicaux(_lemmes.values(cle).at(j));
+    }
 }
 
 void LemCore::remplaceLemme(Lemme* l, Lemme* nl)
