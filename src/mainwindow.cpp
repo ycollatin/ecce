@@ -22,14 +22,16 @@
 
 
    FIXME
+    - Ebreos échec : Hebraeus > ebraeus > ebreus.
 
    TODO
-   - lemcore->setCible("fr"); ??
-   - changement dans les variantes graphiques : relancer seulement
-     le calcul des radicaux.
+   - règles vargraph : ajourer \<del > \<dil, \<necr > nicr
    - faire un historique des positions des mots en échec non résolu
      afin de pouvoir revenir en arrière.
    - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
+   - changement dans les variantes graphiques : relancer seulement
+     le calcul des radicaux.
+   - lemcore->setCible("fr"); ??
    - il y a aussi des ci écrits ti en médiéval !
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
