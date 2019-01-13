@@ -1163,13 +1163,21 @@ QString LemCore::morpho(int m)
 
 void LemCore::reinitRads()
 {
-    _radicaux.clear();
-    for (int i=0;i<_lemmes.keys().count();++i)
+    QMultiMap<QString, Radical*> mmap;
+    mmap.clear();
+    QStringList cles = _radicaux.uniqueKeys();
+    for (int i=0;i<cles.count();++i)
     {
-        QString cle = _lemmes.keys().at(i);
-        for (int j=0;j<_lemmes.count(cle);++j)
-           ajRadicaux(_lemmes.values(cle).at(j));
+        QString k = cles.at(i);
+        QList<Radical*> lr = _radicaux.values(k);
+        for (int j=0;j<lr.count();++j)
+        {
+            Radical* r = lr.at(j);
+            QString k = vg(Ch::atone(Ch::deramise(r->lemme()->gr())));
+            mmap.insert(k, r);
+        }
     }
+    _radicaux.swap(mmap);
 }
 
 void LemCore::remplaceLemme(Lemme* l, Lemme* nl)
