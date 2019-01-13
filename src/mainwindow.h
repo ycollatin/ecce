@@ -216,6 +216,7 @@ class MainWindow : public QMainWindow
         QCompleter*       completeur;
         QCompleter*       completeurM;
         void              connecte();
+        QString           contexte(qint64 p);
         QString docVarGraph =
         "!          vargraph.la\n"
         "!\n"
@@ -237,7 +238,6 @@ class MainWindow : public QMainWindow
         QString           fichier;
         Flexion*          flexion;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
-        QString           hist;
         int               iLemSuiv;
         LemCore*          lemcore;
         QString           ligneFr();

@@ -22,6 +22,7 @@
 
 
    FIXME
+    - le retour en arrière marche mal. Revoir echecs et sa gestion
     - La correction d'un lemme dans .local s'ajoute au lieu de remplacer
     - Ebreos échec : Hebraeus > ebraeus > ebreus.
 
@@ -589,6 +590,42 @@ void MainWindow::connecte()
 
 }
 
+QString MainWindow::contexte(qint64 p)
+{
+    QString ret("*");
+    QChar c;
+    QTextStream flux(&fCorpus);
+    qint64 debut = p;
+    flux.seek(p);
+    // en arrière
+    do
+    {
+        flux >> c;
+        ret.append(c);
+    } while (c.isLetter());
+    ret.chop(1);
+    ret.append('*');
+    ret.append(c);
+    qint64 fin = flux.pos();
+    int i = debut - 200;
+    if (debut < 0) debut = 0;
+    flux.seek(debut);
+    QString ante;
+    for (;i<debut;++i)
+    {
+        flux >> c;
+        ante.append(c);
+    }
+    ret.prepend(ante);
+    flux.seek(fin);
+    for (int i=0;i<200 && !flux.atEnd();++i)
+    {
+        flux >> c;
+        ret.append(c);
+    }
+    return ret;
+}
+
 void MainWindow::activerM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
@@ -674,7 +711,6 @@ void MainWindow::creerM()
 
 void MainWindow::echec()
 {
-    echecs.append(posFC);
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     bool fini = flux.atEnd();
@@ -682,24 +718,22 @@ void MainWindow::echec()
     QString forme;
     bool arret = false;
     qint64 fluxpos = flux.pos();
-    QString post;
     while(!fini && !arret)
     {
+        // passer l'entremots
         do
         {
             flux >> c;
-            hist.append(c);
-            if (hist.size() > 200) hist.remove(0,1);
         }
         while (!flux.atEnd() && !c.isLetter());
+        // lire la forme
         do
         {
             forme.append(c);
             flux >> c;
-            hist.append(c);
-            if (hist.size() > 200) hist.remove(0,1);
         }
         while (!flux.atEnd() && c.isLetter());
+        // retenir la position du premier caractère entre mots
         ml = lemcore->lemmatiseM(forme);
         if (ml.isEmpty())
         {
@@ -718,18 +752,9 @@ void MainWindow::echec()
         if (ml.isEmpty())
         {
             arret = true;
-            fluxpos = flux.pos();
-            post.clear();
-            QChar cp;
-            for (int i=0;i<100 && !flux.atEnd();++i)
-            {
-                flux >> cp;
-                post.append(cp);
-            }
-            hist.remove('*');
-            hist.replace(forme,"*"+forme+"*");
-            labelContexte->setText(hist+post);
             lineEditLemme->setText(forme);
+            labelContexte->setText(contexte(fluxpos-forme.length()-1));
+            echecs.append(fluxpos);
         }
         else
         {
@@ -742,17 +767,8 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                fluxpos = flux.pos();
-                post.clear();
-                QChar cp;
-                for (int i=0;i<100 && !flux.atEnd();++i)
-                {
-                    flux >> cp;
-                    post.append(cp);
-                }
-                hist.remove('*');
-                hist.replace(forme, "*"+forme+"*");
-                labelContexte->setText(hist+post);
+                labelContexte->setText(contexte(fluxpos-forme.length()-1));
+                echecs.append(fluxpos);
                 iLemSuiv = -1;
                 if (!ml.isEmpty()) lemSuiv();
             }
@@ -764,10 +780,9 @@ void MainWindow::echec()
 
 void MainWindow::echecPrec()
 {
-    qDebug()<<"lpos"<<echecs;
-    if (!echecs.isEmpty()) echecs.removeLast();
-    if (!echecs.isEmpty()) echecs.removeLast();
-    else posFC = 0; 
+    if (echecs.count() > 1) echecs.removeLast();
+    if (echecs.count() > 1) echecs.removeLast();
+    posFC = echecs.last();
     echec();
 }
 
@@ -1092,8 +1107,8 @@ void MainWindow::ouvrir(QString nf)
     settings.setValue("fichier", fichier);
     settings.endGroup();
     majInfo();
-    //labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
-    //                   "texte analysé : <strong>"+fichier+"</strong>.");
+    echecs.clear();
+    echecs.append(0);
 }
 
 void MainWindow::majInfo()
