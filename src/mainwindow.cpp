@@ -20,14 +20,18 @@
 
 /*
 
-
    FIXME
-    - La correction d'un lemme dans .local s'ajoute au lieu de remplacer
-      Pour savoir s'il faut remplacer ou ajouter : l'existence d'une clé
-      compatible avec la forme canonique saisie (grq).
+    - il semble qu'une modif de lemmes ou de vargraph perturbe les
+      lemmatisations ultérieures.
+    - Les chiffres romains ?
+    - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
+      lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
+      l'existence d'une clé compatible avec la forme canonique saisie
+      (grq).
+    - cocher dans vargraph écrase les saisies à la main
 
    TODO
-   - règles vargraph : ajourer \<del > \<dil, \<necr > nicr
+   - règles vargraph : ajouter \<del > \<dil, \<necr > nicr
    - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
    - lemcore->setCible("fr"); ??
    - il y a aussi des ci écrits ti en médiéval !
@@ -590,36 +594,38 @@ void MainWindow::connecte()
 QString MainWindow::contexte(qint64 p)
 {
     QString ret("*");
-    QChar c;
+    qint64 posF = p-1;
     QTextStream flux(&fCorpus);
-    qint64 debut = p;
     flux.seek(p);
-    // en arrière
+    QChar c;
+    // la forme
     do
     {
         flux >> c;
         ret.append(c);
     } while (c.isLetter());
+    // ôter la non-lettre qui suit
     ret.chop(1);
+    // ajouter l'étoile et la non-lettre
     ret.append('*');
     ret.append(c);
-    qint64 fin = flux.pos();
-    int i = debut - 200;
-    if (debut < 0) debut = 0;
-    flux.seek(debut);
-    QString ante;
-    for (;i<debut;++i)
-    {
-        flux >> c;
-        ante.append(c);
-    }
-    ret.prepend(ante);
-    flux.seek(fin);
+    // contexte post
     for (int i=0;i<200 && !flux.atEnd();++i)
     {
         flux >> c;
         ret.append(c);
     }
+    // contexte ante
+    qint64 debut = posF - 200;
+    if (debut < 0) debut = 0;
+    flux.seek(debut);
+    QString ante;
+    while (flux.pos() <= posF)
+    {
+        flux >> c;
+        ante.append(c);
+    }
+    ret.prepend(ante);
     return ret;
 }
 
