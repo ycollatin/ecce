@@ -37,13 +37,6 @@ Radical::Radical(QString g, int n, QObject *parent)
     _numero = n;
 }
 
-/*
-QString Radical::cle()
-{
-    return Ch::deramise(Ch::atone(_lemme->gr()));
-}
-*/
-
 /**
  * \fn QString Radical::gr ()
  * \brief Renvoie la graphie du radical
