@@ -298,11 +298,12 @@ class MainWindow : public QMainWindow
         void        echec();
         void        echecPrec();
         void        editIrr(const QModelIndex &m);
+        void        editModule(QString k, QString l, QString f);
         void        edLem(QString l="");
         void        enr();
         void        enrVar();
         void        initCoches(QStringList lv);
-        void        insereLigne(QString l, QString f);
+        //void        insereLigne(QString l, QString f);
         void        instM();
         void        lemSuiv();
         QString     ligneLa(QString modl="");

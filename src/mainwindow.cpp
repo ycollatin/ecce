@@ -22,27 +22,24 @@
 
 
    FIXME
-    - le retour en arrière marche mal. Revoir echecs et sa gestion
     - La correction d'un lemme dans .local s'ajoute au lieu de remplacer
-    - Ebreos échec : Hebraeus > ebraeus > ebreus.
+      Pour savoir s'il faut remplacer ou ajouter : l'existence d'une clé
+      compatible avec la forme canonique saisie (grq).
 
    TODO
    - règles vargraph : ajourer \<del > \<dil, \<necr > nicr
-   - faire un historique des positions des mots en échec non résolu
-     afin de pouvoir revenir en arrière.
    - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
-   - changement dans les variantes graphiques : relancer seulement
-     le calcul des radicaux.
    - lemcore->setCible("fr"); ??
    - il y a aussi des ci écrits ti en médiéval !
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
+     (seulement pour irregs).
    - renommer Editcol Ecce.
      ECCE (Ecce Collatinistarum Communitatis Editor)
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
-   - rendre l'homonymie plus ergonomique
+   - rendre l'homonymie de la clé plus ergonomique
  */
 
 #include <QFileDialog>
@@ -644,7 +641,8 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
-    insereLigne(lin, ajDir+"irregs.la");
+    //insereLigne(lin, ajDir+"irregs.la");
+    editModule(linIrreg->text(), lin, ajDir+"irregs.la");
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -795,6 +793,43 @@ void MainWindow::editIrr(const QModelIndex &m)
     lineEditNumMorpho->setText(sections.at(2));
 }
 
+void MainWindow::editModule(QString k, QString l, QString f)
+{
+    QStringList lignes = lisLignes(f);
+    bool fait = false;
+    QRegExp sep("\\Ŵ");
+    for (int i=0;i<lignes.count();++i)
+    {
+        QString lin = lignes.at(i);
+        int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
+        if (c == 0)
+        {
+            std::cerr << qPrintable(l+" est un doublon dans "+f+"\n");
+            fait = true;
+            break;
+        }
+        // si la clé est identique, remplacer la ligne
+        QString cle = Ch::atone(lin.section(sep,0,0));
+        if (cle == k)
+        {
+            lignes[i] = f;
+            fait = true;
+            break;
+        }
+        else if (c > 0)
+        {
+            lignes.insert(i, l);
+            fait = true;
+            break;
+        }
+    }
+    if (!fait) lignes.append(l);
+    QFile file(f);
+    file.open(QFile::WriteOnly);
+    QTextStream(&file) << lignes.join('\n');
+    file.close();
+}
+
 void MainWindow::edLem(QString l)
 {
     if (!litems.contains(l))
@@ -927,9 +962,11 @@ void MainWindow::enr()
         .arg(lc)
         .arg(ltr);
     // latin
-    insereLigne(linLa, ajDir+"/lemmes.la");
+    //insereLigne(linLa, ajDir+"/lemmes.la");
+    editModule(lc, linLa, ajDir+"/lemmes.la");
     // français
-    insereLigne(linFr, ajDir + "/lemmes.fr");
+    //insereLigne(linFr, ajDir+"/lemmes.fr");
+    editModule(lc, linFr, ajDir+"/lemmes.fr");
     // màj du compléteur
     litems.append(lc);
     modele = new QStringListModel(litems);
@@ -943,6 +980,7 @@ void MainWindow::enr()
     else lemcore->ajLemme(nLemme);
 }
 
+/*
 void MainWindow::insereLigne(QString l, QString f)
 {
     QStringList lignes = lisLignes(f);
@@ -969,6 +1007,7 @@ void MainWindow::insereLigne(QString l, QString f)
     QTextStream(&file) << lignes.join('\n');
     file.close();
 }
+*/
 
 void MainWindow::instM()
 {
