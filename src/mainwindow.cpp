@@ -21,8 +21,6 @@
 /*
 
    FIXME
-    - il semble qu'une modif de lemmes ou de vargraph perturbe les
-      lemmatisations ultérieures.
     - Les chiffres romains ?
     - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
       lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
@@ -61,17 +59,17 @@ MainWindow::MainWindow()
     actionOuvrir = new QAction(this);
     actionQuitter = new QAction(this);
 
-    //  setupUi
+    // ui 
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
     verticalLayout->setSpacing(6);
     verticalLayout->setContentsMargins(11, 11, 11, 11);
     // label d'info sur les lexiques
     labelInfo = new QLabel(centralWidget);
-    //labelInfo->setTextFormat(Qt::RichText);
     verticalLayout->addWidget(labelInfo);
     // conteneur des onglets
     tabWidget = new QTabWidget(centralWidget);
+
     // onglet Lexique
     tabLexique = new QWidget();
     verticalLayout_Lex = new QVBoxLayout(tabLexique);
@@ -171,6 +169,7 @@ MainWindow::MainWindow()
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
     tabWidget->addTab(tabLexique, QString());
+
     // onglet variantes graphiques
     tabVarGraph = new QWidget();
     verticalLayout_5 = new QVBoxLayout(tabVarGraph);
@@ -302,6 +301,7 @@ MainWindow::MainWindow()
     splitterIrr->addWidget(listWidgetIrr);
     verticalLayout_I->addWidget(splitterIrr);
     tabWidget->addTab(tabIrr, QString());
+
     // onglet Modules
     tabM = new QWidget();
     verticalLayoutM = new QVBoxLayout(tabM);
@@ -701,8 +701,6 @@ void MainWindow::creerM()
     QTextStream(&fv) << docVarGraph;
     fv.close();
     module = moduletmp;
-    // affichage
-    QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     // sauver le nom du nouveau module
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("lexique");
@@ -710,6 +708,8 @@ void MainWindow::creerM()
     settings.endGroup();
     // recharger toutes les données
     reinit();
+    // affichage
+    QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     listWidgetM->setCurrentItem(item);
 }
 
