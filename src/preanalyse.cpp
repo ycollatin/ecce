@@ -39,7 +39,6 @@ void MainWindow::preAn()
     f.close();
 
     int len = txt.length();
-    qDebug()<<"longueur du texte"<<len;
     // U > V
     checkBox_UV->setChecked(!txt.contains('U') && txt.contains('V'));
     // I > J
@@ -50,7 +49,6 @@ void MainWindow::preAn()
     // h H
     int nh = txt.count(QRegExp("\\b[Hh]"));
     double nhd = nh / (len+0.0);
-    qDebug()<<"nhd"<<nhd;
     checkBox_H->setChecked(nhd < 0.003);
     // ph f
     int nph = txt.count("ph");
@@ -58,15 +56,12 @@ void MainWindow::preAn()
     checkBox_PH->setChecked(phd < 0.003);
     // ci
     int nci = txt.count(QRegExp("(accio|[arpu]cione)"));
-    qDebug()<<"nci"<<nci;
     checkBox_TICI->setChecked(nci > 0);
     // mn/mpn
     int nmpn = txt.count(QRegExp("[aey]mpn"));
-    qDebug()<<"nmpn"<<nmpn;
     checkBox_MPN->setChecked(nmpn > 0);
     // michi
     int nmichi = txt.count(QRegExp("\\bmichi\\b"));
-    qDebug()<<"nmichi"<<nmichi;
     checkBox_Mihi->setChecked(nmichi > 0);
 
     coche();
