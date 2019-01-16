@@ -2,7 +2,7 @@ VERSION = "alpha"
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
 TEMPLATE = app
-TARGET = editcol
+TARGET = ecce
 INCLUDEPATH += . src
 DEPENDPATH += .
 

@@ -21,7 +21,7 @@
 /*
 
    FIXME
-    - Les chiffres romains ?
+    - Voir pourquoi Ebreos n'est pas lemmatisé en Hebraeus acc. pl.
     - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
       lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
       l'existence d'une clé compatible avec la forme canonique saisie
