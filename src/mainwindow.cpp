@@ -21,6 +21,7 @@
 /*
 
    FIXME
+    - revoir le retour arrière dans les échecs
     - Voir pourquoi Ebreos n'est pas lemmatisé en Hebraeus acc. pl.
     - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
       lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
@@ -593,39 +594,33 @@ void MainWindow::connecte()
 
 QString MainWindow::contexte(qint64 p)
 {
-    QString ret("*");
-    qint64 posF = p-1;
+    QString ret;
     QTextStream flux(&fCorpus);
-    flux.seek(p);
-    QChar c;
-    // la forme
-    do
+    flux.setAutoDetectUnicode(true);
+    if (p < 201)
+    {
+        flux.seek(0);    
+        ret = flux.read(p-1);
+    }
+    else
+    {
+        flux.seek(p-201);
+        ret = flux.read(200);
+    }
+    ret.append('*');
+    QChar c = '\0';;
+    while (true && !flux.atEnd()) 
     {
         flux >> c;
-        ret.append(c);
-    } while (c.isLetter());
-    // ôter la non-lettre qui suit
-    ret.chop(1);
-    // ajouter l'étoile et la non-lettre
+        if (c.isLetter()) ret.append(c);
+        else break;
+    }
     ret.append('*');
     ret.append(c);
-    // contexte post
-    for (int i=0;i<200 && !flux.atEnd();++i)
+    for (int i=0;i<200&&!flux.atEnd();++i)
     {
-        flux >> c;
-        ret.append(c);
+        ret.append(flux.read(1));
     }
-    // contexte ante
-    qint64 debut = posF - 200;
-    if (debut < 0) debut = 0;
-    flux.seek(debut);
-    QString ante;
-    while (flux.pos() <= posF)
-    {
-        flux >> c;
-        ante.append(c);
-    }
-    ret.prepend(ante);
     return ret;
 }
 
@@ -717,12 +712,11 @@ void MainWindow::echec()
 {
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
-    bool fini = flux.atEnd();
     QChar c;
     QString forme;
     bool arret = false;
     qint64 fluxpos = flux.pos();
-    while(!fini && !arret)
+    while(!flux.atEnd() && !arret)
     {
         // passer l'entremots
         do
@@ -730,6 +724,8 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && !c.isLetter());
+        // retenir la position du premier caractère entre mots
+        fluxpos = flux.pos();
         // lire la forme
         do
         {
@@ -737,31 +733,18 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
-        // retenir la position du premier caractère entre mots
+        // lemmatisation
         ml = lemcore->lemmatiseM(forme);
-        if (ml.isEmpty())
-        {
-            // essayer avec les règles de réécriture
-            QString nforme = lemcore->ti(forme);
-            if (nforme != forme) ml = lemcore->lemmatiseM(nforme);
-        }
-        if (ml.isEmpty())
-        {
-            // essayer avec les chiffres romains
-            QString nforme = forme.toUpper();
-            if (lemcore->estRomain(nforme))
-                ml = lemcore->lemmatiseM(nforme);
-        }
-        fluxpos = flux.pos();
         if (ml.isEmpty())
         {
             arret = true;
             lineEditLemme->setText(forme);
-            labelContexte->setText(contexte(fluxpos-forme.length()-1));
+            labelContexte->setText(contexte(fluxpos));
             echecs.append(fluxpos);
         }
         else
         {
+            arret = true;
             // voir si une lemmatisation vient du lexique
             // classique ou du module lexical
             for (int i=0;i<ml.keys().count();++i)
@@ -771,15 +754,17 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                labelContexte->setText(contexte(fluxpos-forme.length()-1));
+                labelContexte->setText(contexte(fluxpos));
+                if (!ml.isEmpty())
+                {
+                    iLemSuiv = -1;
+                    lemSuiv();
+                }
                 echecs.append(fluxpos);
-                iLemSuiv = -1;
-                if (!ml.isEmpty()) lemSuiv();
             }
         }
-        forme.clear();
     }
-    posFC = fluxpos;
+    posFC = flux.pos();
 }
 
 void MainWindow::echecPrec()
