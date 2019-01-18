@@ -716,6 +716,7 @@ void MainWindow::echec()
     QString forme;
     bool arret = false;
     qint64 fluxpos = flux.pos();
+    qint64 posEchec = fluxpos;
     while(!flux.atEnd() && !arret)
     {
         // passer l'entremots
@@ -740,7 +741,7 @@ void MainWindow::echec()
             arret = true;
             lineEditLemme->setText(forme);
             labelContexte->setText(contexte(fluxpos));
-            echecs.append(fluxpos);
+            echecs.append(posEchec);
         }
         else
         {
@@ -759,8 +760,8 @@ void MainWindow::echec()
                 {
                     iLemSuiv = -1;
                     lemSuiv();
+                    echecs.append(posEchec);
                 }
-                echecs.append(fluxpos);
             }
         }
     }
@@ -769,9 +770,14 @@ void MainWindow::echec()
 
 void MainWindow::echecPrec()
 {
-    if (echecs.count() > 1) echecs.removeLast();
-    if (echecs.count() > 1) echecs.removeLast();
-    posFC = echecs.last();
+    if (echecs.count() > 1)
+    {
+        echecs.removeLast();
+        if (echecs.count() > 1)
+            posFC = echecs.takeLast();
+        else posFC = 0;
+    }
+    else posFC = 0;
     echec();
 }
 
