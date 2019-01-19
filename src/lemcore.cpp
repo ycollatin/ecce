@@ -395,6 +395,7 @@ void LemCore::ajDesinence(Desinence *d)
 
 bool LemCore::estRomain(QString f)
 {
+    f = f.toUpper();
     return !(f.contains(QRegExp ("[^IUXLCDM]"))
              || f.contains("IL")
              || f.contains("IUI"));
@@ -799,7 +800,6 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
                 MapLem nmm = lemmatiseM(fd, debPhr, 5);
                 foreach (Lemme *nl, nmm.keys())
                 {
-                    qDebug()<<"ti/ci, nl"<<nl->cle()<<nl->origin();
                     for (int i = 0; i < nmm[nl].count(); ++i)
                         nmm[nl][i].grq = assimq(nmm[nl][i].grq);
                     mm.insert(nl, nmm.value(nl));
@@ -1140,7 +1140,6 @@ void LemCore::lisTraductions(QString nf)
 
 void LemCore::lisVarGraph(QString nf)
 {
-
     QStringList lignes = lignesFichier(nf);
     _reglesVG.clear();
     for (int i=0;i<lignes.count();++i)
@@ -1452,8 +1451,11 @@ QString LemCore::ti(QString f)
 
 QString LemCore::vg(QString c)
 {
+    bool maj = c.at(0).isUpper();
+    c = c.toLower();
     for (int i=0;i<_reglesVG.count();++i)
         c = _reglesVG.at(i)->transf(c);
+    if (maj) c[0] = c.at(0).toUpper();
     return c;
 }
 
