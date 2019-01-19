@@ -21,8 +21,6 @@
 /*
 
    FIXME
-    - revoir le retour arrière dans les échecs
-    - Voir pourquoi Ebreos n'est pas lemmatisé en Hebraeus acc. pl.
     - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
       lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
       l'existence d'une clé compatible avec la forme canonique saisie
@@ -719,6 +717,7 @@ void MainWindow::echec()
     qint64 posEchec = fluxpos;
     while(!flux.atEnd() && !arret)
     {
+        forme.clear();
         // passer l'entremots
         do
         {
@@ -935,10 +934,12 @@ void MainWindow::edLem(QString l)
                         }
                         break;
                     }
+                    /*
                 case 3:
                     {
                         break;
                     }
+                    */
                 default:
                     {
                         break;
