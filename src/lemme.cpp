@@ -62,12 +62,20 @@ QString Radical::grq() const
  * \fn Lemme* Radical::lemme ()
  * \brief Le lemme auquel appartient le radical.
  */
-Lemme *Radical::lemme() { return _lemme; }
+Lemme *Radical::lemme()
+{
+    return _lemme;
+}
+
 /**
  * \fn Modele* Radical::modele ()
  * \brief Le modèle de flexion du radical
  */
-Modele *Radical::modele() { return _lemme->modele(); }
+Modele *Radical::modele()
+{
+    return _lemme->modele();
+}
+
 /**
  * \fn int Radical::numRad ()
  * \brief Le numéro du radical.
