@@ -21,11 +21,8 @@
 /*
 
    FIXME
-    - Bonifacius non lemmatisé malgré l'existence de Bonifatius
-    - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
-      lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
-      l'existence d'une clé compatible avec la forme canonique saisie
-      (grq).
+    
+    - adnuntio ne lemmasise pas annunciat
     - cocher dans vargraph écrase les saisies à la main
 
    TODO
