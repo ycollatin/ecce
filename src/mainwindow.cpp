@@ -22,6 +22,8 @@
 
    FIXME
     
+    - La correction d'un lemme se fait bien pour la traduction, mais
+      crée un doublon dans lemmes.la. Voir ::editModule().
     - adnuntio ne lemmasise pas annunciat
     - cocher dans vargraph écrase les saisies à la main
 
@@ -975,10 +977,8 @@ void MainWindow::enr()
         .arg(lc)
         .arg(ltr);
     // latin
-    //insereLigne(linLa, ajDir+"/lemmes.la");
     editModule(lc, linLa, ajDir+"/lemmes.la");
     // français
-    //insereLigne(linFr, ajDir+"/lemmes.fr");
     editModule(lc, linFr, ajDir+"/lemmes.fr");
     // màj du compléteur
     litems.append(lc);
