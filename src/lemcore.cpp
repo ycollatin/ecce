@@ -91,7 +91,8 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
     if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
     lisIrreguliers(_resDir+"irregs.la");
 #ifdef VERIF_TRAD
-    foreach (Lemme *l, _lemmes.values()) {
+    foreach (Lemme *l, _lemmes.values())
+    {
         QString t = l->traduction("fr");
         if (t == "") qDebug() << l->cle() << "non traduit.";
     }
@@ -613,7 +614,7 @@ MapLem LemCore::lemmatise(QString f)
     int cnt_v = f_lower.count("v");
     bool V_maj = f[0] == 'V';
     int cnt_ae = f_lower.count("æ");
-    int cnt_oe = f_lower.count("œ");
+    //int cnt_oe = f_lower.count("œ");
     if (f_lower.endsWith("æ")) cnt_ae -= 1;
     f = Ch::deramise(f);
     // formes irrégulières
@@ -659,7 +660,7 @@ MapLem LemCore::lemmatise(QString f)
                                  +des->grq().count("v")));
                     if (!c) c = (V_maj && (rad->gr()[0] == 'U')
                             && (cnt_v - 1 == rad->grq().toLower().count("v")));
-                    c = c && ((cnt_oe==0)||(cnt_oe == rad->grq().toLower().count("ōe")));
+                    //c = c && ((cnt_oe==0)||(cnt_oe == rad->grq().toLower().count("ōe")));
                     c = c && ((cnt_ae==0)||
                               (cnt_ae == (rad->grq().toLower().count("āe") + rad->grq().toLower().count("prăe"))));
                     if (c)
@@ -770,7 +771,6 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
     // appliquer les règles de variante graphique
     f = Ch::deramise(vg(f));
     MapLem mm;
-    //bool var = f != fVar;
     if (f.isEmpty()) return mm;
     if ((etape > 4) || (etape <0)) // Condition terminale
     {
@@ -1100,18 +1100,25 @@ void LemCore::lisTraductions(bool base, bool extension)
 //    QString nrep = _resDir;
     QDir rep;
     if (!base && !extension) return;
-    if (base && extension) {
+    if (base && extension)
+    {
         rep = QDir(_resDir, "lem*.*");
-    } else if (base) {
+    }
+    else if (base)
+    {
         rep = QDir(_resDir, "lemmes.*");
-    } else {
+    }
+    else
+    {
         rep = QDir(_resDir, "lem_ext.*");
     }
     QStringList ltr = rep.entryList();
-    if (base) {
+    if (base)
+    {
         ltr.removeOne("lemmes.la");  // n'est pas un fichier de traductions
     }
-    if (extension) {
+    if (extension)
+    {
         ltr.removeOne("lem_ext.la");  // n'est pas un fichier de traductions
     }
     foreach (QString nfl, ltr)
@@ -1314,7 +1321,8 @@ QString LemCore::variable(QString v)
 void LemCore::setExtension(bool e)
 {
     _extension = e;
-    if (!_extLoaded && e) {
+    if (!_extLoaded && e)
+    {
         lisExtension();
         lisTraductions(false,true);
         _extLoaded = true;
@@ -1457,6 +1465,7 @@ QString LemCore::vg(QString c)
     c = c.toLower();
     for (int i=0;i<_reglesVG.count();++i)
         c = _reglesVG.at(i)->transf(c);
+    if (c.isEmpty()) return c;
     if (maj) c[0] = c.at(0).toUpper();
     return c;
 }
