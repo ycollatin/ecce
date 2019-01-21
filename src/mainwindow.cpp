@@ -21,6 +21,7 @@
 /*
 
    FIXME
+    - Bonifacius non lemmatisé malgré l'existence de Bonifatius
     - Fait, à vérifier : La correction d'un lemme dans .local s'ajoute au
       lieu de remplacer Pour savoir s'il faut remplacer ou ajouter :
       l'existence d'une clé compatible avec la forme canonique saisie
@@ -28,14 +29,12 @@
     - cocher dans vargraph écrase les saisies à la main
 
    TODO
-   - règles vargraph : ajouter \<del > \<dil, \<necr > nicr
-   - factoriser le nom de la langue cible dans LemCore _cible.mid(3,2)
-   - lemcore->setCible("fr"); ??
-   - il y a aussi des ci écrits ti en médiéval !
+   - Donner la possibilité de tester une forme qui n'est pas dans le texte.
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
+   - règles vargraph : ajouter \<del > \<dil, \<necr > nicr
    - renommer Editcol Ecce.
      ECCE (Ecce Collatinistarum Communitatis Editor)
    - suppression d'un lemme : trouver une syntaxe
