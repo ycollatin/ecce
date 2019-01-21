@@ -216,7 +216,7 @@ class MainWindow : public QMainWindow
         QCompleter*       completeur;
         QCompleter*       completeurM;
         void              connecte();
-        QString           contexte(qint64 p);
+        QString           contexte(qint64 p, QString f="");
         QString docVarGraph =
         "!          vargraph.la\n"
         "!\n"
