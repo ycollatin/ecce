@@ -81,6 +81,7 @@ MainWindow::MainWindow()
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
     labelContexte = new QLabel(frame);
     labelContexte->setWordWrap(true);
+    labelContexte->setTextFormat(Qt::RichText);
     verticalLayout_3->addWidget(labelContexte);
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
@@ -586,7 +587,7 @@ void MainWindow::connecte()
 
 }
 
-QString MainWindow::contexte(qint64 p)
+QString MainWindow::contexte(qint64 p, QString f)
 {
     QString ret;
     QTextStream flux(&fCorpus);
@@ -601,6 +602,23 @@ QString MainWindow::contexte(qint64 p)
         flux.seek(p-201);
         ret = flux.read(200);
     }
+    QChar c;
+    for (int i=0;i<200 && !flux.atEnd();++i)
+    {
+        flux >> c;
+        ret.append(c);
+    }
+
+    if (f.isEmpty()) return ret;
+    int dm = ret.indexOf(f);
+    int fm = ret.indexOf(QRegExp("\\b"), dm+2);
+    ret.insert(fm, "</strong>");
+    ret.insert(dm, "<strong>");
+    ret.replace("\n", "<br/>");
+    return ret;
+
+
+    /*
     ret.append('*');
     QChar c = '\0';;
     while (true && !flux.atEnd()) 
@@ -615,6 +633,7 @@ QString MainWindow::contexte(qint64 p)
     {
         ret.append(flux.read(1));
     }
+    */
     return ret;
 }
 
@@ -735,7 +754,7 @@ void MainWindow::echec()
         {
             arret = true;
             lineEditLemme->setText(forme);
-            labelContexte->setText(contexte(fluxpos));
+            labelContexte->setText(contexte(fluxpos, forme));
             echecs.append(posEchec);
         }
         else
@@ -750,7 +769,7 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                labelContexte->setText(contexte(fluxpos));
+                labelContexte->setText(contexte(fluxpos, forme));
                 if (!ml.isEmpty())
                 {
                     iLemSuiv = -1;
