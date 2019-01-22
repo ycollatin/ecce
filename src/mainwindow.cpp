@@ -22,12 +22,13 @@
 
    FIXME
     
-    - La correction d'un lemme se fait bien pour la traduction, mais
-      crée un doublon dans lemmes.la. Voir ::editModule().
-    - adnuntio ne lemmasise pas annunciat
+    - L'ajout d'une vargraph ne semble pas pris en compte
+    - La correction d'un lemme se fait bien pour lemmes.la,
+      crée un doublon dans la traduction. Voir ::editModule().
     - cocher dans vargraph écrase les saisies à la main
 
    TODO
+   - problème de place pour la ligne clé
    - Donner la possibilité de tester une forme qui n'est pas dans le texte.
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -806,6 +807,13 @@ void MainWindow::editIrr(const QModelIndex &m)
     lineEditNumMorpho->setText(sections.at(2));
 }
 
+/**
+ * \fn void MainWindow::editModule(QString k, QString l, QString f)
+ * \brief écrit sur le disque dans le fichier f les changements 
+ * La ligne l de clé k. Si la clé est introuvable, la ligne
+ * est ajoutée à sa place dans l'ordre alpha. Sinon, la ligne
+ * l remplace la lignre trouvée.
+ */
 void MainWindow::editModule(QString k, QString l, QString f)
 {
     QStringList lignes = lisLignes(f);
@@ -825,7 +833,7 @@ void MainWindow::editModule(QString k, QString l, QString f)
         QString cle = Ch::atone(lin.section(sep,0,0));
         if (cle == k)
         {
-            lignes[i] = f;
+            lignes[i] = l;
             fait = true;
             break;
         }
@@ -1265,6 +1273,7 @@ void MainWindow::peuple()
     }
     lemcore = new LemCore(this, resDir, ajDir);
     lemcore->setExtension(true);
+    lemcore->setCible("fr");
     flexion = new Flexion(lemcore);
     // lemmes
     litems = lemcore->cles();
@@ -1399,7 +1408,7 @@ void MainWindow::siGenre()
     if (iGenre >= lGenre.count())
     {
         iGenre = 0;
-        btnGenre->setText("mfn");
+        btnGenre->setText("genre");
     }
     else btnGenre->setText(lGenre.at(iGenre));
     majLinMorph();
