@@ -125,28 +125,26 @@ class MainWindow : public QMainWindow
         QWidget *layoutWidget;
         QVBoxLayout *verticalLayoutConf;
         QLabel *label_3;
+
+        // test
+        QHBoxLayout *horizontalLayoutTest;
+        QLabel *labelTest;
+        QLineEdit *lineEditTest;
+        QLabel *labelLemTest;
+
         QHBoxLayout *horizontalLayoutBtnPre;
         QPushButton *btnPre;
         QSpacerItem *horizontalSpacerPre;
         QFormLayout *formLayoutCochesVar;
         QLabel *labelVariante;
         QCheckBox *checkBoxAe;
-        //QCheckBox *checkBox_ae;
         QCheckBox *checkBox_H;
-        //QCheckBox *checkBox_h;
         QCheckBox *checkBox_Mihi;
-        //QCheckBox *checkBox_mihi;
         QCheckBox *checkBox_IJ;
-        //QCheckBox *checkBox_ij;
         QCheckBox *checkBox_UV;
-        //QCheckBox *checkBox_uv;
         QCheckBox *checkBox_TICI;
-        //QCheckBox *checkBox_tici;
         QCheckBox *checkBox_MPN;
-        //QCheckBox *checkBox_mpn;
         QCheckBox *checkBox_PH;
-        //QCheckBox *checkBox_ph;
-        //QLabel *label_tju;
         QSplitter *splitter_2;
         QPlainTextEdit *plainTextEditVariantes;
         QWidget *layoutWidget1;
@@ -326,6 +324,7 @@ class MainWindow : public QMainWindow
         void        supprLa();
         void        supprIrr();
         void        supprM();
+        void        teste(QString f);
 };
 
 #endif

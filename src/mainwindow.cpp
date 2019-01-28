@@ -22,15 +22,15 @@
 
    FIXME
     
-    - Coelum non lemmatisé
-    - la clé de lemmes.fr ne correspond pas à celle de lemmes.la !
+    - extrahentes (classique) non lemmatisé
+    - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
 
    TODO
-   - à la fermeture, garder la position dans le fichier
-   - problème de place pour la ligne clé
    - Donner la possibilité de tester une forme qui n'est pas dans le texte.
+     et donner sa morpho
+   - problème de place pour la ligne clé
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -184,6 +184,17 @@ MainWindow::MainWindow()
     verticalLayoutConf->setContentsMargins(0, 0, 0, 0);
     label_3 = new QLabel(layoutWidget);
     verticalLayoutConf->addWidget(label_3);
+    // test de lemmatisation
+    horizontalLayoutTest = new QHBoxLayout();
+    horizontalLayoutTest->setSpacing(6);
+    labelTest = new QLabel(layoutWidget);
+    horizontalLayoutTest->addWidget(labelTest);
+    lineEditTest = new QLineEdit(layoutWidget);
+    horizontalLayoutTest->addWidget(lineEditTest);
+    labelLemTest = new QLabel(layoutWidget);
+    horizontalLayoutTest->addWidget(labelLemTest);
+    verticalLayoutConf->addLayout(horizontalLayoutTest);
+    // bouton de préanalyse
     horizontalLayoutBtnPre = new QHBoxLayout();
     horizontalLayoutBtnPre->setSpacing(6);
     btnPre = new QPushButton(layoutWidget);
@@ -464,6 +475,7 @@ void MainWindow::retranslateUi()
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
                           QApplication::translate("MainWindow", "Lexique", Q_NULLPTR));
     label_3->setText(docVarGraph);
+    labelTest->setText("lemmatiser");
     btnPre->setText(QApplication::translate("MainWindow", "Pr\303\251analyse", Q_NULLPTR));
     labelVariante->setText(QApplication::translate("MainWindow", "variante", Q_NULLPTR));
     checkBoxAe->setText(QApplication::translate("MainWindow", "ae > e", Q_NULLPTR));
@@ -565,6 +577,8 @@ void MainWindow::connecte()
     connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
+    // test de lemmatisation
+    connect(lineEditTest, SIGNAL(textChanged(QString)), this, SLOT(teste(QString)));
     // préanalyse et variantes
     connect(btnPre, SIGNAL(clicked()), this, SLOT(preAn()));
     connect(checkBoxAe, SIGNAL(clicked()), this, SLOT(coche()));
@@ -759,7 +773,14 @@ void MainWindow::echec()
         }
         while (!flux.atEnd() && c.isLetter());
         // lemmatisation
-        ml = lemcore->lemmatiseM(forme);
+        ml = lemcore->lemmatiseM(forme, true);
+        // nouvel essai : les vargraphe ne savent pas gérer
+        // les variantes à cheval entre radical et désinence.
+        if (ml.isEmpty())
+        {
+            QString fti = lemcore->ti(forme);
+            ml = lemcore->lemmatiseM(fti, true);
+        }
         if (ml.isEmpty())
         {
             arret = true;
@@ -1515,4 +1536,24 @@ void MainWindow::supprM()
     QString nf = modDir + item->text();
     // QDir rep;
     // rep.rmDir(nf);
+}
+
+void MainWindow::teste(QString f)
+{
+    MapLem ll = lemcore->lemmatiseM(forme, true);
+    if (ll.isEmpty())
+        ll = lemcore->lemmatiseM(lemcore->ti(f));
+    QString res;
+    QTextStream ts(&res);
+    for (int i=0;i<ll.count();++i)
+    {
+        Lemme* lem = ll.keys().at(i);
+        ts  << ll.keys().at(i)->humain();
+        for (int j=0;j<ll.count(lem);++j)
+        {
+            SLem sl = ll.value(lem).at(j);
+            ts<<"<br>"<<lemcore->morpho(sl.morpho);
+        }
+    }        
+    labelLemTest->setText(res);
 }

@@ -608,6 +608,8 @@ QString LemCore::desassimq(QString a)
  */
 MapLem LemCore::lemmatise(QString f)
 {
+    bool debog = f=="Cœlum"||f=="Coelum";
+    if (debog) qDebug()<<"lemmatise f"<<f;
     MapLem result;
     if (f.isEmpty()) return result;
     QString f_lower = f.toLower();
@@ -649,6 +651,7 @@ MapLem LemCore::lemmatise(QString f)
         {
             Radical* rad = lrad.at(ir);
             Lemme *l = rad->lemme();
+            if (debog) qDebug()<<"   l"<<l->cle()<<l->origin();
             foreach (Desinence *des, ldes)
             {
                 if (des->modele() == l->modele() &&
@@ -770,13 +773,15 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
     MapLem mm;
     if (f.isEmpty()) return mm;
+    /*
     // appliquer les règles aval
     QString fti = ti(f);
     if (fti != f)
     {
-        mm = lemmatise(fti);
-        if (!mm.isEmpty()) return mm;
+        MapLem mlfti = lemmatiseM(fti);
+        if (!mlfti.isEmpty()) return mlfti;
     }
+    */
     // appliquer les règles de variantes graphiques
     f = Ch::deramise(vg(f));
     if ((etape > 3) || (etape <0)) // Condition terminale
