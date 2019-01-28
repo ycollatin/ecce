@@ -386,6 +386,7 @@ MainWindow::MainWindow()
     settings.beginGroup("fichiers");
     fichier = settings.value("fichier", "").toString();
     posFC = settings.value("signet","0").toLongLong();
+    forme = settings.value("forme", "").toString();
     settings.endGroup();
     settings.beginGroup("lexique");
     module = settings.value("module", "").toString();
@@ -534,6 +535,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     settings.endGroup();
     settings.beginGroup("fichiers");
     settings.setValue("signet", posFC);
+    settings.setValue("forme", forme);
     settings.endGroup();
     QMainWindow::closeEvent(event);
 }
@@ -734,7 +736,7 @@ void MainWindow::echec()
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     QChar c;
-    QString forme;
+    //QString forme;
     bool arret = false;
     qint64 fluxpos = flux.pos();
     qint64 posEchec = fluxpos;
@@ -1170,6 +1172,7 @@ void MainWindow::ouvrir(QString nf)
     }
     if (posFC > 0) posFC--; 
     fCorpus.seek(posFC);
+    labelContexte->setText(contexte(posFC, forme));
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);

@@ -237,6 +237,7 @@ class MainWindow : public QMainWindow
         "!\n";
         QString           fichier;
         Flexion*          flexion;
+        QString           forme;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         int               iLemSuiv;
         LemCore*          lemcore;
