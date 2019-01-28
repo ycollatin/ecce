@@ -52,7 +52,6 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-
 #include <QCompleter>
 
 #include <flexion.h>

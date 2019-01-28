@@ -22,15 +22,13 @@
 
    FIXME
     
-    - extrahentes (classique) non lemmatisé
     - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
 
    TODO
-   - Donner la possibilité de tester une forme qui n'est pas dans le texte.
-     et donner sa morpho
    - problème de place pour la ligne clé
+   - bouton pour revenir au début du texte
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -772,15 +770,10 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
+        bool debog = forme=="extrahentes";
+        if (debog) qDebug()<<"echec, forme"<<forme;
         // lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
-        // nouvel essai : les vargraphe ne savent pas gérer
-        // les variantes à cheval entre radical et désinence.
-        if (ml.isEmpty())
-        {
-            QString fti = lemcore->ti(forme);
-            ml = lemcore->lemmatiseM(fti, true);
-        }
         if (ml.isEmpty())
         {
             arret = true;
@@ -1540,20 +1533,31 @@ void MainWindow::supprM()
 
 void MainWindow::teste(QString f)
 {
-    MapLem ll = lemcore->lemmatiseM(forme, true);
-    if (ll.isEmpty())
-        ll = lemcore->lemmatiseM(lemcore->ti(f));
-    QString res;
-    QTextStream ts(&res);
-    for (int i=0;i<ll.count();++i)
+    MapLem res = lemcore->lemmatiseM(f);
+    if (res.isEmpty())
     {
-        Lemme* lem = ll.keys().at(i);
-        ts  << ll.keys().at(i)->humain();
-        for (int j=0;j<ll.count(lem);++j)
+        QStringList fti = lemcore->ti(f);
+        for (int i=0;i<fti.count();++i)
         {
-            SLem sl = ll.value(lem).at(j);
-            ts<<"<br>"<<lemcore->morpho(sl.morpho);
+            MapLem ml = lemcore->lemmatiseM(fti.at(i));
+            for (int j=0;j<ml.count();++j)
+            {
+                Lemme* nl = ml.keys().at(j);
+                res.insert(nl, ml.value(nl));
+            }
         }
-    }        
-    labelLemTest->setText(res);
+    }
+    QString test;
+    QTextStream fl(&test);
+    for (int i=0;i<res.count();++i)
+    {
+        Lemme* lem = res.keys().at(i);
+        QList<SLem> lsl = res.value(lem);
+        fl<<lem->humain();
+        for (int j=0;j<lsl.count();++j)
+        {
+            fl<<"<br/>"<<lsl.at(j).morpho;
+        }
+    }
+    labelLemTest->setText(test);
 }
