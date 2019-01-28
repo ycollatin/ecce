@@ -82,7 +82,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-    lisVarGraph(_ajDir+"vargraph.la");
+    lisVarGraph();
     lisModeles();
     lisModule();
     lisLexique(1);
@@ -1145,9 +1145,9 @@ void LemCore::lisTraductions(QString nf)
     }
 }
 
-void LemCore::lisVarGraph(QString nf)
+void LemCore::lisVarGraph()
 {
-    QStringList lignes = lignesFichier(nf);
+    QStringList lignes = lignesFichier(_ajDir+"vargraph.la");
     _reglesVG.clear();
     for (int i=0;i<lignes.count();++i)
     {

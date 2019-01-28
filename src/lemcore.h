@@ -152,7 +152,8 @@ class LemCore : public QObject
     QStringList            lignesFichier(QString nf);
     void                   lisModeles();
     void                   lisModule();
-    void                   lisVarGraph(QString nf);
+    //void                   lisVarGraph(QString nf);
+    void                   lisVarGraph();
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
     QStringList            listeLemmesLa();
