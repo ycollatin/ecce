@@ -22,12 +22,13 @@
 
    FIXME
     
-    - L'ajout d'une vargraph ne semble pas pris en compte
-    - La correction d'un lemme se fait bien pour lemmes.la,
+    - Coelum non lemmatisé
+    - la clé de lemmes.fr ne correspond pas à celle de lemmes.la !
+    - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
-    - cocher dans vargraph écrase les saisies à la main
 
    TODO
+   - à la fermeture, garder la position dans le fichier
    - problème de place pour la ligne clé
    - Donner la possibilité de tester une forme qui n'est pas dans le texte.
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -57,7 +58,7 @@ MainWindow::MainWindow()
     actionOuvrir = new QAction(this);
     actionQuitter = new QAction(this);
 
-    // ui 
+    // ui
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
     verticalLayout->setSpacing(6);
@@ -384,6 +385,7 @@ MainWindow::MainWindow()
     // dernier fichier chargé
     settings.beginGroup("fichiers");
     fichier = settings.value("fichier", "").toString();
+    posFC = settings.value("signet","0").toLongLong();
     settings.endGroup();
     settings.beginGroup("lexique");
     module = settings.value("module", "").toString();
@@ -530,6 +532,9 @@ void MainWindow::closeEvent(QCloseEvent* event)
     settings.beginGroup("lexique");
     settings.setValue("module", module);
     settings.endGroup();
+    settings.beginGroup("fichiers");
+    settings.setValue("signet", posFC);
+    settings.endGroup();
     QMainWindow::closeEvent(event);
 }
 
@@ -597,7 +602,7 @@ QString MainWindow::contexte(qint64 p, QString f)
     flux.setAutoDetectUnicode(true);
     if (p < 201)
     {
-        flux.seek(0);    
+        flux.seek(0);
         ret = flux.read(p-1);
     }
     else
@@ -624,7 +629,7 @@ QString MainWindow::contexte(qint64 p, QString f)
     /*
     ret.append('*');
     QChar c = '\0';;
-    while (true && !flux.atEnd()) 
+    while (true && !flux.atEnd())
     {
         flux >> c;
         if (c.isLetter()) ret.append(c);
@@ -809,7 +814,7 @@ void MainWindow::editIrr(const QModelIndex &m)
 
 /**
  * \fn void MainWindow::editModule(QString k, QString l, QString f)
- * \brief écrit sur le disque dans le fichier f les changements 
+ * \brief écrit sur le disque dans le fichier f les changements
  * La ligne l de clé k. Si la clé est introuvable, la ligne
  * est ajoutée à sa place dans l'ordre alpha. Sinon, la ligne
  * l remplace la lignre trouvée.
@@ -886,8 +891,10 @@ void MainWindow::edLem(QString l)
             lineEditTr->setText(lemme->traduction("fr"));
             // vider les lignes
             labelPerfectum->hide();
+            lineEditPerfectum->clear();
             lineEditPerfectum->hide();
             labelSupin->hide();
+            lineSupin->clear();
             lineSupin->hide();
         }
         // radicaux
@@ -1161,7 +1168,8 @@ void MainWindow::ouvrir(QString nf)
         std::cerr << qPrintable(" ne peux ouvrir "+nf);
         return;
     }
-    posFC = 0;
+    if (posFC > 0) posFC--; 
+    fCorpus.seek(posFC);
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
