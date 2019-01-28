@@ -608,8 +608,6 @@ QString LemCore::desassimq(QString a)
  */
 MapLem LemCore::lemmatise(QString f)
 {
-    bool debog = f=="Cœlum"||f=="Coelum";
-    if (debog) qDebug()<<"lemmatise f"<<f;
     MapLem result;
     if (f.isEmpty()) return result;
     QString f_lower = f.toLower();
@@ -651,7 +649,6 @@ MapLem LemCore::lemmatise(QString f)
         {
             Radical* rad = lrad.at(ir);
             Lemme *l = rad->lemme();
-            if (debog) qDebug()<<"   l"<<l->cle()<<l->origin();
             foreach (Desinence *des, ldes)
             {
                 if (des->modele() == l->modele() &&
@@ -773,20 +770,28 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
     MapLem mm;
     if (f.isEmpty()) return mm;
-    /*
     // appliquer les règles aval
-    QString fti = ti(f);
-    if (fti != f)
+    QStringList fti = ti(f);
+    for (int i=0;i<fti.count();++i)
     {
-        MapLem mlfti = lemmatiseM(fti);
-        if (!mlfti.isEmpty()) return mlfti;
+        QStringList lf = ti(f);
+        for (int i=0;i<lf.count();++i)
+        {
+            MapLem nml = lemmatise(lf.at(i));
+            for(int j=0;j<nml.count();++j)
+            {
+                Lemme* nl = nml.keys().at(j);
+                mm.insert(nl, nml.value(nl));
+            }
+        }
     }
-    */
     // appliquer les règles de variantes graphiques
     f = Ch::deramise(vg(f));
     if ((etape > 3) || (etape <0)) // Condition terminale
     {
-        mm = lemmatise(f);
+        MapLem nmm = lemmatise(f);
+        foreach (Lemme *nl, nmm.keys())
+            mm.insert(nl, nmm.value(nl));
         if (debPhr && f.at(0).isUpper())
         {
             QString nf = f.toLower();
@@ -1445,14 +1450,16 @@ int LemCore::tagOcc(QString t)
 }
 
 // calcul d'une variante graphique en amont de lemmatiseM()
-QString LemCore::ti(QString f)
+QStringList LemCore::ti(QString f)
 {
+    QStringList ret;
     for (int i=0;i<_reglesCi.count();++i)
     {
         RegleVG* r = _reglesCi.at(i);
-        f = r->transf(f);
+        ret.append(r->transf(f));
     }
-    return f;
+    ret.removeDuplicates();
+    return ret;
 }
 
 QString LemCore::vg(QString c)

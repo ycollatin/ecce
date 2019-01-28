@@ -184,7 +184,7 @@ class LemCore : public QObject
     int                    fraction(QString listTags);
     QString                tag(Lemme *l, int m);
     int                    tagOcc(QString t);
-    QString                ti(QString f);
+    QStringList            ti(QString f);
     int                    trigram(QString seq);
     QString                vg(QString c);
 
