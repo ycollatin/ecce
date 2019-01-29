@@ -1175,6 +1175,7 @@ void LemCore::lisVarGraph()
  */
 Modele *LemCore::modele(QString m)
 {
+    if (!_modeles.contains(m)) return 0;
     return _modeles[m];
 }
 
