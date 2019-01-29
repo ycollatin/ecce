@@ -785,13 +785,14 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
             }
         }
     }
+    if (!mm.isEmpty()) return mm;
     // appliquer les règles de variantes graphiques
     f = Ch::deramise(vg(f));
     if ((etape > 3) || (etape <0)) // Condition terminale
     {
-        MapLem nmm = lemmatise(f);
-        foreach (Lemme *nl, nmm.keys())
-            mm.insert(nl, nmm.value(nl));
+        MapLem nml = lemmatise(f);
+        foreach (Lemme *nl, nml.keys())
+            mm.insert(nl, nml.value(nl));
         if (debPhr && f.at(0).isUpper())
         {
             QString nf = f.toLower();
