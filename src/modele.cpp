@@ -466,12 +466,4 @@ QList<int> Modele::morphos()
 QChar Modele::pos()
 {
     return _pos;
-    /*
-    if (estUn("uita") || estUn("lupus") || estUn("miles") || estUn("manus") ||
-        estUn("res") || estUn("perseus"))
-        return 'n';
-    if (estUn("doctus") || estUn("fortis")) return 'a';
-    if (estUn("amo") || estUn("imitor")) return 'v';
-    return 'd';
-    */
 }
