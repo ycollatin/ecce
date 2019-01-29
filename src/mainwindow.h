@@ -89,7 +89,7 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
-        QPushButton *bHomon;
+        //QPushButton *bHomon;
         QPushButton *bSuppr;
         QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
@@ -100,7 +100,7 @@ class MainWindow : public QMainWindow
         QLabel *labelGrq;
         QHBoxLayout *horizontalLayout_grq;
         QLineEdit *lineEditGrq;
-        QCheckBox *checkBoxVb;
+        //QCheckBox *checkBoxVb;
         QLabel *labelModele;
         QComboBox *comboBoxModele;
         QLabel *labelPerfectum;
@@ -305,7 +305,7 @@ class MainWindow : public QMainWindow
         void        instM();
         void        lemSuiv();
         QString     ligneLa(QString modl="");
-        void        lignesVisibles(bool v);
+        void        lignesVisibles(QString chModele);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
         void        ouvrir(QString nf="");
         void        paquet();

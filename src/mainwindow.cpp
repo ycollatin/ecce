@@ -22,12 +22,16 @@
 
    FIXME
     
+    - extrahentes tj pas lemmatisé !
     - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
+    - La ligne rad. gén. n'apparaît pas quand on sélectionne le
+      bon modèle
 
    TODO
    - problème de place pour la ligne clé
+   - calcul automatique de la clé d'après la forme canonique
    - bouton pour revenir au début du texte
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -97,8 +101,8 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
-    bHomon = new QPushButton(frame);
-    horizontalLayout->addWidget(bHomon);
+    //bHomon = new QPushButton(frame);
+    //horizontalLayout->addWidget(bHomon);
     bSuppr = new QPushButton(frame);
     horizontalLayout->addWidget(bSuppr);
     bEchecPrec = new QToolButton();
@@ -124,8 +128,8 @@ MainWindow::MainWindow()
     horizontalLayout_grq->setSpacing(6);
     lineEditGrq = new QLineEdit(frame1);
     horizontalLayout_grq->addWidget(lineEditGrq);
-    checkBoxVb = new QCheckBox(frame1);
-    horizontalLayout_grq->addWidget(checkBoxVb);
+    //checkBoxVb = new QCheckBox(frame1);
+    //horizontalLayout_grq->addWidget(checkBoxVb);
     formLayout->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
     labelModele = new QLabel(frame1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
@@ -458,10 +462,10 @@ void MainWindow::retranslateUi()
     labelInfo->setText(QApplication::translate("MainWindow",
                                                "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
-    bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
+    //bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
-    checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
+    //checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
@@ -557,7 +561,7 @@ void MainWindow::connecte()
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // édition
-    connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
+    //connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     //connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
@@ -573,6 +577,7 @@ void MainWindow::connecte()
     connect(lineEditGrq, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineEditGrq, SIGNAL(textChanged(QString)), comboBoxModele, SLOT(show()));
     connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(ligneLa(QString)));
+    connect(comboBoxModele, SIGNAL(currentTextChanged(QString)), this, SLOT(lignesVisibles(QString)));
     connect(lineEditPerfectum, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     connect(lineSupin, SIGNAL(editingFinished()), this, SLOT(ligneLa()));
     // test de lemmatisation
@@ -884,9 +889,9 @@ void MainWindow::edLem(QString l)
         lineMorpho->clear();
         lineEditTr->clear();
         textEditFlexion->clear();
-        comboBoxModele->hide();
-        checkBoxVb->setChecked(l.endsWith("o")
-                               || l.endsWith("or"));
+        //comboBoxModele->hide();
+        //checkBoxVb->setChecked(l.endsWith("o")
+        //                       || l.endsWith("or"));
     }
     else
     {
@@ -901,10 +906,11 @@ void MainWindow::edLem(QString l)
             // si lem est issu de lem_ext, modifier l'intitulé du bouton
             textEditFlexion->setText(flexion->tableau(lemme));
             lineEditGrq->setText(lemme->champ0());
-            comboBoxModele->show();
             comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
             lineMorpho->setText(lemme->indMorph());
             lineEditTr->setText(lemme->traduction("fr"));
+            lignesVisibles(comboBoxModele->currentText());
+            /*
             // vider les lignes
             labelPerfectum->hide();
             lineEditPerfectum->clear();
@@ -912,6 +918,7 @@ void MainWindow::edLem(QString l)
             labelSupin->hide();
             lineSupin->clear();
             lineSupin->hide();
+            */
         }
         // radicaux
         for (int i=0;i<lemme->nbRadicaux();++i)
@@ -927,27 +934,29 @@ void MainWindow::edLem(QString l)
                 lgrq.append(r->grq());
             }
             QString grq = lgrq.join(',');
+            QChar pos = lemme->modele()->pos();
+            lignesVisibles(lemme->modele()->gr());
             switch(numrad)
             {
-                case 0:
-                    {
-                        // verbes, infectum
-                        //lineEditInfectum->setText(grq);
-                        //labelInfectum->show();
-                        //lineEditInfectum->show();
-                        break;
-                    }
                 case 1: // génitif et perfectum
                     {
-                        if (QString("vw").contains(lemme->pos()))
-                            labelPerfectum->setText("rad. perfectum");
-                        else
+                        /* 
+                        if (QString("vw").contains(pos))
                         {
-                            // adverbes ?
-                            labelPerfectum->setText("rad. génitif");
+                            labelPerfectum->setText("rad. perfectum");
+                            lineEditPerfectum->show();
+                            labelSupin->show();
+                            lineSupin->show();
                         }
-                        labelPerfectum->show();
-                        lineEditPerfectum->show();
+                        else if (QString("na").contains(pos))
+                        {
+                            labelPerfectum->setText("rad. génitif");
+                            labelPerfectum->show();
+                            lineEditPerfectum->show();
+                            labelSupin->hide();
+                            lineSupin->hide();
+                        }
+                        */
                         // TODO comparer la génération automatique de radical
                         // le radical
                         QString g = lemme->grq();
@@ -965,10 +974,10 @@ void MainWindow::edLem(QString l)
                     }
                 case 2: // supin
                     {
-                        if (QString("vw").contains(lemme->pos()))
+                        if (QString("vw").contains(pos))
                         {
-                            labelSupin->show();
-                            lineSupin->show();
+                            //labelSupin->show();
+                            //lineSupin->show();
                             // même comparaison
                             QString g = lemme->grq();
                             QString gen = lemme->modele()->genRadical(2);
@@ -982,12 +991,6 @@ void MainWindow::edLem(QString l)
                         }
                         break;
                     }
-                    /*
-                case 3:
-                    {
-                        break;
-                    }
-                    */
                 default:
                     {
                         break;
@@ -1105,7 +1108,6 @@ QString MainWindow::ligneLa(QString modl)
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
     QString grq = lineEditGrq->text();
     if (grq.isEmpty()) return "";
-    //QChar d = Ch::der(grq);
     QString lel = lineEditLemme->text().simplified();
     if (lel.isEmpty()) return "";
     QChar d = Ch::der(lel);
@@ -1129,8 +1131,29 @@ QString MainWindow::ligneLa(QString modl)
     return ret;
 }
 
-void MainWindow::lignesVisibles(bool v)
+void MainWindow::lignesVisibles(QString chModele)
 {
+    Modele* m = lemcore->modele(chModele);
+    if (m == 0) return;
+    QChar p = m->pos();
+    switch (p.toLatin1())
+    {
+        case 'v':
+        case 'w':
+            labelPerfectum->setText("rad. perfectum");
+            labelSupin->show();
+            lineSupin->show();
+            break;
+        case 'a':
+        case 'n':
+            labelPerfectum->setText("rad. génitif");
+            labelSupin->hide();
+            lineSupin->hide();
+            break;
+        default:
+            break;
+    }
+    /*
     if (v)
     {
         labelPerfectum->setText("rad. perfectum");
@@ -1143,6 +1166,7 @@ void MainWindow::lignesVisibles(bool v)
         labelSupin->hide();
         lineSupin->hide();
     }
+    */
 }
 
 QString MainWindow::ligneFr()
