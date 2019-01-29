@@ -22,15 +22,12 @@
 
    FIXME
     
-    - extrahentes tj pas lemmatisé !
+    - Miles (majuscule) mal lemmatisé
     - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
-    - La ligne rad. gén. n'apparaît pas quand on sélectionne le
-      bon modèle
 
    TODO
-   - problème de place pour la ligne clé
    - calcul automatique de la clé d'après la forme canonique
    - bouton pour revenir au début du texte
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -38,8 +35,6 @@
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
    - règles vargraph : ajouter \<del > \<dil, \<necr > nicr
-   - renommer Editcol Ecce.
-     ECCE (Ecce Collatinistarum Communitatis Editor)
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - rendre l'homonymie de la clé plus ergonomique
@@ -54,6 +49,7 @@ MainWindow::MainWindow()
 {
     // actions
     actionQuant = new QAction(this);
+    actionDebut = new QAction(this);
     actionDiff = new QAction(this);
     actionEchecPrec = new QAction(this);
     actionEchecSuiv = new QAction(this);
@@ -101,17 +97,22 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
-    //bHomon = new QPushButton(frame);
-    //horizontalLayout->addWidget(bHomon);
+    verticalLayout_3->addLayout(horizontalLayout);
+    // layout boutons
+    horizontalLayoutBtns = new QHBoxLayout();
     bSuppr = new QPushButton(frame);
-    horizontalLayout->addWidget(bSuppr);
+    horizontalLayoutBtns->addWidget(bSuppr);
     bEchecPrec = new QToolButton();
     bEchecPrec->setDefaultAction(actionEchecPrec);
-    horizontalLayout->addWidget(bEchecPrec);
+    horizontalLayoutBtns->addWidget(bEchecPrec);
     bEchecSuiv = new QToolButton();
     bEchecSuiv->setDefaultAction(actionEchecSuiv);
-    horizontalLayout->addWidget(bEchecSuiv);
-    verticalLayout_3->addLayout(horizontalLayout);
+    horizontalLayoutBtns->addWidget(bEchecSuiv);
+    bDebut = new QToolButton();
+    bDebut->setDefaultAction(actionDebut);
+    horizontalLayoutBtns->addWidget(bDebut);
+    verticalLayout_3->addLayout(horizontalLayoutBtns);
+
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_3->addItem(verticalSpacer_2);
     splitter->addWidget(frame);
@@ -405,7 +406,7 @@ MainWindow::MainWindow()
     module = settings.value("module", "").toString();
     if (!fichier.isEmpty())
     {
-        ouvrir(fichier);
+        ouvrir(fichier, posFC);
     }
     settings.endGroup();
 
@@ -453,6 +454,7 @@ void MainWindow::retranslateUi()
     actionEchecPrec->setShortcut(QApplication::translate("MainWindow", "Ctrl+P", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
+    actionDebut->setText(QApplication::translate("MainWindow","début", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
@@ -531,6 +533,42 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::activerM()
+{
+    QListWidgetItem* item = listWidgetM->currentItem();
+    module = item->text();
+    QSettings settings("Collatinus", "ecce");
+    settings.beginGroup("lexique");
+    settings.setValue("module", module);
+    settings.endGroup();
+    // recharger toutes les données
+    reinit();
+}
+
+void MainWindow::ajIrr()
+{
+    QString lin = QString("%1:%2:%3")
+        .arg(linIrreg->text())
+        .arg(linLemmeIrr->text())
+        .arg(lineEditNumMorpho->text());
+    //insereLigne(lin, ajDir+"irregs.la");
+    editModule(linIrreg->text(), lin, ajDir+"irregs.la");
+}
+
+// ajoute les nْ° des morphos sélectionnées à la forme irrégulière
+void MainWindow::ajMorph()
+{
+    QList<QListWidgetItem*> liste = listWidgetMorphos->selectedItems();
+    for (int i=0;i<liste.count();++i)
+    {
+        QListWidgetItem *item = liste.at(i);
+        int n = lMorphos.key(item->text());
+        QStringList lm = lineEditNumMorpho->text().split(',', QString::SkipEmptyParts);
+        lm.append(QString::number(n));
+        lineEditNumMorpho->setText(lm.join(','));
+    }
+}
+
 QString MainWindow::cle(QString ligne)
 {
     QString ret = ligne.section(QRegExp("[\\W]"),0,0);
@@ -570,6 +608,7 @@ void MainWindow::connecte()
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(actionDebut, SIGNAL(triggered()), this, SLOT(debut()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     connect(actionEchecPrec, SIGNAL(triggered()), this, SLOT(echecPrec()));
     connect(actionEchecSuiv, SIGNAL(triggered()), this, SLOT(echec()));
@@ -643,61 +682,6 @@ QString MainWindow::contexte(qint64 p, QString f)
     ret.insert(dm, "<strong>");
     ret.replace("\n", "<br/>");
     return ret;
-
-
-    /*
-    ret.append('*');
-    QChar c = '\0';;
-    while (true && !flux.atEnd())
-    {
-        flux >> c;
-        if (c.isLetter()) ret.append(c);
-        else break;
-    }
-    ret.append('*');
-    ret.append(c);
-    for (int i=0;i<200&&!flux.atEnd();++i)
-    {
-        ret.append(flux.read(1));
-    }
-    */
-    return ret;
-}
-
-void MainWindow::activerM()
-{
-    QListWidgetItem* item = listWidgetM->currentItem();
-    module = item->text();
-    QSettings settings("Collatinus", "ecce");
-    settings.beginGroup("lexique");
-    settings.setValue("module", module);
-    settings.endGroup();
-    // recharger toutes les données
-    reinit();
-}
-
-void MainWindow::ajIrr()
-{
-    QString lin = QString("%1:%2:%3")
-        .arg(linIrreg->text())
-        .arg(linLemmeIrr->text())
-        .arg(lineEditNumMorpho->text());
-    //insereLigne(lin, ajDir+"irregs.la");
-    editModule(linIrreg->text(), lin, ajDir+"irregs.la");
-}
-
-// ajoute les nْ° des morphos sélectionnées à la forme irrégulière
-void MainWindow::ajMorph()
-{
-    QList<QListWidgetItem*> liste = listWidgetMorphos->selectedItems();
-    for (int i=0;i<liste.count();++i)
-    {
-        QListWidgetItem *item = liste.at(i);
-        int n = lMorphos.key(item->text());
-        QStringList lm = lineEditNumMorpho->text().split(',', QString::SkipEmptyParts);
-        lm.append(QString::number(n));
-        lineEditNumMorpho->setText(lm.join(','));
-    }
 }
 
 /**
@@ -748,6 +732,15 @@ void MainWindow::creerM()
     listWidgetM->setCurrentItem(item);
 }
 
+void MainWindow::debut()
+{
+    posFC = 0;
+    fCorpus.seek(0);
+    echecs.clear();
+    forme.clear();
+    labelContexte->setText(contexte(0, ""));
+}
+
 void MainWindow::echec()
 {
     QTextStream flux(&fCorpus);
@@ -775,10 +768,22 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
-        bool debog = forme=="extrahentes";
-        if (debog) qDebug()<<"echec, forme"<<forme;
         // lemmatisation
+        posEchec = fluxpos;
         ml = lemcore->lemmatiseM(forme, true);
+        // appliquer les règles aval
+        QStringList lfti = lemcore->ti(forme);
+        for (int i=0;i<lfti.count();++i)
+        {
+            QString fti = lfti.at(i);
+            //MapLem nml = lemcore->lemmatiseM(fti, true);
+            MapLem nml = lemcore->lemmatise(fti);
+            for(int j=0;j<nml.count();++j)
+            {
+                Lemme* nl = nml.keys().at(j);
+                ml.insert(nl, nml.value(nl));
+            }
+        }
         if (ml.isEmpty())
         {
             arret = true;
@@ -817,7 +822,7 @@ void MainWindow::echecPrec()
     {
         echecs.removeLast();
         if (echecs.count() > 1)
-            posFC = echecs.takeLast();
+            posFC = echecs.takeLast()-1;
         else posFC = 0;
     }
     else posFC = 0;
@@ -910,15 +915,6 @@ void MainWindow::edLem(QString l)
             lineMorpho->setText(lemme->indMorph());
             lineEditTr->setText(lemme->traduction("fr"));
             lignesVisibles(comboBoxModele->currentText());
-            /*
-            // vider les lignes
-            labelPerfectum->hide();
-            lineEditPerfectum->clear();
-            lineEditPerfectum->hide();
-            labelSupin->hide();
-            lineSupin->clear();
-            lineSupin->hide();
-            */
         }
         // radicaux
         for (int i=0;i<lemme->nbRadicaux();++i)
@@ -940,23 +936,6 @@ void MainWindow::edLem(QString l)
             {
                 case 1: // génitif et perfectum
                     {
-                        /* 
-                        if (QString("vw").contains(pos))
-                        {
-                            labelPerfectum->setText("rad. perfectum");
-                            lineEditPerfectum->show();
-                            labelSupin->show();
-                            lineSupin->show();
-                        }
-                        else if (QString("na").contains(pos))
-                        {
-                            labelPerfectum->setText("rad. génitif");
-                            labelPerfectum->show();
-                            lineEditPerfectum->show();
-                            labelSupin->hide();
-                            lineSupin->hide();
-                        }
-                        */
                         // TODO comparer la génération automatique de radical
                         // le radical
                         QString g = lemme->grq();
@@ -976,9 +955,6 @@ void MainWindow::edLem(QString l)
                     {
                         if (QString("vw").contains(pos))
                         {
-                            //labelSupin->show();
-                            //lineSupin->show();
-                            // même comparaison
                             QString g = lemme->grq();
                             QString gen = lemme->modele()->genRadical(2);
                             int oter = gen.section(',', 0, 0).toInt();
@@ -1026,35 +1002,6 @@ void MainWindow::enr()
     }
     else lemcore->ajLemme(nLemme);
 }
-
-/*
-void MainWindow::insereLigne(QString l, QString f)
-{
-    QStringList lignes = lisLignes(f);
-    bool aj = false;
-    for (int i=0;i<lignes.count();++i)
-    {
-        QString lin = lignes.at(i);
-        int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
-        if (c == 0)
-        {
-            std::cerr << qPrintable(l+" est un doublon dans "+f+"\n");
-            break;
-        }
-        else if (c > 0)
-        {
-            lignes.insert(i, l);
-            aj = true;
-            break;
-        }
-    }
-    if (!aj) lignes.append(l);
-    QFile file(f);
-    file.open(QFile::WriteOnly);
-    QTextStream(&file) << lignes.join('\n');
-    file.close();
-}
-*/
 
 void MainWindow::instM()
 {
@@ -1153,20 +1100,6 @@ void MainWindow::lignesVisibles(QString chModele)
         default:
             break;
     }
-    /*
-    if (v)
-    {
-        labelPerfectum->setText("rad. perfectum");
-        labelSupin->show();
-        lineSupin->show();
-    }
-    else
-    {
-        labelPerfectum->setText("rad. génitif");
-        labelSupin->hide();
-        lineSupin->hide();
-    }
-    */
 }
 
 QString MainWindow::ligneFr()
@@ -1193,7 +1126,7 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
     return retour;
 }
 
-void MainWindow::ouvrir(QString nf)
+void MainWindow::ouvrir(QString nf, qint64 p)
 {
     if (nf.isEmpty())
     {
@@ -1208,7 +1141,9 @@ void MainWindow::ouvrir(QString nf)
         std::cerr << qPrintable(" ne peux ouvrir "+nf);
         return;
     }
-    if (posFC > 0) posFC--; 
+    posFC = p;
+    if (posFC > 0) posFC--;
+    else debut();
     fCorpus.seek(posFC);
     labelContexte->setText(contexte(posFC, forme));
     QSettings settings("Collatinus", "ecce");
@@ -1217,7 +1152,7 @@ void MainWindow::ouvrir(QString nf)
     settings.endGroup();
     majInfo();
     echecs.clear();
-    echecs.append(0);
+    //echecs.append(0);
 }
 
 void MainWindow::majInfo()
@@ -1551,19 +1486,17 @@ void MainWindow::supprM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
     QString nf = modDir + item->text();
-    // QDir rep;
-    // rep.rmDir(nf);
 }
 
 void MainWindow::teste(QString f)
 {
-    MapLem res = lemcore->lemmatiseM(f);
+    MapLem res = lemcore->lemmatiseM(f, true);
     if (res.isEmpty())
     {
         QStringList fti = lemcore->ti(f);
         for (int i=0;i<fti.count();++i)
         {
-            MapLem ml = lemcore->lemmatiseM(fti.at(i));
+            MapLem ml = lemcore->lemmatiseM(fti.at(i), true);
             for (int j=0;j<ml.count();++j)
             {
                 Lemme* nl = ml.keys().at(j);

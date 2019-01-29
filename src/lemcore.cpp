@@ -770,22 +770,6 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
 {
     MapLem mm;
     if (f.isEmpty()) return mm;
-    // appliquer les règles aval
-    QStringList fti = ti(f);
-    for (int i=0;i<fti.count();++i)
-    {
-        QStringList lf = ti(f);
-        for (int i=0;i<lf.count();++i)
-        {
-            MapLem nml = lemmatise(lf.at(i));
-            for(int j=0;j<nml.count();++j)
-            {
-                Lemme* nl = nml.keys().at(j);
-                mm.insert(nl, nml.value(nl));
-            }
-        }
-    }
-    if (!mm.isEmpty()) return mm;
     // appliquer les règles de variantes graphiques
     f = Ch::deramise(vg(f));
     if ((etape > 3) || (etape <0)) // Condition terminale
@@ -796,7 +780,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape)
         if (debPhr && f.at(0).isUpper())
         {
             QString nf = f.toLower();
-            MapLem nmm = lemmatiseM(nf);
+            MapLem nmm = lemmatiseM(nf, debPhr);
             foreach (Lemme *nl, nmm.keys())
             {
                 mm.insert(nl, nmm.value(nl));

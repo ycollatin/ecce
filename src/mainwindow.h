@@ -67,12 +67,13 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
     private:
-        QAction *actionQuant;
-        QAction *actionQuitter;
+        QAction *actionDebut;
         QAction *actionDiff;
         QAction *actionEchecPrec;
         QAction *actionEchecSuiv;
         QAction *actionOuvrir;
+        QAction *actionQuant;
+        QAction *actionQuitter;
         //QAction *actionCopier;
 
         QWidget *centralWidget;
@@ -90,9 +91,11 @@ class MainWindow : public QMainWindow
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
         //QPushButton *bHomon;
+        QHBoxLayout *horizontalLayoutBtns;
         QPushButton *bSuppr;
         QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
+        QToolButton *bDebut;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_2;
@@ -293,6 +296,7 @@ class MainWindow : public QMainWindow
         void        closeEvent(QCloseEvent* event);
         void        coche();
         void        creerM();
+        void        debut();
         void        echec();
         void        echecPrec();
         void        editIrr(const QModelIndex &m);
@@ -307,7 +311,7 @@ class MainWindow : public QMainWindow
         QString     ligneLa(QString modl="");
         void        lignesVisibles(QString chModele);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
-        void        ouvrir(QString nf="");
+        void        ouvrir(QString nf="", qint64 p=0);
         void        paquet();
         void        preAn();
         //void        reserve();
