@@ -1004,7 +1004,8 @@ void LemCore::lisFichierLexique(QString filepath, int orig)
     for (int i=0;i<_listeLemmesLa.count();++i)
     {
         QString lin = _listeLemmesLa.at(i);
-        QString k = Ch::atone(Ch::deramise(lin.section(QRegExp("[|=]"),0,0)));
+        //QString k = Ch::atone(Ch::deramise(lin.section(QRegExp("[|=]"),0,0)));
+        QString k = Ch::atone(lin.section(QRegExp("[|=]"),0,0));
         // détruire le lemme homonyme des listes précédentes
         Lemme* dl = lemme(k);
         if (dl != 0)

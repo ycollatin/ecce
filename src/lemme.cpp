@@ -102,7 +102,8 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent, QString k)
     _champ0 = eclats.at(0);
     QStringList lg = _champ0.split('=');
     if (k.isEmpty())
-        _cle = Ch::atone(Ch::deramise(lg.at(0)));
+        _cle = Ch::atone(lg.at(0));
+        //_cle = Ch::atone(Ch::deramise(lg.at(0)));
     else _cle = k;
     _grd = oteNh(lg.at(0), _nh);
     if (lg.count() == 1)
