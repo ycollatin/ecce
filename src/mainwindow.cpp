@@ -23,6 +23,8 @@
    FIXME
     
     - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
+    - Ambiguïté entre édition d'un lemme de lem_ext.l ou lemmes.la
+      et création d'un lemme, qui peut être un homonyme.
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
 
@@ -601,7 +603,6 @@ void MainWindow::connecte()
     //connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
-    //connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(reserve()));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
@@ -803,12 +804,9 @@ void MainWindow::echec()
             if (arret)
             {
                 labelContexte->setText(contexte(fluxpos, forme));
-                if (!ml.isEmpty())
-                {
-                    iLemSuiv = -1;
-                    lemSuiv();
-                    echecs.append(posEchec);
-                }
+                iLemSuiv = -1;
+                lemSuiv();
+                echecs.append(posEchec);
             }
         }
     }
@@ -883,19 +881,16 @@ void MainWindow::editModule(QString k, QString l, QString f)
 
 void MainWindow::edLem(QString l)
 {
+    lineEditGrq->clear();
+    lineEditPerfectum->clear();
+    lineSupin->clear();
+    lineMorpho->clear();
+    lineEditTr->clear();
+    textEditFlexion->clear();
     if (!litems.contains(l))
     {
         lemme = 0;
         // effacer les lignes
-        lineEditGrq->clear();
-        lineEditPerfectum->clear();
-        lineSupin->clear();
-        lineMorpho->clear();
-        lineEditTr->clear();
-        textEditFlexion->clear();
-        //comboBoxModele->hide();
-        //checkBoxVb->setChecked(l.endsWith("o")
-        //                       || l.endsWith("or"));
     }
     else
     {
@@ -1049,8 +1044,6 @@ void MainWindow::lemSuiv()
 
 QString MainWindow::ligneLa(QString modl)
 {
-    // construire la clé en ajoutant le n° d'homonymie + grq
-    // en cas de nouveau lemme, l'utilisateur ajoute ce n°
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
     QString grq = lineEditGrq->text();
     if (grq.isEmpty()) return "";
@@ -1094,6 +1087,7 @@ void MainWindow::lignesVisibles(QString chModele)
         case 'n':
             labelPerfectum->setText("rad. génitif");
             labelSupin->hide();
+            lineSupin->clear();
             lineSupin->hide();
             break;
         default:
