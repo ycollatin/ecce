@@ -22,7 +22,6 @@
 
    FIXME
     
-    - Miles (majuscule) mal lemmatisé
     - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
