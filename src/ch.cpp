@@ -222,12 +222,12 @@ QString Ch::deramise(QString r)
     r.replace('J', 'I');
     r.replace('j', 'i');
     r.replace('v', 'u');
+    r.replace('V', 'U');
     r.replace("æ", "ae");
     r.replace("Æ", "Ae");
     r.replace("œ", "oe");  // le latin médiéval a souvent œ pour æ
     r.replace("Œ", "Oe");  // utiliser vargraph pour ces ligatures
     r.replace(0x1ee5, 'u');  // ụ le u muet de suavis, suadeo, etc...
-    r.replace ('V', 'U');
     return r;
 }
 
