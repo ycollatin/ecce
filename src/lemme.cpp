@@ -102,8 +102,7 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent, QString k)
     _champ0 = eclats.at(0);
     QStringList lg = _champ0.split('=');
     if (k.isEmpty())
-        _cle = Ch::atone(lg.at(0));
-        //_cle = Ch::atone(Ch::deramise(lg.at(0)));
+        _cle = Ch::atone(Ch::deramise(lg.at(0)));
     else _cle = k;
     _grd = oteNh(lg.at(0), _nh);
     if (lg.count() == 1)
@@ -467,14 +466,13 @@ int Lemme::origin()
  */
 QString Lemme::oteNh(QString g, int &nh)
 {
-    int c = g.right(1).toInt();
-    if (c > 0)
+    QChar c = g.at(g.length()-1);
+    if (c.isDigit())
     {
-        nh = c;
+        nh = g.right(1).toInt();
         g.chop(1);
     }
-    else
-        c = 1;
+    else nh = 1;
     return g;
 }
 
