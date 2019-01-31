@@ -257,6 +257,7 @@ class MainWindow : public QMainWindow
         Lemme*            nLemme = 0;
         void              peuple();
         void              reinit();
+        qint64            tailleF;
 
         // irréguliers
         QStringList       lCas;

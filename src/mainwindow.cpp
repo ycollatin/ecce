@@ -29,8 +29,8 @@
       crée un doublon dans la traduction. Voir ::editModule().
 
    TODO
+   - Donner le %age de texte lu
    - calcul automatique de la clé d'après la forme canonique
-   - bouton pour revenir au début du texte
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -739,6 +739,7 @@ void MainWindow::debut()
     echecs.clear();
     forme.clear();
     labelContexte->setText(contexte(0, ""));
+    majInfo();
 }
 
 void MainWindow::echec()
@@ -810,6 +811,7 @@ void MainWindow::echec()
             }
         }
     }
+    majInfo();
     posFC = flux.pos();
 }
 
@@ -1134,6 +1136,7 @@ void MainWindow::ouvrir(QString nf, qint64 p)
         std::cerr << qPrintable(" ne peux ouvrir "+nf);
         return;
     }
+    tailleF = fCorpus.size();
     posFC = p;
     if (posFC > 0) posFC--;
     else debut();
@@ -1145,13 +1148,16 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     settings.endGroup();
     majInfo();
     echecs.clear();
-    //echecs.append(0);
 }
 
 void MainWindow::majInfo()
 {
-    labelInfo->setText("ecce - module actuel <strong>"+module+"</strong> "
-                       "texte analysé : <strong>"+fichier+"</strong>.");
+    qreal p = 100 * posFC / tailleF;
+    labelInfo->setText(QString("ecce - module actuel <strong>%1</strong> "
+                       "texte analysé : <strong>%2</strong> %3 \%")
+        .arg(module)
+        .arg(fichier)
+        .arg(p));
 }
 
 void MainWindow::majLinMorph()
