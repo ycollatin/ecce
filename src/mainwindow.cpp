@@ -1575,7 +1575,7 @@ void MainWindow::teste(QString f)
         fl<<lem->humain();
         for (int j=0;j<lsl.count();++j)
         {
-            fl<<"<br/>"<<lsl.at(j).morpho;
+            fl<<"<br/>"<<lemcore->morpho(lsl.at(j).morpho);
         }
     }
     labelLemTest->setText(test);
