@@ -96,7 +96,9 @@ class Lemme : public QObject
         QString             genre();
         QString             getHyphen (); // Accesseurs pour les césures étymologiques
         QString             gr();
+        QString             grNh();
         QString             grq();
+        QString             grqNh();
         QString             grModele();
         QString             humain(bool html = false, QString l = "fr", bool nbr = false);
         QString             indMorph();

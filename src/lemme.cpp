@@ -326,6 +326,28 @@ QString Lemme::gr()
 }
 
 /**
+ * \fn QString Lemme::grNh()
+ * \brief Retourne la clé du lemme telle qu'elle est notée
+ *        Dans les fichiers lem*.fr.
+ */
+QString Lemme::grNh()
+{
+    if (_nh < 2) return _gr;
+    return QString("%1%2").arg(_gr).arg(_nh);
+}
+
+/**
+ * \fn QString Lemme::grqNh()
+ * \brief Retourne la clé du lemme telle qu'elle est notée
+ *        Dans les fichiers lem*.la.
+ */
+QString Lemme::grqNh()
+{
+    if (_nh < 2) return _grq;
+    return QString("%1%2").arg(_grq).arg(_nh);
+}
+
+/**
  * \fn QString Lemme::grq ()
  * \brief Retourne la graphie ramiste du lemme sans diacritiques.
  */
@@ -466,7 +488,8 @@ int Lemme::origin()
  */
 QString Lemme::oteNh(QString g, int &nh)
 {
-    QChar c = g.at(g.length()-1);
+    //QChar c = g.at(g.length()-1);
+    QChar c = Ch::der(g);
     if (c.isDigit())
     {
         nh = g.right(1).toInt();
