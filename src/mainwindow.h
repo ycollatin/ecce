@@ -67,6 +67,8 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
     private:
+        QAction *actionArr;
+        QAction *actionArrArr;
         QAction *actionDebut;
         QAction *actionDiff;
         QAction *actionEchecPrec;
@@ -95,6 +97,8 @@ class MainWindow : public QMainWindow
         QPushButton *bSuppr;
         QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
+        QToolButton *bArr;
+        QToolButton *bArrArr;
         QToolButton *bDebut;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
@@ -293,6 +297,8 @@ class MainWindow : public QMainWindow
         void        activerM();
         void        ajIrr();
         void        ajMorph();
+        void        arr();
+        void        arrArr();
         QString     cle(QString ligne);
         void        closeEvent(QCloseEvent* event);
         void        coche();

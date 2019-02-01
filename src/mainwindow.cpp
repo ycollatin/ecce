@@ -22,15 +22,16 @@
 
    FIXME
     
-    - la clé de lemmes.fr n'est pas calculée celle de lemmes.la !
+    - seque non lemmatisé
+    - Doublons si correction d'un lemme qu'on vient d'enregistrer
     - Ambiguïté entre édition d'un lemme de lem_ext.l ou lemmes.la
       et création d'un lemme, qui peut être un homonyme.
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
       crée un doublon dans la traduction. Voir ::editModule().
 
    TODO
-   - Donner le %age de texte lu
-   - calcul automatique de la clé d'après la forme canonique
+   - traduire les n° de morpho, onglet vargraph.
+   - boutons retour 100 et 1000
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -42,6 +43,7 @@
  */
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
 #include <mainwindow.h>
@@ -49,14 +51,15 @@
 MainWindow::MainWindow()
 {
     // actions
-    actionQuant = new QAction(this);
-    actionDebut = new QAction(this);
-    actionDiff = new QAction(this);
+    actionArr       = new QAction(this);
+    actionArrArr    = new QAction(this);
+    actionQuant     = new QAction(this);
+    actionDebut     = new QAction(this);
+    actionDiff      = new QAction(this);
     actionEchecPrec = new QAction(this);
     actionEchecSuiv = new QAction(this);
-    actionOuvrir = new QAction(this);
-    actionQuitter = new QAction(this);
-
+    actionOuvrir    = new QAction(this);
+    actionQuitter   = new QAction(this);
     // ui
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
@@ -109,8 +112,14 @@ MainWindow::MainWindow()
     bEchecSuiv = new QToolButton();
     bEchecSuiv->setDefaultAction(actionEchecSuiv);
     horizontalLayoutBtns->addWidget(bEchecSuiv);
-    bDebut = new QToolButton();
+    bArr    = new QToolButton();
+    bArr->setDefaultAction(actionArr);
+    bArrArr = new QToolButton();
+    bArrArr->setDefaultAction(actionArrArr);
+    bDebut  = new QToolButton();
     bDebut->setDefaultAction(actionDebut);
+    horizontalLayoutBtns->addWidget(bArr);
+    horizontalLayoutBtns->addWidget(bArrArr);
     horizontalLayoutBtns->addWidget(bDebut);
     verticalLayout_3->addLayout(horizontalLayoutBtns);
 
@@ -455,6 +464,8 @@ void MainWindow::retranslateUi()
     actionEchecPrec->setShortcut(QApplication::translate("MainWindow", "Ctrl+P", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
+    actionArr->setText("<");
+    actionArrArr->setText("<<");
     actionDebut->setText(QApplication::translate("MainWindow","début", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
@@ -570,6 +581,35 @@ void MainWindow::ajMorph()
     }
 }
 
+void MainWindow::arr()
+{
+    posFC -= 200;
+    if (posFC < 0) posFC = 0;
+    QTextStream flux(&fCorpus);
+    flux.seek(posFC);
+    QChar c='\0';
+    do flux >> c; while (c.isLetter());
+    while (!echecs.isEmpty() && echecs.last() > posFC)
+        echecs.removeLast();
+    forme.clear();
+    labelContexte->setText(contexte(posFC, ""));
+    majInfo();
+}
+
+void MainWindow::arrArr()
+{
+    posFC = posFC / 2;
+    QTextStream flux(&fCorpus);
+    flux.seek(posFC);
+    QChar c='\0';
+    do flux >> c; while (c.isLetter());
+    while (!echecs.isEmpty() && echecs.last() > posFC)
+        echecs.removeLast();
+    forme.clear();
+    labelContexte->setText(contexte(posFC, ""));
+    majInfo();
+}
+
 QString MainWindow::cle(QString ligne)
 {
     QString ret = ligne.section(QRegExp("[\\W]"),0,0);
@@ -608,6 +648,8 @@ void MainWindow::connecte()
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
+    connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
     connect(actionDebut, SIGNAL(triggered()), this, SLOT(debut()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     connect(actionEchecPrec, SIGNAL(triggered()), this, SLOT(echecPrec()));
@@ -769,6 +811,7 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
+        //bool debog = forme == "Æduorum";
         // lemmatisation
         posEchec = fluxpos;
         ml = lemcore->lemmatiseM(forme, true);
@@ -979,6 +1022,13 @@ void MainWindow::enr()
     QString lc = lineEditLemme->text();
     QString linLa = ligneLa();
     QString ltr = lineEditTr->text();
+    if (ltr.isEmpty())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Il faut donner une traduction");
+        msgBox.exec();
+        return;
+    }
     QString linFr = QString("%1:%2")
         .arg(lc)
         .arg(ltr);
@@ -1044,22 +1094,35 @@ void MainWindow::lemSuiv()
     lineEditLemme->setText(lemme->cle());
 }
 
+/**
+ * \fn QString MainWindow::ligneLa(QString modl)
+ * \brief calcule un lemme d'après les champs
+ *        renseignés, affiche sa flexion.
+ *        et renvoie la ligne capable de créer
+ *        le lemme.
+ */
 QString MainWindow::ligneLa(QString modl)
 {
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
-    QString grq = lineEditGrq->text();
-    if (grq.isEmpty()) return "";
+    // chercher s'il existe un lemme dont la clé est 
+    // celle de lineEditLemme
+    QString grq;
+    if (lemme != 0) grq = lemme->grqNh();
+    else grq = lineEditGrq->text();
     QString lel = lineEditLemme->text().simplified();
-    if (lel.isEmpty()) return "";
-    QChar d = Ch::der(lel);
-    if (d.isDigit())
+    if (!lel.isEmpty()) 
     {
-        int p = grq.indexOf('=');
-        if (p < 0) grq.append(d);
-        else grq.insert(p, d);
+        QChar d = Ch::der(lel);
+        if (d.isDigit())
+        {
+            int p = grq.indexOf('=');
+            if (p < 0) grq.append(d);
+            else grq.insert(p, d);
+        }
     }
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
+    if (grq.isEmpty()) return "";
     QString ret = gabaritLa
         .arg(grq)
         .arg(modl)
