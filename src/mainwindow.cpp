@@ -22,7 +22,9 @@
 
    FIXME
     
-    - seque non lemmatisé
+    - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
+      fin du mot n'est pas recherchée.
+    - seque non lemmatisé (à cause de /sequo/, suff. non recherchée).
     - Doublons si correction d'un lemme qu'on vient d'enregistrer
     - Ambiguïté entre édition d'un lemme de lem_ext.l ou lemmes.la
       et création d'un lemme, qui peut être un homonyme.
@@ -589,6 +591,7 @@ void MainWindow::arr()
     flux.seek(posFC);
     QChar c='\0';
     do flux >> c; while (c.isLetter());
+    posFC = flux.pos();
     while (!echecs.isEmpty() && echecs.last() > posFC)
         echecs.removeLast();
     forme.clear();
@@ -603,6 +606,7 @@ void MainWindow::arrArr()
     flux.seek(posFC);
     QChar c='\0';
     do flux >> c; while (c.isLetter());
+    posFC = flux.pos();
     while (!echecs.isEmpty() && echecs.last() > posFC)
         echecs.removeLast();
     forme.clear();
@@ -811,8 +815,7 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
-        //bool debog = forme == "Æduorum";
-        // lemmatisation
+        // la forme est compète. Lemmatisation
         posEchec = fluxpos;
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -820,12 +823,15 @@ void MainWindow::echec()
         for (int i=0;i<lfti.count();++i)
         {
             QString fti = lfti.at(i);
-            //MapLem nml = lemcore->lemmatiseM(fti, true);
-            MapLem nml = lemcore->lemmatise(fti);
-            for(int j=0;j<nml.count();++j)
+            if (fti != forme)
             {
-                Lemme* nl = nml.keys().at(j);
-                ml.insert(nl, nml.value(nl));
+                MapLem nml = lemcore->lemmatiseM(fti, true, 0, false);
+                //MapLem nml = lemcore->lemmatise(fti);
+                for(int j=0;j<nml.count();++j)
+                {
+                    Lemme* nl = nml.keys().at(j);
+                    ml.insert(nl, nml.value(nl));
+                }
             }
         }
         if (ml.isEmpty())
