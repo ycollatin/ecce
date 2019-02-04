@@ -22,21 +22,16 @@
 
    FIXME
     
-    - Une correction immédiate double les entrées
-    - Le rad. génitif est pris comme 1er champ dans lemmes.fr !
+    - le remplacement de lemme ne remplace pas, mais ajoute
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
-    - Doublons si correction d'un lemme qu'on vient d'enregistrer
-    - Ambiguïté entre édition d'un lemme de lem_ext.l ou lemmes.la
-      et création d'un lemme, qui peut être un homonyme.
-    - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
+    - L'ajout d'irrégulier n'est pas dynamique
 
    TODO
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
-   - règles vargraph : ajouter \<del > \<dil, \<necr > nicr
    - suppression d'un lemme : trouver une syntaxe
      prévoir une gestion des lignes lemmes commentées
    - rendre l'homonymie de la clé plus ergonomique
@@ -1035,6 +1030,7 @@ void MainWindow::enr()
     QString linLa = ligneLa();
     QString lc = linLa.section(QRegExp("[=|]"),0,0);
     // lc est-il un homographe ?
+    bool remplace = true;
     if (lemme != 0 && lemme->origin() < 2)
     {
         for (int i=1;i<4;++i)
@@ -1063,7 +1059,7 @@ void MainWindow::enr()
         }
     }
     QString linFr = QString("%1:%2")
-        .arg(lc)
+        .arg(Ch::atone(lc))
         .arg(ltr);
     // latin
     editModule(lc, linLa, ajDir+"/lemmes.la");
@@ -1074,7 +1070,7 @@ void MainWindow::enr()
     modele = new QStringListModel(litems);
     modele->setStringList(litems);
     completeur->setModel(modele);
-    if (lemme != 0)
+    if (remplace)
     {
         lemcore->remplaceLemme(lemme, nLemme);
         lemme = nLemme;
