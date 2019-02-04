@@ -22,18 +22,16 @@
 
    FIXME
     
+    - Une correction immédiate double les entrées
+    - Le rad. génitif est pris comme 1er champ dans lemmes.fr !
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
-    - seque non lemmatisé (à cause de /sequo/, suff. non recherchée).
     - Doublons si correction d'un lemme qu'on vient d'enregistrer
     - Ambiguïté entre édition d'un lemme de lem_ext.l ou lemmes.la
       et création d'un lemme, qui peut être un homonyme.
     - (pê lié) La correction d'un lemme se fait bien pour lemmes.la,
-      crée un doublon dans la traduction. Voir ::editModule().
 
    TODO
-   - traduire les n° de morpho, onglet vargraph.
-   - boutons retour 100 et 1000
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -1025,8 +1023,7 @@ void MainWindow::enr()
 {
     if (nLemme == 0) return;
     // radicaux et morphologie
-    QString lc = lineEditLemme->text();
-    QString linLa = ligneLa();
+    //QString lc = lineEditLemme->text();
     QString ltr = lineEditTr->text();
     if (ltr.isEmpty())
     {
@@ -1034,6 +1031,36 @@ void MainWindow::enr()
         msgBox.setText("Il faut donner une traduction");
         msgBox.exec();
         return;
+    }
+    QString linLa = ligneLa();
+    QString lc = linLa.section(QRegExp("[=|]"),0,0);
+    // lc est-il un homographe ?
+    if (lemme != 0 && lemme->origin() < 2)
+    {
+        for (int i=1;i<4;++i)
+        {
+            QString lci = QString("%1%2").arg(lc).arg(i);
+            if (i == 1) lci = lc;
+            if (litems.contains(lci))
+                continue;
+            else
+            {
+                QMessageBox::StandardButton rep;
+                rep = QMessageBox::question(this, "lexique",
+                                            "Le lexique a un lemme "+lc
+                                            +". Le remplacer ?",
+                                            QMessageBox::Yes|QMessageBox::No
+                                            |QMessageBox::Cancel);
+                if (rep == QMessageBox::No)
+                {
+                    lc = lci;
+                    break;
+                }
+                else if (rep == QMessageBox::Cancel)
+                    return;
+                else break;
+            }
+        }
     }
     QString linFr = QString("%1:%2")
         .arg(lc)
