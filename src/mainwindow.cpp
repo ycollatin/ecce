@@ -22,7 +22,7 @@
 
    FIXME
     
-    - le remplacement de lemme ne remplace pas, mais ajoute
+    - Corrigé, à vérifier : le remplacement de lemme ne remplace pas, mais ajoute
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
     - L'ajout d'irrégulier n'est pas dynamique
@@ -707,13 +707,7 @@ QString MainWindow::contexte(qint64 p, QString f)
         flux.seek(p-201);
         ret = flux.read(200);
     }
-    QChar c;
-    for (int i=0;i<200 && !flux.atEnd();++i)
-    {
-        flux >> c;
-        ret.append(c);
-    }
-
+    ret.append(flux.read(200));
     if (f.isEmpty()) return ret;
     int dm = ret.indexOf(f);
     int fm = ret.indexOf(QRegExp("\\b"), dm+2);
@@ -895,12 +889,14 @@ void MainWindow::editModule(QString k, QString l, QString f)
     {
         QString lin = lignes.at(i);
         int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
+        /*
         if (c == 0)
         {
             std::cerr << qPrintable(l+" est un doublon dans "+f+"\n");
             fait = true;
             break;
         }
+        */
         // si la clé est identique, remplacer la ligne
         QString cle = Ch::atone(lin.section(sep,0,0));
         if (cle == k)
@@ -1029,6 +1025,7 @@ void MainWindow::enr()
     }
     QString linLa = ligneLa();
     QString lc = linLa.section(QRegExp("[=|]"),0,0);
+    lc = Ch::atone(lc);
     // lc est-il un homographe ?
     bool remplace = true;
     if (lemme != 0 && lemme->origin() < 2)
