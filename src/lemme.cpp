@@ -261,6 +261,12 @@ QString Lemme::cle()
     return _cle;
 }
 
+QString Lemme::cleF()
+{
+    if (_nh < 2) return _gr;
+    else return QString("%1%2").arg(_gr).arg(_nh);
+}
+
 /**
  * \fn QList<int> Lemme::clesR ()
  * \brief Retourne toutes les clés (formes non-ramistes

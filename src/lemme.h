@@ -91,6 +91,7 @@ class Lemme : public QObject
         QString             ambrogio();
         QString             champ0();
         QString             cle();
+        QString             cleF(); // clé pour le fichier
         QList<int>          clesR();
         bool                estIrregExcl(int nm);
         QString             genre();
