@@ -22,13 +22,13 @@
 
    FIXME
     
-    - Corrigé, à vérifier : le remplacement de lemme ne remplace pas, mais ajoute
+    - Revoir le classement alphabétique du lemmes.la du module
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
     - L'ajout d'irrégulier n'est pas dynamique
 
    TODO
-   - première utilisation : ouvrir l'onglet module, donner une marche à
+/  - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
@@ -1016,10 +1016,11 @@ void MainWindow::enr()
     // radicaux et morphologie
     //QString lc = lineEditLemme->text();
     QString ltr = lineEditTr->text();
-    if (ltr.isEmpty())
+    QString grq = lineEditGrq->text();
+    if (ltr.isEmpty() || grq.isEmpty())
     {
         QMessageBox msgBox;
-        msgBox.setText("Il faut donner une traduction");
+        msgBox.setText("Il faut donner au moins la forme canonique et une traduction");
         msgBox.exec();
         return;
     }
@@ -1069,7 +1070,7 @@ void MainWindow::enr()
     completeur->setModel(modele);
     if (remplace)
     {
-        lemcore->remplaceLemme(lemme, nLemme);
+        lemcore->remplaceLemme(nLemme);
         lemme = nLemme;
     }
     else lemcore->ajLemme(nLemme);
@@ -1117,7 +1118,8 @@ void MainWindow::lemSuiv()
     if (iLemSuiv >= ml.keys().count())
         iLemSuiv = 0;
     lemme = ml.keys().at(iLemSuiv);
-    lineEditLemme->setText(lemme->cle());
+    edLem(lemme->cle());
+    //lineEditLemme->setText(lemme->cle());
 }
 
 /**
@@ -1132,23 +1134,11 @@ QString MainWindow::ligneLa(QString modl)
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
     // chercher s'il existe un lemme dont la clé est 
     // celle de lineEditLemme
-    QString grq;
-    if (lemme != 0) grq = lemme->grqNh();
-    else grq = lineEditGrq->text();
-    QString lel = lineEditLemme->text().simplified();
-    if (!lel.isEmpty()) 
-    {
-        QChar d = Ch::der(lel);
-        if (d.isDigit())
-        {
-            int p = grq.indexOf('=');
-            if (p < 0) grq.append(d);
-            else grq.insert(p, d);
-        }
-    }
+    //QString grq;
+    //if (lemme != 0) grq = lemme->grqNh();
+    QString grq = lineEditGrq->text();
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
-    if (grq.isEmpty()) return "";
     QString ret = gabaritLa
         .arg(grq)
         .arg(modl)
@@ -1156,7 +1146,8 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    nLemme = new Lemme(ret, 0, lemcore, lineEditLemme->text());
+    //nLemme = new Lemme(ret, 0, lemcore, lineEditLemme->text());
+    nLemme = new Lemme(ret, 0, lemcore);
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
 }
@@ -1188,8 +1179,13 @@ void MainWindow::lignesVisibles(QString chModele)
 
 QString MainWindow::ligneFr()
 {
+    QString cl;
+    if (lemme != 0) cl = lemme->cleF();
+    else if (nLemme != 0) cl = nLemme->cleF();
+    else return "";
     return QString("%1|%2")
-        .arg(lineEditLemme->text())
+        //.arg(lineEditLemme->text())
+        .arg(cl)
         .arg(lineEditTr->text());
 }
 
@@ -1243,10 +1239,11 @@ void MainWindow::majInfo()
 {
     qreal p = 100 * posFC / tailleF;
     labelInfo->setText(QString("ecce - module actuel <strong>%1</strong> "
-                       "texte analysé : <strong>%2</strong> %3 \%")
+                       "texte analysé : <strong>%2</strong> %3 \% %4")
         .arg(module)
         .arg(fichier)
-        .arg(p));
+        .arg(p)
+        .arg(posFC));
 }
 
 void MainWindow::majLinMorph()
