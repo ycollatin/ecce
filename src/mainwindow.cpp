@@ -22,13 +22,15 @@
 
    FIXME
     
+    - La ligne lemme, en cas de lemmatisation ext, ne se met pas à jour
     - Revoir le classement alphabétique du lemmes.la du module
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
     - L'ajout d'irrégulier n'est pas dynamique
 
    TODO
-/  - première utilisation : ouvrir l'onglet module, donner une marche à
+   - Dialogue de remplacement/ajout
+   - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
@@ -1039,10 +1041,15 @@ void MainWindow::enr()
                 continue;
             else
             {
+                /*
+                // pour l'affichage en français
+                QLocale curLocale(QLocale("pl_PL"));
+                QLocale::setDefault(curLocale);
+                */
                 QMessageBox::StandardButton rep;
                 rep = QMessageBox::question(this, "lexique",
                                             "Le lexique a un lemme "+lc
-                                            +". Le remplacer ?",
+                                            +"Oui : Le remplacer ; Non : l'ajouter",
                                             QMessageBox::Yes|QMessageBox::No
                                             |QMessageBox::Cancel);
                 if (rep == QMessageBox::No)
