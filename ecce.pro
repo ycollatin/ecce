@@ -13,7 +13,7 @@ QT += widgets core
 
 CONFIG += release_binary
 
-# TRANSLATIONS    = collatinus_fr.ts
+#TRANSLATIONS    = src/ecce_fr.ts
 # TRANSLATIONS    += collatinus_en.ts
 
 unix:!macx:DESTDIR = bin
