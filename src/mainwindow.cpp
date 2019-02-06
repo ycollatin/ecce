@@ -886,21 +886,12 @@ void MainWindow::editModule(QString k, QString l, QString f)
 {
     QStringList lignes = lisLignes(f);
     bool fait = false;
-    QRegExp sep("\\Ŵ");
+    QRegExp sep("\\W");
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
-        int c = QString::compare(Ch::atone(lin), Ch::atone(l), Qt::CaseInsensitive);
-        /*
-        if (c == 0)
-        {
-            std::cerr << qPrintable(l+" est un doublon dans "+f+"\n");
-            fait = true;
-            break;
-        }
-        */
-        // si la clé est identique, remplacer la ligne
         QString cle = Ch::atone(lin.section(sep,0,0));
+        int c = QString::compare(cle, Ch::atone(l), Qt::CaseInsensitive);
         if (cle == k)
         {
             lignes[i] = l;
@@ -1041,23 +1032,18 @@ void MainWindow::enr()
                 continue;
             else
             {
-                /*
-                // pour l'affichage en français
-                QLocale curLocale(QLocale("pl_PL"));
-                QLocale::setDefault(curLocale);
-                */
-                QMessageBox::StandardButton rep;
-                rep = QMessageBox::question(this, "lexique",
-                                            "Le lexique a un lemme "+lc
-                                            +"Oui : Le remplacer ; Non : l'ajouter",
-                                            QMessageBox::Yes|QMessageBox::No
-                                            |QMessageBox::Cancel);
-                if (rep == QMessageBox::No)
+                QMessageBox boite(QMessageBox::Question, tr("lexique"), 
+                "Le lexique a un lemme "+lc, 0, this);
+                boite.addButton("Remplacer",QMessageBox::YesRole);
+                boite.addButton("Ajouter",QMessageBox::NoRole);
+                boite.addButton("Annuler",QMessageBox::RejectRole);
+                int rep = boite.exec();
+                if (rep == QMessageBox::NoRole)
                 {
                     lc = lci;
                     break;
                 }
-                else if (rep == QMessageBox::Cancel)
+                else if (rep == QMessageBox::RejectRole)
                     return;
                 else break;
             }
