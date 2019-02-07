@@ -22,14 +22,11 @@
 
    FIXME
     
-    - La ligne lemme, en cas de lemmatisation ext, ne se met pas à jour
-    - Revoir le classement alphabétique du lemmes.la du module
     - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
       fin du mot n'est pas recherchée.
     - L'ajout d'irrégulier n'est pas dynamique
 
    TODO
-   - Dialogue de remplacement/ajout
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -815,11 +812,11 @@ void MainWindow::echec()
             if (fti != forme)
             {
                 MapLem nml = lemcore->lemmatiseM(fti, true, 0, false);
-                //MapLem nml = lemcore->lemmatise(fti);
                 for(int j=0;j<nml.count();++j)
                 {
                     Lemme* nl = nml.keys().at(j);
                     ml.insert(nl, nml.value(nl));
+                    if (j==0) lineEditLemme->setText(nl->cle());
                 }
             }
         }
