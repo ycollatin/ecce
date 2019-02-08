@@ -22,10 +22,11 @@
 
    FIXME
     
+    - /magnialia/ non lemmatisé
     - Revoir la navigation dans les échecs
 
    TODO
-   - navigation rapide << < > >>
+   - afficher le % de la barre de tâches
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -87,19 +88,33 @@ MainWindow::MainWindow()
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     labelLemme = new QLabel(frame);
+    /*
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(labelLemme->sizePolicy().hasHeightForWidth());
     labelLemme->setSizePolicy(sizePolicy);
     labelLemme->setMaximumSize(QSize(16777215, 50));
+    */
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
     verticalLayout_3->addLayout(horizontalLayout);
+
+    layoutScroll = new QHBoxLayout();
+    labelScroll = new QLabel(frame);
+    labelScroll->setText("0 %");
+    //labelScroll->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored);
+    layoutScroll->addWidget(labelScroll);
     horizontalScrollBar = new QScrollBar();
     horizontalScrollBar->setOrientation(Qt::Horizontal);
-    verticalLayout_3->addWidget(horizontalScrollBar);
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(horizontalScrollBar->sizePolicy().hasHeightForWidth());
+    horizontalScrollBar->setSizePolicy(sizePolicy);
+    layoutScroll->addWidget(horizontalScrollBar);
+    verticalLayout_3->addLayout(layoutScroll);
     // layout boutons
     horizontalLayoutBtns = new QHBoxLayout();
     bSuppr = new QPushButton(frame);
@@ -642,6 +657,7 @@ void MainWindow::connecte()
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(horizontalScrollBar, SIGNAL(sliderReleased()), SLOT(sbar()));
+    connect(horizontalScrollBar, SIGNAL(valueChanged(int)), SLOT(scroll()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
     connect(actionAv, SIGNAL(triggered()), this, SLOT(av()));
@@ -1225,7 +1241,7 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     echecs.clear();
 }
 
-void MainWindow::majInfo()
+void MainWindow::majInfo(bool barre)
 {
     qreal p = 100 * posFC / tailleF;
     labelInfo->setText(QString("ecce - module actuel <strong>%1</strong> "
@@ -1234,7 +1250,7 @@ void MainWindow::majInfo()
         .arg(fichier)
         .arg(p)
         .arg(posFC));
-    horizontalScrollBar->setValue(p);
+    if (barre) horizontalScrollBar->setValue(p);
 }
 
 void MainWindow::majLinMorph()
@@ -1479,8 +1495,16 @@ void MainWindow::rotQ()
 void MainWindow::sbar()
 {
     posFC = horizontalScrollBar->value() * tailleF / 100;
+    labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
+    majInfo(false);
+}
+
+void MainWindow::scroll()
+{
+    posFC = horizontalScrollBar->value() * tailleF / 100;
     labelContexte->setText(contexte(posFC, ""));
-    majInfo();
+    labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
+    majInfo(false);
 }
 
 void MainWindow::siCas()

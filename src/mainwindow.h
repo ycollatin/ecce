@@ -95,6 +95,8 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
+        QHBoxLayout* layoutScroll;
+        QLabel*      labelScroll;
         QScrollBar* horizontalScrollBar;
         QHBoxLayout *horizontalLayoutBtns;
         QPushButton *bSuppr;
@@ -257,7 +259,7 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
-        void              majInfo();
+        void              majInfo(bool barre=true);
         void              majLinMorph();
         MapLem            ml;
         QStringListModel* modele;
@@ -335,6 +337,7 @@ class MainWindow : public QMainWindow
         //void        reserve();
         void        rotQ();
         void        sbar();
+        void        scroll();
         void        siCas();
         void        siGenre();
         void        siMod();
