@@ -22,11 +22,10 @@
 
    FIXME
     
-    - Retours arrière : Quand on tombe à l'intérieur d'un mot, la 
-      fin du mot n'est pas recherchée.
-    - L'ajout d'irrégulier n'est pas dynamique
+    - Revoir la navigation dans les échecs
 
    TODO
+   - navigation rapide << < > >>
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -47,6 +46,8 @@ MainWindow::MainWindow()
     // actions
     actionArr       = new QAction(this);
     actionArrArr    = new QAction(this);
+    actionAv        = new QAction(this);
+    actionAvAv      = new QAction(this);
     actionQuant     = new QAction(this);
     actionDebut     = new QAction(this);
     actionDiff      = new QAction(this);
@@ -110,10 +111,16 @@ MainWindow::MainWindow()
     bArr->setDefaultAction(actionArr);
     bArrArr = new QToolButton();
     bArrArr->setDefaultAction(actionArrArr);
+    bAv    = new QToolButton();
+    bAv->setDefaultAction(actionAv);
+    bAvAv = new QToolButton();
+    bAvAv->setDefaultAction(actionAvAv);
     bDebut  = new QToolButton();
     bDebut->setDefaultAction(actionDebut);
     horizontalLayoutBtns->addWidget(bArr);
     horizontalLayoutBtns->addWidget(bArrArr);
+    horizontalLayoutBtns->addWidget(bAv);
+    horizontalLayoutBtns->addWidget(bAvAv);
     horizontalLayoutBtns->addWidget(bDebut);
     verticalLayout_3->addLayout(horizontalLayoutBtns);
 
@@ -133,8 +140,6 @@ MainWindow::MainWindow()
     horizontalLayout_grq->setSpacing(6);
     lineEditGrq = new QLineEdit(frame1);
     horizontalLayout_grq->addWidget(lineEditGrq);
-    //checkBoxVb = new QCheckBox(frame1);
-    //horizontalLayout_grq->addWidget(checkBoxVb);
     formLayout->setLayout(0, QFormLayout::FieldRole, horizontalLayout_grq);
     labelModele = new QLabel(frame1);
     labelModele->setLayoutDirection(Qt::LeftToRight);
@@ -373,7 +378,6 @@ MainWindow::MainWindow()
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionOuvrir);
     mainToolBar->addAction(actionQuant);
-    //mainToolBar->addAction(actionEchecSuiv);
     mainToolBar->addAction(actionQuitter);
     addToolBar(Qt::TopToolBarArea, mainToolBar);
     // barre de menu
@@ -458,9 +462,11 @@ void MainWindow::retranslateUi()
     actionEchecPrec->setShortcut(QApplication::translate("MainWindow", "Ctrl+P", Q_NULLPTR));
     actionEchecSuiv->setText(QApplication::translate("MainWindow", "\303\251chec suivant", Q_NULLPTR));
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
-    actionArr->setText("<");
+    actionDebut->setText("|<");
     actionArrArr->setText("<<");
-    actionDebut->setText(QApplication::translate("MainWindow","début", Q_NULLPTR));
+    actionArr->setText("<");
+    actionAv->setText(">");
+    actionAvAv->setText(">>");
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
@@ -577,33 +583,22 @@ void MainWindow::ajMorph()
 
 void MainWindow::arr()
 {
-    posFC -= 200;
-    if (posFC < 0) posFC = 0;
-    QTextStream flux(&fCorpus);
-    flux.seek(posFC);
-    QChar c='\0';
-    do flux >> c; while (c.isLetter());
-    posFC = flux.pos();
-    while (!echecs.isEmpty() && echecs.last() > posFC)
-        echecs.removeLast();
-    forme.clear();
-    labelContexte->setText(contexte(posFC, ""));
-    majInfo();
+    retro(200);
 }
 
 void MainWindow::arrArr()
 {
-    posFC = posFC / 2;
-    QTextStream flux(&fCorpus);
-    flux.seek(posFC);
-    QChar c='\0';
-    do flux >> c; while (c.isLetter());
-    posFC = flux.pos();
-    while (!echecs.isEmpty() && echecs.last() > posFC)
-        echecs.removeLast();
-    forme.clear();
-    labelContexte->setText(contexte(posFC, ""));
-    majInfo();
+    retro(2000);
+}
+
+void MainWindow::av()
+{
+    porro(200);
+}
+
+void MainWindow::avAv()
+{
+    porro(2000);
 }
 
 QString MainWindow::cle(QString ligne)
@@ -646,6 +641,8 @@ void MainWindow::connecte()
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
+    connect(actionAv, SIGNAL(triggered()), this, SLOT(av()));
+    connect(actionAvAv, SIGNAL(triggered()), this, SLOT(avAv()));
     connect(actionDebut, SIGNAL(triggered()), this, SLOT(debut()));
     connect(bEchecSuiv, SIGNAL(clicked()), this, SLOT(echec()));
     connect(actionEchecPrec, SIGNAL(triggered()), this, SLOT(echecPrec()));
@@ -1395,6 +1392,16 @@ void MainWindow::peuple()
     majInfo();
 }
 
+void MainWindow::porro(int pas)
+{
+    posFC += pas;
+    if (posFC >= fCorpus.size()) 
+        posFC = fCorpus.size() - 1;
+    forme.clear();
+    labelContexte->setText(contexte(posFC, ""));
+    majInfo();
+}
+
 void MainWindow::reinit()
 {
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -1410,6 +1417,22 @@ void MainWindow::reinit()
     posFC = 0;
     peuple();
     qApp->restoreOverrideCursor();
+}
+
+void MainWindow::retro(int pas)
+{
+    posFC -= pas;
+    if (posFC < 0) posFC = 0;
+    QTextStream flux(&fCorpus);
+    flux.seek(posFC);
+    QChar c='\0';
+    do flux >> c; while (c.isLetter());
+    posFC = flux.pos();
+    while (!echecs.isEmpty() && echecs.last() > posFC)
+        echecs.removeLast();
+    forme.clear();
+    labelContexte->setText(contexte(posFC, ""));
+    majInfo();
 }
 
 void MainWindow::rotQ()

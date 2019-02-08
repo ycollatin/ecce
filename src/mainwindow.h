@@ -69,6 +69,8 @@ class MainWindow : public QMainWindow
     private:
         QAction *actionArr;
         QAction *actionArrArr;
+        QAction *actionAv;
+        QAction *actionAvAv;
         QAction *actionDebut;
         QAction *actionDiff;
         QAction *actionEchecPrec;
@@ -99,6 +101,8 @@ class MainWindow : public QMainWindow
         QToolButton *bEchecSuiv;
         QToolButton *bArr;
         QToolButton *bArrArr;
+        QToolButton *bAv;
+        QToolButton *bAvAv;
         QToolButton *bDebut;
         QSpacerItem *verticalSpacer_2;
         QFrame *frame1;
@@ -292,6 +296,9 @@ class MainWindow : public QMainWindow
         QStringList       lvarGraph;
         qint64            posFC;
         QList<qint64>     echecs;  // liste des positions d'échec
+        // navigation
+        void        porro(int pas);
+        void        retro(int pas);
 
     private slots:
         void        activerM();
@@ -299,6 +306,9 @@ class MainWindow : public QMainWindow
         void        ajMorph();
         void        arr();
         void        arrArr();
+        //void        arrArr();
+        void        av();
+        void        avAv();
         QString     cle(QString ligne);
         void        closeEvent(QCloseEvent* event);
         void        coche();
