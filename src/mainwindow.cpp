@@ -97,6 +97,9 @@ MainWindow::MainWindow()
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
     verticalLayout_3->addLayout(horizontalLayout);
+    horizontalScrollBar = new QScrollBar();
+    horizontalScrollBar->setOrientation(Qt::Horizontal);
+    verticalLayout_3->addWidget(horizontalScrollBar);
     // layout boutons
     horizontalLayoutBtns = new QHBoxLayout();
     bSuppr = new QPushButton(frame);
@@ -631,7 +634,6 @@ void MainWindow::connecte()
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // édition
-    //connect(checkBoxVb, SIGNAL(toggled(bool)), this, SLOT(lignesVisibles(bool)));
     connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
@@ -639,6 +641,7 @@ void MainWindow::connecte()
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(horizontalScrollBar, SIGNAL(sliderReleased()), SLOT(sbar()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
     connect(actionAv, SIGNAL(triggered()), this, SLOT(av()));
@@ -1231,6 +1234,7 @@ void MainWindow::majInfo()
         .arg(fichier)
         .arg(p)
         .arg(posFC));
+    horizontalScrollBar->setValue(p);
 }
 
 void MainWindow::majLinMorph()
@@ -1395,8 +1399,8 @@ void MainWindow::peuple()
 void MainWindow::porro(int pas)
 {
     posFC += pas;
-    if (posFC >= fCorpus.size()) 
-        posFC = fCorpus.size() - 1;
+    if (posFC >= tailleF) 
+        posFC = tailleF - 1;
     forme.clear();
     labelContexte->setText(contexte(posFC, ""));
     majInfo();
@@ -1470,6 +1474,13 @@ void MainWindow::rotQ()
             break;
         }
     }
+}
+
+void MainWindow::sbar()
+{
+    posFC = horizontalScrollBar->value() * tailleF / 100;
+    labelContexte->setText(contexte(posFC, ""));
+    majInfo();
 }
 
 void MainWindow::siCas()

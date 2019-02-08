@@ -42,6 +42,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollBar>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
@@ -94,7 +95,7 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
-        //QPushButton *bHomon;
+        QScrollBar* horizontalScrollBar;
         QHBoxLayout *horizontalLayoutBtns;
         QPushButton *bSuppr;
         QToolButton *bEchecPrec;
@@ -333,6 +334,7 @@ class MainWindow : public QMainWindow
         void        preAn();
         //void        reserve();
         void        rotQ();
+        void        sbar();
         void        siCas();
         void        siGenre();
         void        siMod();
