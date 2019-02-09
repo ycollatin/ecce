@@ -21,12 +21,13 @@
 /*
 
    FIXME
+    - echec() fait de mauvaises sélections.
+    - incognitumne non lemmatisé à cause de incognitumpne
     - retour arrière : on navigue qqf au milieu des mots
     - Revoir la navigation dans les échecs
     - en cas d'échec complet, lineEditLemme n'est pas mise à jour
 
    TODO
-   - afficher le % de la barre de tâches
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -708,19 +709,18 @@ void MainWindow::connecte()
 QString MainWindow::contexte(qint64 p, QString f)
 {
     QString ret;
-    QTextStream flux(&fCorpus);
-    flux.setAutoDetectUnicode(true);
-    if (p < 201)
+    QTextStream fl(&fCorpus);
+    if (p < 101)
     {
-        flux.seek(0);
-        ret = flux.read(p-1);
+        fl.seek(0);
+        ret = fl.read(p-1);
     }
     else
     {
-        flux.seek(p-201);
-        ret = flux.read(200);
+        fl.seek(p-100);
+        ret = fl.read(100);
     }
-    ret.append(flux.read(200));
+    ret.append(fl.read(400));
     if (f.isEmpty()) return ret;
     int dm = ret.indexOf(f);
     int fm = ret.indexOf(QRegExp("\\b"), dm+2);
@@ -789,25 +789,26 @@ void MainWindow::debut()
 
 void MainWindow::echec()
 {
-    QTextStream flux(&fCorpus);
     flux.seek(posFC);
-    QChar c;
-    //QString forme;
+    QChar c = '\0';
     bool arret = false;
     qint64 fluxpos = flux.pos();
     qint64 posEchec = fluxpos;
     while(!flux.atEnd() && !arret)
     {
+        forme.clear();
         // passer l'entremots
-        do
+        if (!c.isLetter())
         {
-            flux >> c;
+            do
+            {
+                flux >> c;
+            }
+            while (!flux.atEnd() && !c.isLetter());
         }
-        while (!flux.atEnd() && !c.isLetter());
         // retenir la position du premier caractère entre mots
         fluxpos = flux.pos();
         // lire la forme
-        forme.clear();
         do
         {
             forme.append(c);
@@ -833,33 +834,28 @@ void MainWindow::echec()
                 }
             }
         }
-        if (ml.isEmpty())
+        // évaluation de la lemmatisation, arrêt si elle a échoué
+        arret = true;
+        if (!ml.isEmpty())
         {
-            arret = true;
-            lineEditLemme->setText(forme);
-            echecs.append(posEchec);
-        }
-        else
-        {
-            arret = true;
-            // voir si une lemmatisation vient du lexique
-            // classique ou du module lexical
+            // sinon arrêt seulement si une lemmatisation vient du
+            // réservoir
             for (int i=0;i<ml.keys().count();++i)
-            {
-                Lemme* l = ml.keys().at(i);
-                arret = arret && l->origin() > 1;
-            }
-            if (arret)
-            {
+                arret = arret && ml.keys().at(i)->origin() > 1;
+        }
+        if (arret)
+        {
+            if (!ml.isEmpty())
                 lineEditLemme->setText(ml.keys().at(0)->cle());
-                iLemSuiv = -1;
-                lemSuiv();
-                echecs.append(posEchec);
-            }
+            else lineEditLemme->setText(forme);
+            iLemSuiv = -1;
+            lemSuiv();
+            echecs.append(posEchec);
+            posFC = flux.pos();
+            majInfo();
         }
     }
     posFC = flux.pos();
-    majInfo();
 }
 
 void MainWindow::echecPrec()
@@ -1215,11 +1211,12 @@ void MainWindow::ouvrir(QString nf, qint64 p)
         std::cerr << qPrintable(" ne peux ouvrir "+nf);
         return;
     }
+    flux.setDevice(&fCorpus);
     tailleF = fCorpus.size();
     posFC = p;
     if (posFC > 0) posFC--;
     else debut();
-    fCorpus.seek(posFC);
+    flux.seek(posFC);
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
@@ -1430,7 +1427,7 @@ void MainWindow::retro(int pas)
 {
     posFC -= pas;
     if (posFC < 0) posFC = 0;
-    QTextStream flux(&fCorpus);
+    //QTextStream flux(&fCorpus);
     flux.seek(posFC);
     QChar c='\0';
     // terminer le mot
@@ -1483,6 +1480,7 @@ void MainWindow::sbar()
 {
     posFC = horizontalScrollBar->value() * tailleF / 100;
     labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
+    forme.clear();
     majInfo(false);
 }
 
@@ -1490,6 +1488,7 @@ void MainWindow::scroll()
 {
     posFC = horizontalScrollBar->value() * tailleF / 100;
     labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
+    forme.clear();
     majInfo(false);
 }
 

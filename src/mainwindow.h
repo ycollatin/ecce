@@ -248,6 +248,7 @@ class MainWindow : public QMainWindow
         "!\n";
         QString           fichier;
         Flexion*          flexion;
+        QTextStream       flux;
         QString           forme;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         int               iLemSuiv;
