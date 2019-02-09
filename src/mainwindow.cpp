@@ -21,7 +21,7 @@
 /*
 
    FIXME
-    
+    - retour arrière : on navigue qqf au milieu des mots
     - Revoir la navigation dans les échecs
     - en cas d'échec complet, lineEditLemme n'est pas mise à jour
 
@@ -1433,6 +1433,7 @@ void MainWindow::retro(int pas)
     QTextStream flux(&fCorpus);
     flux.seek(posFC);
     QChar c='\0';
+    // terminer le mot
     do flux >> c; while (c.isLetter());
     posFC = flux.pos();
     while (!echecs.isEmpty() && echecs.last() > posFC)
