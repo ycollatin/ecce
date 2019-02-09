@@ -22,8 +22,8 @@
 
    FIXME
     
-    - /magnialia/ non lemmatisé
     - Revoir la navigation dans les échecs
+    - en cas d'échec complet, lineEditLemme n'est pas mise à jour
 
    TODO
    - afficher le % de la barre de tâches
@@ -494,10 +494,8 @@ void MainWindow::retranslateUi()
     labelInfo->setText(QApplication::translate("MainWindow",
                                                "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
-    //bHomon->setText(QApplication::translate("MainWindow", "homon.", Q_NULLPTR));
     bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
-    //checkBoxVb->setText(QApplication::translate("MainWindow", "verbe", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
@@ -786,7 +784,6 @@ void MainWindow::debut()
     fCorpus.seek(0);
     echecs.clear();
     forme.clear();
-    labelContexte->setText(contexte(0, ""));
     majInfo();
 }
 
@@ -801,7 +798,6 @@ void MainWindow::echec()
     qint64 posEchec = fluxpos;
     while(!flux.atEnd() && !arret)
     {
-        forme.clear();
         // passer l'entremots
         do
         {
@@ -811,6 +807,7 @@ void MainWindow::echec()
         // retenir la position du premier caractère entre mots
         fluxpos = flux.pos();
         // lire la forme
+        forme.clear();
         do
         {
             forme.append(c);
@@ -840,7 +837,6 @@ void MainWindow::echec()
         {
             arret = true;
             lineEditLemme->setText(forme);
-            labelContexte->setText(contexte(fluxpos, forme));
             echecs.append(posEchec);
         }
         else
@@ -855,15 +851,15 @@ void MainWindow::echec()
             }
             if (arret)
             {
-                labelContexte->setText(contexte(fluxpos, forme));
+                lineEditLemme->setText(ml.keys().at(0)->cle());
                 iLemSuiv = -1;
                 lemSuiv();
                 echecs.append(posEchec);
             }
         }
     }
-    majInfo();
     posFC = flux.pos();
+    majInfo();
 }
 
 void MainWindow::echecPrec()
@@ -1020,7 +1016,6 @@ void MainWindow::enr()
 {
     if (nLemme == 0) return;
     // radicaux et morphologie
-    //QString lc = lineEditLemme->text();
     QString ltr = lineEditTr->text();
     QString grq = lineEditGrq->text();
     if (ltr.isEmpty() || grq.isEmpty())
@@ -1125,7 +1120,6 @@ void MainWindow::lemSuiv()
         iLemSuiv = 0;
     lemme = ml.keys().at(iLemSuiv);
     edLem(lemme->cle());
-    //lineEditLemme->setText(lemme->cle());
 }
 
 /**
@@ -1138,10 +1132,6 @@ void MainWindow::lemSuiv()
 QString MainWindow::ligneLa(QString modl)
 {
     if (modl.isEmpty()) modl = comboBoxModele->currentText();
-    // chercher s'il existe un lemme dont la clé est 
-    // celle de lineEditLemme
-    //QString grq;
-    //if (lemme != 0) grq = lemme->grqNh();
     QString grq = lineEditGrq->text();
     int nbOcc = 1;
     if (lemme != 0) nbOcc = lemme->nbOcc();
@@ -1152,7 +1142,6 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    //nLemme = new Lemme(ret, 0, lemcore, lineEditLemme->text());
     nLemme = new Lemme(ret, 0, lemcore);
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
@@ -1190,7 +1179,6 @@ QString MainWindow::ligneFr()
     else if (nLemme != 0) cl = nLemme->cleF();
     else return "";
     return QString("%1|%2")
-        //.arg(lineEditLemme->text())
         .arg(cl)
         .arg(lineEditTr->text());
 }
@@ -1232,7 +1220,6 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     if (posFC > 0) posFC--;
     else debut();
     fCorpus.seek(posFC);
-    labelContexte->setText(contexte(posFC, forme));
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("fichiers");
     settings.setValue("fichier", fichier);
@@ -1250,6 +1237,7 @@ void MainWindow::majInfo(bool barre)
         .arg(fichier)
         .arg(p)
         .arg(posFC));
+    labelContexte->setText(contexte(posFC, forme));
     if (barre) horizontalScrollBar->setValue(p);
 }
 
@@ -1418,7 +1406,6 @@ void MainWindow::porro(int pas)
     if (posFC >= tailleF) 
         posFC = tailleF - 1;
     forme.clear();
-    labelContexte->setText(contexte(posFC, ""));
     majInfo();
 }
 
@@ -1451,7 +1438,6 @@ void MainWindow::retro(int pas)
     while (!echecs.isEmpty() && echecs.last() > posFC)
         echecs.removeLast();
     forme.clear();
-    labelContexte->setText(contexte(posFC, ""));
     majInfo();
 }
 
@@ -1502,7 +1488,6 @@ void MainWindow::sbar()
 void MainWindow::scroll()
 {
     posFC = horizontalScrollBar->value() * tailleF / 100;
-    labelContexte->setText(contexte(posFC, ""));
     labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
     majInfo(false);
 }
