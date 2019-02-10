@@ -21,13 +21,12 @@
 /*
 
    FIXME
-    - echec() fait de mauvaises sélections.
+    - ne pas revenir au début si la liste d'échecs est vide 
     - incognitumne non lemmatisé à cause de incognitumpne
-    - retour arrière : on navigue qqf au milieu des mots
-    - Revoir la navigation dans les échecs
-    - en cas d'échec complet, lineEditLemme n'est pas mise à jour
 
    TODO
+   - Trouver le moyen de distinguer la manip manuelle ou auto de la barre
+   - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -656,7 +655,7 @@ void MainWindow::connecte()
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(horizontalScrollBar, SIGNAL(sliderReleased()), SLOT(sbar()));
-    connect(horizontalScrollBar, SIGNAL(valueChanged(int)), SLOT(scroll()));
+    connect(horizontalScrollBar, SIGNAL(actionTriggered(int)), SLOT(sbar()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
     connect(actionAv, SIGNAL(triggered()), this, SLOT(av()));
@@ -792,8 +791,7 @@ void MainWindow::echec()
     flux.seek(posFC);
     QChar c = '\0';
     bool arret = false;
-    qint64 fluxpos = flux.pos();
-    qint64 posEchec = fluxpos;
+    qint64 posEchec = flux.pos();
     while(!flux.atEnd() && !arret)
     {
         forme.clear();
@@ -805,9 +803,9 @@ void MainWindow::echec()
                 flux >> c;
             }
             while (!flux.atEnd() && !c.isLetter());
+            posEchec = flux.pos();
         }
         // retenir la position du premier caractère entre mots
-        fluxpos = flux.pos();
         // lire la forme
         do
         {
@@ -815,8 +813,8 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && c.isLetter());
+
         // la forme est compète. Lemmatisation
-        posEchec = fluxpos;
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
         QStringList lfti = lemcore->ti(forme);
@@ -1402,6 +1400,9 @@ void MainWindow::porro(int pas)
     posFC += pas;
     if (posFC >= tailleF) 
         posFC = tailleF - 1;
+    QChar c;
+    flux.seek(posFC);
+    do flux >> c; while (c.isLetter());
     forme.clear();
     majInfo();
 }
@@ -1432,7 +1433,6 @@ void MainWindow::retro(int pas)
     QChar c='\0';
     // terminer le mot
     do flux >> c; while (c.isLetter());
-    posFC = flux.pos();
     while (!echecs.isEmpty() && echecs.last() > posFC)
         echecs.removeLast();
     forme.clear();
@@ -1477,14 +1477,6 @@ void MainWindow::rotQ()
 }
 
 void MainWindow::sbar()
-{
-    posFC = horizontalScrollBar->value() * tailleF / 100;
-    labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
-    forme.clear();
-    majInfo(false);
-}
-
-void MainWindow::scroll()
 {
     posFC = horizontalScrollBar->value() * tailleF / 100;
     labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));

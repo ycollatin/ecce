@@ -338,7 +338,6 @@ class MainWindow : public QMainWindow
         //void        reserve();
         void        rotQ();
         void        sbar();
-        void        scroll();
         void        siCas();
         void        siGenre();
         void        siMod();
