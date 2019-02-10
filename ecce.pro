@@ -19,7 +19,7 @@ CONFIG += release_binary
 unix:!macx:DESTDIR = bin
 OBJECTS_DIR= obj/
 MOC_DIR = moc/
-QMAKE_DISTCLEAN += $${DESTDIR}/editcol
+QMAKE_DISTCLEAN += $${DESTDIR}/ecce
 
 LIBS += -lquazip5
 
