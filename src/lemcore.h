@@ -122,6 +122,7 @@ class LemCore : public QObject
     QString                dirFr();
     QString                dirIrr();
     QString                dirVg();
+    void                   ajIrreg(Irreg* irr);
     void                   ajLemme(Lemme* l);
     void                   ajModele(Modele *m);
     void                   ajRadicaux(Lemme *l);

@@ -353,6 +353,13 @@ void LemCore::ajContractions()
     }
 }
 
+void LemCore::ajIrreg(Irreg* irr)
+{
+    QString gr = Ch::deramise(irr->gr());
+    gr = vg(gr);
+    _irregs.insert(gr, irr);
+}
+
 void LemCore::ajLemme(Lemme* l)
 {
     _lemmes.insert(l->cle(), l);
