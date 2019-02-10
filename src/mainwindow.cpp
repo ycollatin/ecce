@@ -21,19 +21,18 @@
 /*
 
    FIXME
+    - encore des aterrissages en milieu de mot
     - ne pas revenir au début si la liste d'échecs est vide 
     - incognitumne non lemmatisé à cause de incognitumpne
 
    TODO
-   - Trouver le moyen de distinguer la manip manuelle ou auto de la barre
    - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
-   - suppression d'un lemme : trouver une syntaxe
+   - suppression d'un lemme : trouver une syntaxe :
      prévoir une gestion des lignes lemmes commentées
-   - rendre l'homonymie de la clé plus ergonomique
  */
 
 #include <QFileDialog>
@@ -88,32 +87,17 @@ MainWindow::MainWindow()
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     labelLemme = new QLabel(frame);
-    /*
-    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(labelLemme->sizePolicy().hasHeightForWidth());
-    labelLemme->setSizePolicy(sizePolicy);
-    labelLemme->setMaximumSize(QSize(16777215, 50));
-    */
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
     verticalLayout_3->addLayout(horizontalLayout);
-
     layoutScroll = new QHBoxLayout();
     labelScroll = new QLabel(frame);
     labelScroll->setText("0 %");
-    //labelScroll->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored);
     layoutScroll->addWidget(labelScroll);
-    horizontalScrollBar = new QScrollBar();
-    horizontalScrollBar->setOrientation(Qt::Horizontal);
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(horizontalScrollBar->sizePolicy().hasHeightForWidth());
-    horizontalScrollBar->setSizePolicy(sizePolicy);
-    layoutScroll->addWidget(horizontalScrollBar);
+    slider = new QSlider();
+    slider->setOrientation(Qt::Horizontal);
+    layoutScroll->addWidget(slider);
     verticalLayout_3->addLayout(layoutScroll);
     // layout boutons
     horizontalLayoutBtns = new QHBoxLayout();
@@ -420,7 +404,6 @@ MainWindow::MainWindow()
     // état de la fenêtre
     settings.beginGroup("fenetre");
     restoreGeometry(settings.value("geometry").toByteArray());
-    //restoreState(settings.value("windowState").toByteArray());
     settings.endGroup();
     // dernier fichier chargé
     settings.beginGroup("fichiers");
@@ -579,7 +562,6 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
-    //insereLigne(lin, ajDir+"irregs.la");
     editModule(linIrreg->text(), lin, ajDir+"irregs.la");
 }
 
@@ -654,8 +636,7 @@ void MainWindow::connecte()
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
-    connect(horizontalScrollBar, SIGNAL(sliderReleased()), SLOT(sbar()));
-    connect(horizontalScrollBar, SIGNAL(actionTriggered(int)), SLOT(sbar()));
+    connect(slider, SIGNAL(sliderMoved(int)), SLOT(sbar()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
     connect(actionAv, SIGNAL(triggered()), this, SLOT(av()));
@@ -1233,7 +1214,8 @@ void MainWindow::majInfo(bool barre)
         .arg(p)
         .arg(posFC));
     labelContexte->setText(contexte(posFC, forme));
-    if (barre) horizontalScrollBar->setValue(p);
+    //if (barre) horizontalScrollBar->setValue(p);
+    if (barre) slider->setValue(p);
 }
 
 void MainWindow::majLinMorph()
@@ -1317,7 +1299,6 @@ void MainWindow::peuple()
     // et le répertoire personnel, où sont les modules lexicaux
     resDir = Ch::chemin("collatinus/"+module,'d');
     if (!resDir.endsWith('/')) resDir.append('/');
-    // TODO : création, et QSettings pour module
     modDir = Ch::chemin("collatinus/", 'p');
     if (!modDir.endsWith('/')) modDir.append('/');
     if (!module.isEmpty())
@@ -1478,8 +1459,9 @@ void MainWindow::rotQ()
 
 void MainWindow::sbar()
 {
-    posFC = horizontalScrollBar->value() * tailleF / 100;
-    labelScroll->setText(QString("%1 \%").arg(horizontalScrollBar->value()));
+    posFC = slider->value() * tailleF / 100;
+    flux.seek(posFC);
+    labelScroll->setText(QString("%1 \%").arg(slider->value()));
     forme.clear();
     majInfo(false);
 }

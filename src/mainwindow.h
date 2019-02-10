@@ -42,7 +42,8 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QScrollBar>
+//#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
@@ -97,7 +98,8 @@ class MainWindow : public QMainWindow
         QLineEdit *lineEditLemme;
         QHBoxLayout* layoutScroll;
         QLabel*      labelScroll;
-        QScrollBar* horizontalScrollBar;
+        //QScrollBar* horizontalScrollBar;
+        QSlider*     slider;
         QHBoxLayout *horizontalLayoutBtns;
         QPushButton *bSuppr;
         QToolButton *bEchecPrec;
