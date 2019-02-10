@@ -563,7 +563,13 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
+    qDebug()<<"ajIrr, lin"<<lin;
+    Irreg* irreg = new Irreg(lin, lemcore);
+    qDebug()<<"irreg"<<irreg;
+    lemcore->ajIrreg(irreg);
+    qDebug()<<"ajouté";
     editModule(linIrreg->text(), lin, ajDir+"irregs.la");
+    new QListWidgetItem(lin, listWidgetIrr);
 }
 
 // ajoute les nْ° des morphos sélectionnées à la forme irrégulière
@@ -1333,7 +1339,7 @@ void MainWindow::peuple()
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
     // irréguliers
-    itemsIrr = lisLignes(module+"/irregs.la", true);
+    itemsIrr = lisLignes(ajDir+"irregs.la", true);
     for (int i=0;i<itemsIrr.count();++i)
     {
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
