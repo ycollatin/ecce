@@ -697,8 +697,8 @@ QString MainWindow::contexte(qint64 p, QString f)
     }
     else
     {
-        fl.seek(p-100);
-        ret = fl.read(100);
+        fl.seek(p-200);
+        ret = fl.read(200);
     }
     ret.append(fl.read(400));
     if (f.isEmpty()) return ret;
@@ -1214,8 +1214,11 @@ void MainWindow::majInfo(bool barre)
         .arg(p)
         .arg(posFC));
     labelContexte->setText(contexte(posFC, forme));
-    //if (barre) horizontalScrollBar->setValue(p);
-    if (barre) slider->setValue(p);
+    if (barre)
+    {
+        slider->setValue(p);
+        labelScroll->setText(QString("%1 \%").arg(p));
+    }
 }
 
 void MainWindow::majLinMorph()
@@ -1384,6 +1387,7 @@ void MainWindow::porro(int pas)
     QChar c;
     flux.seek(posFC);
     do flux >> c; while (c.isLetter());
+    posFC = flux.pos();
     forme.clear();
     majInfo();
 }
@@ -1414,6 +1418,7 @@ void MainWindow::retro(int pas)
     QChar c='\0';
     // terminer le mot
     do flux >> c; while (c.isLetter());
+    posFC = flux.pos();
     while (!echecs.isEmpty() && echecs.last() > posFC)
         echecs.removeLast();
     forme.clear();
