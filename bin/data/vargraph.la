@@ -1,0 +1,10 @@
+!          vargraph.la
+!
+!  Dans ce fichier sont enregistrées les variantes
+! graphiques du corpus traité. Chaque ligne est
+! composée de deux chaînes séparées par le caractère ';'
+!
+h;
+ti;ci
+mn;mpn
+ph;f
