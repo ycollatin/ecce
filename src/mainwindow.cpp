@@ -21,7 +21,6 @@
 /*
 
    FIXME
-    - la liste des irréguliers n'apparaît pas si '>'.
     - encore des aterrissages en milieu de mot
     - ne pas revenir au début si la liste d'échecs est vide 
     - incognitumne non lemmatisé à cause de incognitumpne
@@ -1364,11 +1363,11 @@ void MainWindow::peuple()
     lPers << ""; lTps<<""; lVx << "";
     for (int i=0;i<6;++i) lCas   << lemcore->cas(i);
     for (int i=0;i<3;++i) lGenre << lemcore->genre(i);
-    for (int i=0;i<3;++i) lMod   << lemcore->modes(i);
+    for (int i=0;i<9;++i) lMod   << lemcore->modes(i);
     for (int i=0;i<2;++i) lNb    << lemcore->nombre(i);
-    lPers <<""<<"1ère"<<"2ème"<<"3ème";
+    lPers <<"1ère"<<"2ème"<<"3ème";
     for (int i=0;i<6;++i) lTps   << lemcore->temps(i);
-    for (int i=0;i<2;++i) lTps   << lemcore->voix(i);
+    for (int i=0;i<2;++i) lVx    << lemcore->voix(i);
     iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
     iTps = 0; iVx = 0;
 
@@ -1546,7 +1545,7 @@ void MainWindow::siTps()
         iTps = 0;
         btnTps->setText("tps");
     }
-    btnTps->setText(lTps.at(iTps));
+    else btnTps->setText(lTps.at(iTps));
     majLinMorph();
 }
 
