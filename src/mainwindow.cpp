@@ -21,11 +21,15 @@
 /*
 
    FIXME
-    - encore des aterrissages en milieu de mot
+    - décocher le h dans les vargraph supprime de nombreuses lignes à droite
+    - pretiosissimus non lemmatisé
+    - dans le fichier t, contexte cassé
+     encore des atterrissages en milieu de mot
     - ne pas revenir au début si la liste d'échecs est vide 
     - incognitumne non lemmatisé à cause de incognitumpne
 
    TODO
+   - tester avec et sans "essayer sans vg" l. 823
    - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -562,11 +566,8 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(linLemmeIrr->text())
         .arg(lineEditNumMorpho->text());
-    qDebug()<<"ajIrr, lin"<<lin;
     Irreg* irreg = new Irreg(lin, lemcore);
-    qDebug()<<"irreg"<<irreg;
     lemcore->ajIrreg(irreg);
-    qDebug()<<"ajouté";
     editModule(linIrreg->text(), lin, ajDir+"irregs.la");
     new QListWidgetItem(lin, listWidgetIrr);
 }
@@ -819,6 +820,9 @@ void MainWindow::echec()
                 }
             }
         }
+        // échec, essayer sans vg
+        if (ml.isEmpty())
+            ml = lemcore->lemmatiseM(forme, true, 0, false);
         // évaluation de la lemmatisation, arrêt si elle a échoué
         arret = true;
         if (!ml.isEmpty())
