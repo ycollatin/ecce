@@ -21,16 +21,12 @@
 /*
 
    FIXME
-    - 25 %, 508568
     - décocher le h dans les vargraph supprime de nombreuses lignes à droite
-    - pretiosissimus non lemmatisé
-    - dans le fichier t, contexte cassé
-     encore des atterrissages en milieu de mot
     - ne pas revenir au début si la liste d'échecs est vide 
     - incognitumne non lemmatisé à cause de incognitumpne
 
    TODO
-   - tester avec et sans "essayer sans vg" l. 823
+   - essai de lemmatisation sans vg l. 823 : reporter dans C12
    - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -712,8 +708,8 @@ QString MainWindow::contexte(qint64 p, QString f)
     if (reste < 400) ret.append(fl.read(reste));
     else ret.append(fl.read(400));
     if (f.isEmpty()) return ret;
-    int dm = ret.indexOf(f);
-    int fm = ret.indexOf(QRegExp("\\b"), dm+2);
+    int dm = ret.indexOf(QRegExp("\\W"+f+"\\W"))+1;
+    int fm = ret.indexOf(QRegExp("\\W"), dm+1);
     ret.insert(fm, "</strong>");
     ret.insert(dm, "<strong>");
     ret.replace("\n", "<br/>");
