@@ -443,7 +443,7 @@ void LemCore::ajRadicaux(Lemme *l)
             _radicaux.insert(Ch::deramise(gr), r);
             // si le radical est en -h
             if (r->gr().endsWith('h'))
-                _radicaux.insert(r->gr(), r);
+                _radicaux.insert(Ch::deramise(r->gr()), r);
         }
     }
     // pour chaque radical du modèle
@@ -477,7 +477,9 @@ void LemCore::ajRadicaux(Lemme *l)
             _radicaux.insert(gr, r);
             // si le radical est en -h
             if (r->gr().endsWith('h'))
-                _radicaux.insert(r->gr(), r);
+            {
+                _radicaux.insert(Ch::deramise(r->gr()), r);
+            }
         }
     }
 }
