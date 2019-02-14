@@ -21,6 +21,7 @@
 /*
 
    FIXME
+    - 25 %, 508568
     - décocher le h dans les vargraph supprime de nombreuses lignes à droite
     - pretiosissimus non lemmatisé
     - dans le fichier t, contexte cassé
@@ -697,17 +698,19 @@ QString MainWindow::contexte(qint64 p, QString f)
 {
     QString ret;
     QTextStream fl(&fCorpus);
-    if (p < 101)
+    if (p < 200)
     {
         fl.seek(0);
-        ret = fl.read(p-1);
+        //ret = fl.read(p-1);
     }
     else
     {
         fl.seek(p-200);
-        ret = fl.read(200);
+        //ret = fl.read(200);
     }
-    ret.append(fl.read(400));
+    int reste = tailleF - fl.pos();
+    if (reste < 400) ret.append(fl.read(reste));
+    else ret.append(fl.read(400));
     if (f.isEmpty()) return ret;
     int dm = ret.indexOf(f);
     int fm = ret.indexOf(QRegExp("\\b"), dm+2);
