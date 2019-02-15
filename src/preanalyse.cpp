@@ -69,17 +69,34 @@ void MainWindow::preAn()
 
 void MainWindow::coche()
 {
-    QString tv;
-    plainTextEditVariantes->clear();
-    if (checkBoxAe->isChecked())    tv.append("ae;e\n");
-    if (checkBox_H->isChecked())    tv.append("h;\n");
-    if (checkBox_Mihi->isChecked()) tv.append("mihi;michi\n");
-    if (checkBox_IJ->isChecked())   tv.append("I;J\n");
-    if (checkBox_UV->isChecked())   tv.append("U;V\n");
-    if (checkBox_TICI->isChecked()) tv.append("([aeiourl])ci([aeiourl])>\\1ti\\2\n");
-    if (checkBox_MPN->isChecked())  tv.append("mn;mpn\n");
-    if (checkBox_PH->isChecked())   tv.append("ph;f\n");
-    plainTextEditVariantes->setPlainText(tv);
+    QStringList listevg = QStringList()
+        <<  "([aeiourln])ci([aeiourl])>\\1ti\\2"
+        <<  "ph>f"
+        <<  "ae;e"
+        <<  "h;"
+        <<  "mihi;michi"
+        <<  "I;J"
+        <<  "U;V"
+        <<  "mn;mpn";
+    QStringList tv = plainTextEditVariantes->toPlainText().split("\n");
+    if (checkBox_TICI->isChecked()) tv.append(listevg.at(0));
+    else tv.removeAll(listevg.at(0));
+    if (checkBox_PH->isChecked())   tv.append(listevg.at(1));
+    else tv.removeAll(listevg.at(1));
+    if (checkBoxAe->isChecked())    tv.append(listevg.at(2));
+    else tv.removeAll(listevg.at(2));
+    if (checkBox_H->isChecked())    tv.append(listevg.at(3));
+    else tv.removeAll(listevg.at(3));
+    if (checkBox_Mihi->isChecked()) tv.append(listevg.at(4));
+    else tv.removeAll(listevg.at(4));
+    if (checkBox_IJ->isChecked())   tv.append(listevg.at(5));
+    else tv.removeAll(listevg.at(5));
+    if (checkBox_UV->isChecked())   tv.append(listevg.at(6));
+    else tv.removeAll(listevg.at(6));
+    if (checkBox_MPN->isChecked())  tv.append(listevg.at(7));
+    else tv.removeAll(listevg.at(7));
+    tv.removeDuplicates();
+    plainTextEditVariantes->setPlainText(tv.join("\n"));
 }
 
 void MainWindow::enrVar()
