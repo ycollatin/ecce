@@ -21,12 +21,10 @@
 /*
 
    FIXME
-    - décocher le h dans les vargraph supprime de nombreuses lignes à droite
     - ne pas revenir au début si la liste d'échecs est vide 
-    - incognitumne non lemmatisé à cause de incognitumpne
 
    TODO
-   - essai de lemmatisation sans vg l. 823 : reporter dans C12
+   - Encore besoin de quelques éditions manuelles
    - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -34,7 +32,7 @@
      (seulement pour irregs).
    - suppression d'un lemme : trouver une syntaxe :
      prévoir une gestion des lignes lemmes commentées
- */
+*/
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -221,6 +219,7 @@ MainWindow::MainWindow()
     formLayoutCochesVar->setSpacing(6);
     formLayoutCochesVar->setContentsMargins(13, 13, -1, -1);
     labelVariante = new QLabel(layoutWidget);
+    // coches pour les variantes les plus courantes
     formLayoutCochesVar->setWidget(0, QFormLayout::LabelRole, labelVariante);
     checkBoxAe = new QCheckBox(layoutWidget);
     formLayoutCochesVar->setWidget(1, QFormLayout::LabelRole, checkBoxAe);
