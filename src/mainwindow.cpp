@@ -19,14 +19,15 @@
  */
 
 /*
+   XXX
+    - rupidus       34 %, pro rupibus
+    - se nectutis   35 %, pro senectutis
+    - perueueniemus 35 %, pro perueniemus
 
    FIXME
-    - ne pas revenir au début si la liste d'échecs est vide 
 
    TODO
-   - Compression du col : supprimer le répertoire perso.
-   - implémenter la suppression d'un lemme.
-   - souder les mots coupés par des tirets de fin de ligne
+   - implémenter la suppression d'un lemme. Un bouton en trop ?
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -794,10 +795,10 @@ void MainWindow::echec()
         // lire la forme
         do
         {
-            forme.append(c);
+            if (c!='-') forme.append(c);
             flux >> c;
         }
-        while (!flux.atEnd() && c.isLetter());
+        while (!flux.atEnd() && (c.isLetter() || c == '-'));
 
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
@@ -849,12 +850,12 @@ void MainWindow::echecPrec()
     if (echecs.count() > 1)
     {
         echecs.removeLast();
-        if (echecs.count() > 1)
+        if (echecs.count() > 0)
+        {
             posFC = echecs.takeLast()-1;
-        else posFC = 0;
+            echec();
+        }
     }
-    else posFC = 0;
-    echec();
 }
 
 void MainWindow::editIrr(const QModelIndex &m)
