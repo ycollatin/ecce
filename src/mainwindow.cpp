@@ -1287,11 +1287,10 @@ void MainWindow::paquet()
 	for (int i=0;i<entrees.count();++i)
     {
         QString n = QString("%1/%2").arg(rep).arg(entrees.at(i).fileName());
+        QString o = QString("%1/%2").arg(nom).arg(entrees.at(i).fileName());
 	    in.setFileName(n);
         in.open(QIODevice::ReadOnly);
-        out.open(QIODevice::WriteOnly,
-                 QuaZipNewInfo(in.fileName(),
-                               in.fileName()));
+        out.open(QIODevice::WriteOnly, QuaZipNewInfo(o,o));
         while(in.getChar(&c) && out.putChar(c));
         out.close();
         in.close();
