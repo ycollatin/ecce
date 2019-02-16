@@ -188,6 +188,7 @@ class MainWindow : public QMainWindow
         QToolButton *btnMod;
         QToolButton *btnVx;
         QToolButton *btnAj;
+        QToolButton *btnVide;
         QListWidget *listWidgetMorphos;
         QVBoxLayout *verticalLayoutIrrCentre;
         QSpacerItem *spacerIrrHaut;
@@ -352,6 +353,7 @@ class MainWindow : public QMainWindow
         void        supprIrr();
         void        supprM();
         void        teste(QString f);
+        void        videMorph();
 };
 
 #endif

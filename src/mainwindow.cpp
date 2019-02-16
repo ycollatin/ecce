@@ -24,7 +24,8 @@
     - ne pas revenir au début si la liste d'échecs est vide 
 
    TODO
-   - Encore besoin de quelques éditions manuelles
+   - Compression du col : supprimer le répertoire perso.
+   - implémenter la suppression d'un lemme.
    - souder les mots coupés par des tirets de fin de ligne
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
@@ -298,6 +299,7 @@ MainWindow::MainWindow()
     btnMod = new QToolButton(widget);
     btnVx = new QToolButton(widget);
     btnAj = new QToolButton(widget);
+    btnVide = new QToolButton(widget);
     horizontalLayout_2->addWidget(btnPers);
     horizontalLayout_2->addWidget(btnCas);
     horizontalLayout_2->addWidget(btnGenre);
@@ -306,6 +308,7 @@ MainWindow::MainWindow()
     horizontalLayout_2->addWidget(btnTps);
     horizontalLayout_2->addWidget(btnVx);
     horizontalLayout_2->addWidget(btnAj);
+    horizontalLayout_2->addWidget(btnVide);
     formLayout_2->setLayout(3, QFormLayout::FieldRole, horizontalLayout_2);
     splitterIrr->addWidget(widget);
     widgetM = new QWidget(splitterIrr);
@@ -509,15 +512,10 @@ void MainWindow::retranslateUi()
                                                    "forme irr\303\251guli\303\250re", Q_NULLPTR));
     labelMorphoIrr->setText(QApplication::translate("MainWindow", "rech. morpho", Q_NULLPTR));
     labelNumMorpho->setText(QApplication::translate("MainWindow", "num. morpho", Q_NULLPTR));
-    btnPers->setText(QApplication::translate("MainWindow","pers"));
-    btnCas->setText(QApplication::translate("MainWindow","cas"));
-    btnGenre->setText(QApplication::translate("MainWindow","genre"));
-    btnNb->setText(QApplication::translate("MainWindow", "nb"));
-    btnTps->setText(QApplication::translate("MainWindow", "tps"));
-    btnMod->setText(QApplication::translate("MainWindow", "mod"));
-    btnVx->setText(QApplication::translate("MainWindow", "vx"));
+    videMorph();
     btnAj->setText(QApplication::translate("MainWindow", "^", Q_NULLPTR));
     bAjIrr->setText(QApplication::translate("MainWindow", " > ", Q_NULLPTR));
+    btnVide->setText("<-x");
     bsupprIrr->setText(QApplication::translate("MainWindow", " x ", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabIrr),
                           QApplication::translate("MainWindow", "&irr\303\251guliers", Q_NULLPTR));
@@ -677,6 +675,7 @@ void MainWindow::connecte()
     connect(btnTps, SIGNAL(clicked()), this, SLOT(siTps()));
     connect(btnVx, SIGNAL(clicked()), this, SLOT(siVx()));
     connect(btnAj, SIGNAL(clicked()), this, SLOT(ajMorph()));
+    connect(btnVide, SIGNAL(clicked()), this, SLOT(videMorph()));
     connect(listWidgetIrr, SIGNAL(pressed(QModelIndex)), this, SLOT(editIrr(QModelIndex)));
     connect(bAjIrr, SIGNAL(clicked()), this, SLOT(ajIrr()));
     connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
@@ -1622,4 +1621,17 @@ void MainWindow::teste(QString f)
         }
     }
     labelLemTest->setText(test);
+}
+
+void MainWindow::videMorph()
+{
+    lineEditNumMorpho->clear();
+    btnPers->setText(QApplication::translate("MainWindow","pers"));
+    btnCas->setText(QApplication::translate("MainWindow","cas"));
+    btnGenre->setText(QApplication::translate("MainWindow","genre"));
+    btnNb->setText(QApplication::translate("MainWindow", "nb"));
+    btnTps->setText(QApplication::translate("MainWindow", "tps"));
+    btnMod->setText(QApplication::translate("MainWindow", "mod"));
+    btnVx->setText(QApplication::translate("MainWindow", "vx"));
+    listWidgetMorphos->clear();
 }
