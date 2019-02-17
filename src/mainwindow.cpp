@@ -20,9 +20,11 @@
 
 /*
    XXX
-    - rupidus       34 %, pro rupibus
-    - se nectutis   35 %, pro senectutis
-    - perueueniemus 35 %, pro perueniemus
+    - rupidus        34 %, pro rupibus
+    - se nectutis    35 %, pro senectutis
+    - perueueniemus  35 %, pro perueniemus
+    - fratribuspe    35 %, pro fratribusque ?
+    - recom- pensans 35 %, pro recompensans
 
    FIXME
 
