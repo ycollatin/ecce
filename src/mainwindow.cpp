@@ -25,6 +25,8 @@
     - perueueniemus  35 %, pro perueniemus
     - fratribuspe    35 %, pro fratribusque ?
     - recom- pensans 35 %, pro recompensans
+    - ilegere        37 %, pro eligere ?
+    - 0HOC           37 %, pro θΕΟΣ
 
    FIXME
 
