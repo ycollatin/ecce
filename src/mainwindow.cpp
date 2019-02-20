@@ -27,6 +27,11 @@
     - recom- pensans 35 %, pro recompensans
     - ilegere        37 %, pro eligere ?
     - 0HOC           37 %, pro θΕΟΣ
+    - gratu- lantium 39 %, pro gratulantium
+    - onustra        41 %, pro onusta (plaustra onustra)
+    - persossus      41 %, pro perfossus
+    - conatisunt     41 %, pro conati sunt
+    - adiutotium     42 %, pro adiutorium
 
    FIXME
 
@@ -795,14 +800,14 @@ void MainWindow::echec()
             while (!flux.atEnd() && !c.isLetter());
             posEchec = flux.pos();
         }
-        // retenir la position du premier caractère entre mots
         // lire la forme
         do
         {
-            if (c!='-') forme.append(c);
+            //if (c!='-') forme.append(c);
+            forme.append(c);
             flux >> c;
         }
-        while (!flux.atEnd() && (c.isLetter() || c == '-'));
+        while (!flux.atEnd() && (c.isLetter())); // || c == '-'));
 
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
