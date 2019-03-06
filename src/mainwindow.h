@@ -84,7 +84,9 @@ class MainWindow : public QMainWindow
 
         QWidget *centralWidget;
         QVBoxLayout *verticalLayout;
+        QHBoxLayout *layoutInfo;
         QLabel *labelInfo;
+        QLabel *labelPos;
         QTabWidget *tabWidget;
         // onglet lexique
         QWidget *tabLexique;
@@ -96,9 +98,9 @@ class MainWindow : public QMainWindow
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
+        QLabel *labelVG;
         QHBoxLayout* layoutScroll;
         QLabel*      labelScroll;
-        //QScrollBar* horizontalScrollBar;
         QSlider*     slider;
         QHBoxLayout *horizontalLayoutBtns;
         QPushButton *bSuppr;
@@ -116,7 +118,6 @@ class MainWindow : public QMainWindow
         QLabel *labelGrq;
         QHBoxLayout *horizontalLayout_grq;
         QLineEdit *lineEditGrq;
-        //QCheckBox *checkBoxVb;
         QLabel *labelModele;
         QComboBox *comboBoxModele;
         QLabel *labelPerfectum;

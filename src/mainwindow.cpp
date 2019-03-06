@@ -20,23 +20,222 @@
 
 /*
    XXX
-    - rupidus        34 %, pro rupibus
-    - se nectutis    35 %, pro senectutis
-    - perueueniemus  35 %, pro perueniemus
-    - fratribuspe    35 %, pro fratribusque ?
-    - recom- pensans 35 %, pro recompensans
-    - ilegere        37 %, pro eligere ?
-    - 0HOC           37 %, pro θΕΟΣ
-    - gratu- lantium 39 %, pro gratulantium
-    - onustra        41 %, pro onusta (plaustra onustra)
-    - persossus      41 %, pro perfossus
-    - conatisunt     41 %, pro conati sunt
-    - adiutotium     42 %, pro adiutorium
+      forme          %  pro
+      --------------------------------
+    - Æduorom         2  Æduorum
+    - langu or        4  languor
+    - miserorumanimae 7  miserorum animae
+    - pulchior        8  pulchrior
+    - pra epositum    9  praepositum
+    - deiecctis      11  deiectis
+    - sublevabet     12  sublevabat
+    - Aupet          12  Aupes
+    - comitantie     12  comitante
+    - copora         13  corpora
+    - Vesoniense     13  ? non élucidé
+    - Alsenna, Budriacum 13  ? lieux inconnus
+    - honorati       13  Honorati
+    - singentes      14  fingentes
+    - aestimarentse  14  aestimarent se
+    - aromativus     14  aromatibus
+    - præcluos       17  praeclaros
+    - Spaciaci       19  ? Lieu inconnu
+    - admiti         21  ? admitti
+    - augustiis      21  angustiis
+    - Farnodernesi   21  ? échec
+    - sigilaceæ      22  ? échec
+    - augustia       22  angustia
+    - Hidulsi        22  Hidulfi
+    - utiq ;         23  utiq; utique
+    - devinet        23  devenit
+    - indies         23  in dies
+    - Amarilcivillare23  Amalrici villare
+    - iniquirate     23  iniquitate
+    - caruare        23  caruere
+    - deodecim       24  duodecim
+    - prpe           24  prope 
+    - gravisus       24  gavisus
+    - enfe           24  ense
+    - pretiosissim   24  pretiosissimum (2 x)
+    - novȩrant       24  ajout d'un #807 après 'e' 
+    - exteriobus     24  exterioribus
+    - constar        25  constat
+    - perperim       25  perpetim
+    - iuflammatus    26  inflammatus
+    - teneta         26  tenera
+    - paceret        26  parceret ?
+    - astitia        26  astutia ?
+    - hereditatio    26  hereditario
+    - loctum         27  loci tum
+    - hamana         28  humana
+    - rexpexit       28  respexit
+
+    - rupidus        34  rupibus
+    - se nectutis    35  senectutis
+    - perueueniemus  35  perueniemus
+    - fratribuspe    35  fratribusque ?
+    - recom- pensans 35  recompensans
+    - ilegere        37  eligere ?
+    - 0HOC           37  θΕΟΣ
+    - gratu- lantium 39  gratulantium
+    - onustra        41  onusta (plaustra onustra)
+    - persossus      41  perfossus
+    - conatisunt     41  conati sunt
+    - adiutotium     42  adiutorium
+    - fluctib.       42  fluctibus
+    - savillas       43  favillas
+    - visonem        45  visionem
+    - auxius         45  anxius
+    - familari       45  familiari
+    - inimo          46  in imo
+    - art ifico...   46  artifico praeparatum
+    - tentatonum     47  tentationum
+    - adjurotr       47  adjutor
+    - corfigat       47  corrigat
+    - moansterium    47  monasterium
+    - itaut          51  ita ut
+    - profit         51  prosit
+    - insernale      51  infernale 
+    - seruidus       52  feruidus
+    - sragores       52  fragores
+    - receipt        53  recepit
+    - castigation    53  castigatio
+    - serrum         53  ferrum
+    - desatigatus    53  defatigatus 
+    - gessise        55  gessisse 
+    - glorisicavit   55  glorificavit
+    - Quemq ;        56  Quemque
+    - replendet      56  resplendet
+    - sebre          56  febre
+    - vtriusq.       56  utriusque
+    - mistis         57  mixtis
+    - triunculus     58  tirunculus
+    - euneos         ibid. cuneos
+    - eccelesiam     58  ecclesiam
+    - recupertus     58  recuperatus
+    - solidalis      59  sodalis
+    - augustias      59  angustias
+    - festitinabo    59  festinabo
+    - deliberative, ss doute adv., 1189431
+    - degnerunt      61  deguerunt
+    - pertissimus    61  peritissimus
+    - percueret      62  percutere(t)
+    - immortulitatis 63  immortalitatis
+    - coniuncxit     64  coniunxit
+    - baccilli       64  bacilli
+    - abtissimas     64  aptissimas
+    - frabrica       64  fabrica
+    - lod            66  loci
+    - reliquid       67  reliquit
+    - vanęglorię     67  vanae gloriae 19594
+    - nutrioris      68  nutritor
+    - adolesentem    68  adolescentem
+    - campros        68  ** introuvable
+    - fatsis         69  falsis
+    - regarent       70  negarent
+    - Adnimadversum  70  Animadversum
+    - vill           72  vili
+    - filli          72  filii
+    - juxa           72  juxta
+    - veletiam       73  vel etiam
+    - adgnormam     ibid ad normam
+    - alcare         73  altare
+    - seapulis       74  scapulis
+    - suiffagia      74  suffragia
+    - quatornis      74  quaternis
+    - aufferenti     74  auferenti
+    - filere         74  silere
+    - fexus          75  sexus
+    - almisiui       75  almiflui
+    - cripo          75  eripe
+    - onim           77  enim
+    - sibrarum       78  fibrarum
+    - castelio       78  castello
+    - cunct          78  cunctis
+    - Chritum        79  Christum
+    - conderorare    79  condecorare
+    - tuititionem    79  tuitionem
+    - transatorium   79  transitorium
+    - vavans         80  vacans
+    - devore         80  devote
+    - quinimo        81  quin im[m]o
+    - cellum         81  collum
+    - fortuituo      81  fortuito
+    - intervientibus 81  intervenientibus
+    - mititumque     83  militumque
+    - fruerat        84  fuerat
+    - antiqum        84  antiquum
+    - ieuniis        84  ieiuniis
+    - evus           84  avus ?
+    - beti           85  beati
+    - militiose      85  malitiose
+    - habitants      86  habitantes
+    - lumierem       86  mulierem
+    - revolver       86  revolvere
+    - modermina      86  moderamina
+    - cirium         86  uirium
+    - meditates      86  meditatus
+    - quipped        86  quippe
+    - gragem         86  gregem
+    - gravisus       86  gavisus
+    - ipsistraderent 86  ipsis traderent
+    - proereandos    86  procreandos
+    - ncesseria      86  necessaria
+    - sobrier        86  sobrie
+    - quipost        86  qui post
+    - sacti          86  sancti
+    - Att amen       86  Attamen
+    - monaschis      86  monachis
+    - ordination     86  ordinatio
+    - reversion      86  reversio
+    - A tille        87  Atille
+    - fratirbus      87  fratirbus
+    - valtudine      87  valetudine
+    - octogesimotertio " octogesimo tertio
+    - tuturos        87  futuros
+    - vestigial      87  vestigia
+    - imprimense     87  imprimens
+    - appellants     87  appellantes
+    - cuo            87  suo
+    - dilation       87  dilatione
+    - littetas       87  litteras
+    - ēxaminatione   87  examinatione
+    - savum          89  favum
+    - Puersuasio     91  Persuasio (Puer- dans toutes les impressions anciennes)
+    - nodosostipiti  91  nodoso stipiti
+    - prosundiori    91  profundiori
+    - perculfus      91  perculsus
+    - monateria      92  monasteria
+    - reliquiiis     92  reliquiis (bis)
+    - nobicum        92  nobiscum
+    - ispis          92  ipsis
+    - avimaeque      93  animaeque
+    - Pontisex       93  Pontifex
+    - ingessu        93  ingressu
+    - beatissi       94  beatissimis
+    - augustiati     94  angustiati
+    - crucidarent    96  trucidarent
+    - sterit         96  stetit
+    - misericor
+      dissimus       96 misericordissimus
+    - irrum
+      pere           97 irrumpere
+    - hæec           97 haec
+    - terraemorus    97 terraemotus
 
    FIXME
+   - les lemmes2 n'apparaissent pas dans la partie édition
+   - ajout d'irréguliers, retour arrière, rech. échec -> plantage
+   - laïci non reconnu
+   - laetitiâ, horâ, poenitentiâ, praesentiâ non reconnus
+   - /sto/ sélectionné n'affiche pas ses données
+   - impossible de faire marcher la vg "q.\b>que"
+   - champ supin non rempli automatiquement
 
    TODO
+   - afficher la progression de la lemmatisation
    - implémenter la suppression d'un lemme. Un bouton en trop ?
+   - suppression d'un irrégulier : idem
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -70,9 +269,17 @@ MainWindow::MainWindow()
     verticalLayout = new QVBoxLayout(centralWidget);
     verticalLayout->setSpacing(6);
     verticalLayout->setContentsMargins(11, 11, 11, 11);
+    // bandeau info
+    layoutInfo = new QHBoxLayout();
     // label d'info
     labelInfo = new QLabel(centralWidget);
-    verticalLayout->addWidget(labelInfo);
+    // label de position
+    labelPos = new QLabel(centralWidget);
+    layoutInfo->addWidget(labelInfo);
+    layoutInfo->addWidget(labelPos);
+    //verticalLayout->addWidget(labelInfo);
+    verticalLayout->addLayout(layoutInfo);
+
     // conteneur des onglets
     tabWidget = new QTabWidget(centralWidget);
 
@@ -100,6 +307,8 @@ MainWindow::MainWindow()
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
     horizontalLayout->addWidget(lineEditLemme);
+    labelVG = new QLabel(frame);
+    horizontalLayout->addWidget(labelVG);
     verticalLayout_3->addLayout(horizontalLayout);
     layoutScroll = new QHBoxLayout();
     labelScroll = new QLabel(frame);
@@ -783,6 +992,7 @@ void MainWindow::debut()
 
 void MainWindow::echec()
 {
+    labelVG->clear();
     flux.seek(posFC);
     QChar c = '\0';
     bool arret = false;
@@ -808,6 +1018,9 @@ void MainWindow::echec()
             flux >> c;
         }
         while (!flux.atEnd() && (c.isLetter())); // || c == '-'));
+    
+        // XXX inopérant
+        labelPos->setText(forme);
 
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
@@ -844,9 +1057,16 @@ void MainWindow::echec()
             if (!ml.isEmpty())
                 lineEditLemme->setText(ml.keys().at(0)->cle());
             else lineEditLemme->setText(forme);
+            // historique des échecs
             iLemSuiv = -1;
             lemSuiv();
             echecs.append(posEchec);
+            // liste des graphies envoyées au lemmatiseur
+            QStringList lgr = lemcore->ti(forme);
+            lgr.append(lemcore->vg(forme));
+            lgr.removeDuplicates();
+            labelVG->setText(lgr.join(" "));
+            // mise à jour du pointeur et de l'info
             posFC = flux.pos();
             majInfo();
         }
@@ -1135,6 +1355,7 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineMorpho->text())
         .arg(nbOcc);
     nLemme = new Lemme(ret, 0, lemcore);
+    nLemme->ajTrad(lineEditTr->text(), "fr");
     textEditFlexion->setText(flexion->tableau(nLemme));
     return ret;
 }
@@ -1228,8 +1449,9 @@ void MainWindow::majInfo(bool barre)
                        "texte analysé : <strong>%2</strong> %3 \% %4")
         .arg(module)
         .arg(fichier)
-        .arg(p)
-        .arg(posFC));
+        .arg(p));
+        //.arg(posFC));
+    labelPos->setText(QString("%1").arg(posFC));
     labelContexte->setText(contexte(posFC, forme));
     if (barre)
     {
@@ -1427,10 +1649,11 @@ void MainWindow::reinit()
 
 void MainWindow::retro(int pas)
 {
-    posFC -= pas;
-    if (posFC < 0) posFC = 0;
-    //QTextStream flux(&fCorpus);
-    flux.seek(posFC);
+    //posFC -= pas;
+    //if (posFC < 0) posFC = 0;
+    // flux.seek(posFC);
+    if (flux.pos() > pas) flux.seek(flux.pos() - pas);
+    else flux.seek(0);
     QChar c='\0';
     // terminer le mot
     do flux >> c; while (c.isLetter());
