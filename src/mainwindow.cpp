@@ -69,8 +69,12 @@
     - loctum         27  loci tum
     - hamana         28  humana
     - rexpexit       28  respexit
-
+    - poserat        29  poterat
+    - Pontisicis     29  Pontificis
+    - secretins      30  secretius (corrigé )
+    - Inte           32  Inde
     - rupidus        34  rupibus
+    - quodi          34  quod
     - se nectutis    35  senectutis
     - perueueniemus  35  perueniemus
     - fratribuspe    35  fratribusque ?
@@ -83,15 +87,20 @@
     - conatisunt     41  conati sunt
     - adiutotium     42  adiutorium
     - fluctib.       42  fluctibus
+    - acrisae        43  acri se
     - savillas       43  favillas
+    - vito vitae     44  viro vitae
     - visonem        45  visionem
     - auxius         45  anxius
     - familari       45  familiari
+    - tribunaliis    46  ? non élucidé
     - inimo          46  in imo
     - art ifico...   46  artifico praeparatum
     - tentatonum     47  tentationum
     - adjurotr       47  adjutor
     - corfigat       47  corrigat
+    - etate          47  ajout de caractères apres l'initiale
+    // ---
     - moansterium    47  monasterium
     - itaut          51  ita ut
     - profit         51  prosit
@@ -224,7 +233,7 @@
     - terraemorus    97 terraemotus
 
    FIXME
-   - les lemmes2 n'apparaissent pas dans la partie édition
+   - la validation d'un lemmes2 affiche le lemme1
    - ajout d'irréguliers, retour arrière, rech. échec -> plantage
    - laïci non reconnu
    - laetitiâ, horâ, poenitentiâ, praesentiâ non reconnus
@@ -234,6 +243,7 @@
 
    TODO
    - afficher la progression de la lemmatisation
+   - bricoler le compléteur pour qu'il déramise lineEditLemme
    - implémenter la suppression d'un lemme. Un bouton en trop ?
    - suppression d'un irrégulier : idem
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -1148,7 +1158,7 @@ void MainWindow::edLem(QString l)
     }
     else
     {
-        if (lemme == 0) lemme = lemcore->lemme(l);
+        if (lemme == 0) lemme = lemcore->lemme(Ch::deramise(l));
         if (lemme != 0)
         {
             QString t = "enregistrer ";
