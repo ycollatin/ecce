@@ -42,7 +42,6 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
-//#include <QtWidgets/QScrollBar>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
@@ -86,7 +85,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayout;
         QHBoxLayout *layoutInfo;
         QLabel *labelInfo;
-        QLabel *labelPos;
+        //QLabel *labelPos;
         QTabWidget *tabWidget;
         // onglet lexique
         QWidget *tabLexique;
@@ -94,7 +93,6 @@ class MainWindow : public QMainWindow
         QSplitter *splitter;
         QFrame *frame;
         QVBoxLayout *verticalLayout_3;
-        //QLabel* labelContexte;
         QTextEdit* editContexte;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;

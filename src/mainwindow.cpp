@@ -284,9 +284,7 @@ MainWindow::MainWindow()
     // label d'info
     labelInfo = new QLabel(centralWidget);
     // label de position
-    labelPos = new QLabel(centralWidget);
     layoutInfo->addWidget(labelInfo);
-    layoutInfo->addWidget(labelPos);
     //verticalLayout->addWidget(labelInfo);
     verticalLayout->addLayout(layoutInfo);
 
@@ -307,14 +305,8 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-    //labelContexte = new QLabel(frame);
-    //labelContexte->setWordWrap(true);
-    //labelContexte->setTextFormat(Qt::RichText);
-    //verticalLayout_3->addWidget(labelContexte);
     editContexte = new QTextEdit(frame);
     editContexte->setReadOnly(true);
-    //editContexte->setWordWrap(true);
-    //editContexte->setTextFormat(Qt::RichText);
     verticalLayout_3->addWidget(editContexte);
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
@@ -1034,9 +1026,6 @@ void MainWindow::echec()
         }
         while (!flux.atEnd() && (c.isLetter())); // || c == '-'));
     
-        // XXX inopérant
-        labelPos->setText(forme);
-
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -1464,10 +1453,9 @@ void MainWindow::majInfo(bool barre)
                        "texte analysé : <strong>%2</strong> %3 \% %4")
         .arg(module)
         .arg(fichier)
-        .arg(p));
-        //.arg(posFC));
-    labelPos->setText(QString("%1").arg(posFC));
-    //labelContexte->setText(contexte(posFC, forme));
+        .arg(p)
+        .arg(posFC));
+    //labelPos->setText(QString("%1").arg(posFC));
     editContexte->setText(contexte(posFC, forme));
     if (barre)
     {
