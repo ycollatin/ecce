@@ -94,7 +94,8 @@ class MainWindow : public QMainWindow
         QSplitter *splitter;
         QFrame *frame;
         QVBoxLayout *verticalLayout_3;
-        QLabel* labelContexte;
+        //QLabel* labelContexte;
+        QTextEdit* editContexte;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;

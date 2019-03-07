@@ -307,10 +307,15 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-    labelContexte = new QLabel(frame);
-    labelContexte->setWordWrap(true);
-    labelContexte->setTextFormat(Qt::RichText);
-    verticalLayout_3->addWidget(labelContexte);
+    //labelContexte = new QLabel(frame);
+    //labelContexte->setWordWrap(true);
+    //labelContexte->setTextFormat(Qt::RichText);
+    //verticalLayout_3->addWidget(labelContexte);
+    editContexte = new QTextEdit(frame);
+    editContexte->setReadOnly(true);
+    //editContexte->setWordWrap(true);
+    //editContexte->setTextFormat(Qt::RichText);
+    verticalLayout_3->addWidget(editContexte);
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     labelLemme = new QLabel(frame);
@@ -1462,7 +1467,8 @@ void MainWindow::majInfo(bool barre)
         .arg(p));
         //.arg(posFC));
     labelPos->setText(QString("%1").arg(posFC));
-    labelContexte->setText(contexte(posFC, forme));
+    //labelContexte->setText(contexte(posFC, forme));
+    editContexte->setText(contexte(posFC, forme));
     if (barre)
     {
         slider->setValue(p);
