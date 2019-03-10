@@ -56,5 +56,7 @@ QString RegleVG::doc()
 
 QString RegleVG::transf(QString s)
 {
+    if (_a.pattern() == "h" && s.contains("trahe"))
+        return s;
     return s.replace(_a, _b);
 }
