@@ -413,7 +413,7 @@ QString LemCore::ajDir()
 
 bool LemCore::estRomain(QString f)
 {
-    f = f.toUpper();
+    //f = f.toUpper();
     return !(f.contains(QRegExp ("[^IUXLCDM]"))
              || f.contains("IL")
              || f.contains("IUI"));
