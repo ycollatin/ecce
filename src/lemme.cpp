@@ -16,7 +16,7 @@
  *  along with COLLATINUS; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * © Yves Ouvrard, 2009 - 2016
+ * © Yves Ouvrard, 2009 - 2019
  */
 
 #include "lemme.h"
@@ -332,17 +332,6 @@ QString Lemme::gr()
 }
 
 /**
- * \fn QString Lemme::grNh()
- * \brief Retourne la clé du lemme telle qu'elle est notée
- *        Dans les fichiers lem*.fr.
- */
-QString Lemme::grNh()
-{
-    if (_nh < 2) return _gr;
-    return QString("%1%2").arg(_gr).arg(_nh);
-}
-
-/**
  * \fn QString Lemme::grqNh()
  * \brief Retourne la clé du lemme telle qu'elle est notée
  *        Dans les fichiers lem*.la.
@@ -494,14 +483,12 @@ int Lemme::origin()
  */
 QString Lemme::oteNh(QString g, int &nh)
 {
-    //QChar c = g.at(g.length()-1);
-    QChar c = Ch::der(g);
-    if (c.isDigit())
+    int c = g.right(1).toInt();
+    if (c > 0)
     {
-        nh = g.right(1).toInt();
+        nh = c;
         g.chop(1);
     }
-    else nh = 1;
     return g;
 }
 

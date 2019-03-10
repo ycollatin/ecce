@@ -19,7 +19,8 @@
  */
 
 /*
-   XXX
+    typos :
+
       forme          %  pro
       --------------------------------
     - Æduorom         2  Æduorum
@@ -100,9 +101,7 @@
     - adjurotr       47  adjutor
     - corfigat       47  corrigat
     - etate          47  ajout de caractères apres l'initiale
-    // ---
     - moansterium    47  monasterium
-    - itaut          51  ita ut
     - profit         51  prosit
     - insernale      51  infernale 
     - seruidus       52  feruidus
@@ -111,6 +110,8 @@
     - castigation    53  castigatio
     - serrum         53  ferrum
     - desatigatus    53  defatigatus 
+    - f claustris    54  claustris
+    - passionis h    54  passionis
     - gessise        55  gessisse 
     - glorisicavit   55  glorificavit
     - Quemq ;        56  Quemque
@@ -125,38 +126,56 @@
     - solidalis      59  sodalis
     - augustias      59  angustias
     - festitinabo    59  festinabo
+    - Scritura       60  Scriptura
     - deliberative, ss doute adv., 1189431
+    - Archembalbus   60  Archenbaldus
     - degnerunt      61  deguerunt
     - pertissimus    61  peritissimus
     - percueret      62  percutere(t)
+    - f.             62
     - immortulitatis 63  immortalitatis
     - coniuncxit     64  coniunxit
     - baccilli       64  bacilli
     - abtissimas     64  aptissimas
     - frabrica       64  fabrica
+    - Bemo           65  Berno
     - lod            66  loci
+    - subiuncxit     66  subiunxit
+    - introstetis    66  intro stetit
+    - revi- sitavit 67  revisitavit
     - reliquid       67  reliquit
     - vanęglorię     67  vanae gloriae 19594
-    - nutrioris      68  nutritor
+    - nutrioris      68  nutritoris
     - adolesentem    68  adolescentem
     - campros        68  ** introuvable
     - fatsis         69  falsis
+    - ClivumScauri   70  Clivum Scauri
     - regarent       70  negarent
     - Adnimadversum  70  Animadversum
     - vill           72  vili
     - filli          72  filii
     - juxa           72  juxta
     - veletiam       73  vel etiam
+    - Wlfranus       73  Wilfranus
+    - Blaviaco       73  Blaniaco
+    - Arisma         73  Arisina
+    - Burbureur      73  Burburenum
+    - Yeio           73  Ycio
     - adgnormam     ibid ad normam
     - alcare         73  altare
+    - Bosuensis      74  Besuensis
     - seapulis       74  scapulis
     - suiffagia      74  suffragia
     - quatornis      74  quaternis
     - aufferenti     74  auferenti
     - filere         74  silere
     - fexus          75  sexus
+    - muninca        75  munifica
     - almisiui       75  almiflui
+    - idonec         75  idonee
+    - Afcherius      75  Ascherius
     - cripo          75  eripe
+    - Adium          77  Adsum
     - onim           77  enim
     - sibrarum       78  fibrarum
     - castelio       78  castello
@@ -171,13 +190,16 @@
     - cellum         81  collum
     - fortuituo      81  fortuito
     - intervientibus 81  intervenientibus
+    - fatres         83  fratres
     - mititumque     83  militumque
     - fruerat        84  fuerat
     - antiqum        84  antiquum
     - ieuniis        84  ieiuniis
     - evus           84  avus ?
     - beti           85  beati
+    - Sondervita     85  Sonder vita
     - militiose      85  malitiose
+    - Rotbertu       86  Rotberti
     - habitants      86  habitantes
     - lumierem       86  mulierem
     - revolver       86  revolvere
@@ -233,6 +255,7 @@
     - terraemorus    97 terraemotus
 
    FIXME
+   - Trahentes non lemmatisé
    - la validation d'un lemmes2 affiche le lemme1
    - ajout d'irréguliers, retour arrière, rech. échec -> plantage
    - laïci non reconnu
@@ -242,8 +265,8 @@
    - champ supin non rempli automatiquement
 
    TODO
+   - remplacer le compléteur par une liste éditable
    - afficher la progression de la lemmatisation
-   - bricoler le compléteur pour qu'il déramise lineEditLemme
    - implémenter la suppression d'un lemme. Un bouton en trop ?
    - suppression d'un irrégulier : idem
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -999,6 +1022,7 @@ void MainWindow::debut()
 
 void MainWindow::echec()
 {
+    qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     labelVG->clear();
     flux.seek(posFC);
     QChar c = '\0';
@@ -1024,7 +1048,10 @@ void MainWindow::echec()
             forme.append(c);
             flux >> c;
         }
-        while (!flux.atEnd() && (c.isLetter())); // || c == '-'));
+        //while (!flux.atEnd() && (c.isLetter() || c==0x0327)); // || c == '-'));
+        while (!flux.atEnd()
+               && (c.isLetter()
+                   || c.category()==QChar::QChar::Mark_NonSpacing)); 
     
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
@@ -1076,6 +1103,7 @@ void MainWindow::echec()
         }
     }
     posFC = flux.pos();
+    qApp->restoreOverrideCursor();
 }
 
 void MainWindow::echecPrec()
