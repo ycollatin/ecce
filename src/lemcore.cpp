@@ -439,11 +439,10 @@ void LemCore::ajRadicaux(Lemme *l)
         foreach (Radical *r, lr)
         {
             if (r == 0) continue;
+            // conserver le 'h' en fin de radical (trah.o)
             QString gr = vg(r->gr());
+            if (!gr.endsWith("trah")) gr = vg(r->gr());
             _radicaux.insert(Ch::deramise(gr), r);
-            // si le radical est en -h
-            if (r->gr().endsWith('h'))
-                _radicaux.insert(Ch::deramise(r->gr()), r);
         }
     }
     // pour chaque radical du modèle
