@@ -368,6 +368,7 @@ void LemCore::ajLemme(Lemme* l)
 int LemCore::aRomano(QString f)
 {
     if (f.size () == 0) return 0;
+    f = f.toUpper();
     // création de la table de conversion : pourrait être créée ailleurs.
     QMap<QChar,int> conversion;
     conversion['I']=1;
@@ -413,10 +414,10 @@ QString LemCore::ajDir()
 
 bool LemCore::estRomain(QString f)
 {
-    //f = f.toUpper();
-    return !(f.contains(QRegExp ("[^IUXLCDM]"))
+    f = f.toUpper();
+    return !(f.contains(QRegExp ("[^IVXLCDM]"))
              || f.contains("IL")
-             || f.contains("IUI"));
+             || f.contains("IVI"));
 }
 
 /**
@@ -632,6 +633,7 @@ MapLem LemCore::lemmatise(QString f)
     QString f_lower = f.toLower();
     int cnt_v = f_lower.count("v");
     bool V_maj = f[0] == 'V';
+    QString fBrut = f;
     f = Ch::deramise(f);
     // formes irrégulières
     QList<Irreg *> lirr = _irregs.values(f);
@@ -665,8 +667,10 @@ MapLem LemCore::lemmatise(QString f)
         {
             Radical* rad = lrad.at(ir);
             Lemme *l = rad->lemme();
-            foreach (Desinence *des, ldes)
+            //foreach (Desinence *des, ldes)
+            for (int id=0;id<ldes.count();++id)
             {
+                Desinence *des = ldes.at(id);
                 if (des->modele() == l->modele() &&
                     des->numRad() == rad->numRad() &&
                     !l->estIrregExcl(des->morphoNum()))
@@ -702,14 +706,13 @@ MapLem LemCore::lemmatise(QString f)
         if (!res.isEmpty()) result = res;
     }
     // romains
-    if (estRomain(f) && !_lemmes.contains(f))
+    if (estRomain(fBrut) && !_lemmes.contains(fBrut))
     {
-        f.replace('U','V');
-        QString lin = QString("%1|inv|||adj. num.|1").arg(f);
+        QString lin = QString("%1|inv|||adj. num.|1").arg(fBrut);
         Lemme *romain = new Lemme(lin, 0, this);
-        int nr = aRomano(f);
+        int nr = aRomano(fBrut);
         romain->ajTrad(QString("%1").arg(nr), "fr");
-        _lemmes.insert(f, romain);
+        _lemmes.insert(fBrut, romain);
         SLem sl = {f,416,""};
         QList<SLem> lsl;
         lsl.append(sl);
