@@ -704,6 +704,17 @@ MapLem LemCore::lemmatise(QString f)
     // romains
     if (estRomain(f) && !_lemmes.contains(f))
     {
+        f.replace('U','V');
+        QString lin = QString("%1|inv|||adj. num.|1").arg(f);
+        Lemme *romain = new Lemme(lin, 0, this);
+        int nr = aRomano(f);
+        romain->ajTrad(QString("%1").arg(nr), "fr");
+        _lemmes.insert(f, romain);
+        SLem sl = {f,416,""};
+        QList<SLem> lsl;
+        lsl.append(sl);
+        result.insert(romain, lsl);
+        /*
         QString f1 = f.toUpper();
         f.replace('U','V');
         QString lin = QString("%1|inv|||adj. num.|1").arg(f);
@@ -715,6 +726,7 @@ MapLem LemCore::lemmatise(QString f)
         QList<SLem> lsl;
         lsl.append(sl);
         result.insert(romain, lsl);
+        */
     }
     return result;
 }
