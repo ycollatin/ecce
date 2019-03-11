@@ -176,7 +176,7 @@ class MainWindow : public QMainWindow
         QLabel *labelFormeIrr;
         QLabel *labelMorphoIrr;
         QHBoxLayout *horizontalLayout_2;
-        QPushButton *pushButtonReinit;
+        //QPushButton *pushButtonReinit;
         QLineEdit *linIrreg;
         QLineEdit *lineEditNumMorpho;
         QLabel *labelNumMorpho;

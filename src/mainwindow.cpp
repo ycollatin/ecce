@@ -21,9 +21,9 @@
 /*
 
    FIXME
-   - Trahentes non lemmatisé
+   - la mise en gras est qqf mauvaise
    - la validation d'un lemmes2 affiche le lemme1
-   - ajout d'irréguliers, retour arrière, rech. échec -> plantage
+   - ajout d'irréguliers, retour arrière, :échec -> plantage
    - laïci non reconnu
    - laetitiâ, horâ, poenitentiâ, praesentiâ non reconnus
    - /sto/ sélectionné n'affiche pas ses données
@@ -798,7 +798,7 @@ void MainWindow::echec()
     while(!flux.atEnd() && !arret)
     {
         forme.clear();
-        // passer l'entremots
+        // tokenisation : passer l'entremots
         if (!c.isLetter())
         {
             do
@@ -811,15 +811,14 @@ void MainWindow::echec()
         // lire la forme
         do
         {
-            //if (c!='-') forme.append(c);
             forme.append(c);
             flux >> c;
         }
-        //while (!flux.atEnd() && (c.isLetter() || c==0x0327)); // || c == '-'));
         while (!flux.atEnd()
                && (c.isLetter()
+                   || c == '\''
                    || c.category()==QChar::QChar::Mark_NonSpacing)); 
-    
+
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -1263,26 +1262,27 @@ void MainWindow::majLinMorph()
 {
     // construire une regexp reflétant l'état des boutons
     QString re = "%1\\s*%2\\s*%3\\s*%4\\s*%5\\s*%6\\s*%7";
+    const QString w = "\\w*";
     // personne
-    QString p = "\\w*";
+    QString p = w;
     if (iPers > 0) p = lPers.at(iPers);
     // cas
-    QString c = "\\w*";
+    QString c = w;
     if (iCas > 0) c = lCas.at(iCas);
     // genre
-    QString g = "\\w*";
+    QString g = w;
     if (iGenre > 0) g = lGenre.at(iGenre);
     // nombre
-    QString n = "\\w*";
+    QString n = w;
     if (iNb > 0) n = lNb.at(iNb);
     // mode
-    QString m = "\\w*";
+    QString m = w;
     if (iMod > 0) m = lMod.at(iMod);
     // temps
-    QString t = "\\w*";
+    QString t = w;
     if (iTps > 0) t = lTps.at(iTps);
     // voix
-    QString v = "\\w*";
+    QString v = w;
     if (iVx > 0) v = lVx.at(iVx);
 
     QString mm = re.arg(p).arg(c).arg(g).arg(n)
@@ -1665,4 +1665,11 @@ void MainWindow::videMorph()
     btnMod->setText(QApplication::translate("MainWindow", "mod"));
     btnVx->setText(QApplication::translate("MainWindow", "vx"));
     listWidgetMorphos->clear();
+    iCas = 0;
+    iGenre = 0;
+    iMod = 0;
+    iNb = 0;
+    iPers = 0;
+    iTps = 0;
 }
+
