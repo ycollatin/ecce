@@ -21,19 +21,15 @@
 /*
 
    FIXME
-   - la mise en gras est qqf mauvaise
+   - perte de mémoire affectant l'éditeur de morpho
+   - plantage après un ajout d'irrégulier
+   - mise en gras est mauvaise après édition + retour
    - la validation d'un lemmes2 affiche le lemme1
-   - ajout d'irréguliers, retour arrière, :échec -> plantage
    - laïci non reconnu
-   - laetitiâ, horâ, poenitentiâ, praesentiâ non reconnus
-   - /sto/ sélectionné n'affiche pas ses données
-   - impossible de faire marcher la vg "q.\b>que"
-   - champ supin non rempli automatiquement
+   - difficulté d'affiche des données avec le compléteur lemmes
 
    TODO
-   - paramétrer le calcul des chiffres romains
    - remplacer le compléteur par une liste éditable
-   - afficher la progression de la lemmatisation
    - implémenter la suppression d'un lemme. Un bouton en trop ?
    - suppression d'un irrégulier : idem
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -574,7 +570,7 @@ void MainWindow::ajIrr()
 {
     QString lin = QString("%1:%2:%3")
         .arg(linIrreg->text())
-        .arg(linLemmeIrr->text())
+        .arg(Ch::deramise(linLemmeIrr->text()))
         .arg(lineEditNumMorpho->text());
     Irreg* irreg = new Irreg(lin, lemcore);
     lemcore->ajIrreg(irreg);
@@ -816,8 +812,7 @@ void MainWindow::echec()
         }
         while (!flux.atEnd()
                && (c.isLetter()
-                   || c == '\''
-                   || c.category()==QChar::QChar::Mark_NonSpacing)); 
+                   || c.category()==QChar::Mark_NonSpacing)); 
 
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
@@ -889,8 +884,8 @@ void MainWindow::editIrr(const QModelIndex &m)
 {
     QString lin = qvariant_cast<QString>(m.data());
     QStringList sections = lin.split(':');
-    linLemmeIrr->setText(sections.at(0));
-    linIrreg->setText(sections.at(1));
+    linLemmeIrr->setText(sections.at(1));
+    linIrreg->setText(sections.at(0));
     lineEditNumMorpho->setText(sections.at(2));
 }
 
@@ -1250,7 +1245,7 @@ void MainWindow::majInfo(bool barre)
         .arg(p)
         .arg(posFC));
     //labelPos->setText(QString("%1").arg(posFC));
-    editContexte->setText(contexte(posFC, forme));
+    editContexte->setHtml(contexte(posFC, forme));
     if (barre)
     {
         slider->setValue(p);
@@ -1665,11 +1660,12 @@ void MainWindow::videMorph()
     btnMod->setText(QApplication::translate("MainWindow", "mod"));
     btnVx->setText(QApplication::translate("MainWindow", "vx"));
     listWidgetMorphos->clear();
-    iCas = 0;
+    iCas   = 0;
     iGenre = 0;
-    iMod = 0;
-    iNb = 0;
-    iPers = 0;
-    iTps = 0;
+    iPers  = 0;
+    iNb    = 0;
+    iTps   = 0;
+    iMod   = 0;
+    iVx    = 0;
 }
 
