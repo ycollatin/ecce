@@ -21,7 +21,7 @@
 /*
 
    FIXME
-   - perte de mémoire affectant l'éditeur de morpho
+   - seque non lemmatisé
    - plantage après un ajout d'irrégulier
    - mise en gras est mauvaise après édition + retour
    - la validation d'un lemmes2 affiche le lemme1
@@ -29,7 +29,6 @@
    - difficulté d'affiche des données avec le compléteur lemmes
 
    TODO
-   - remplacer le compléteur par une liste éditable
    - implémenter la suppression d'un lemme. Un bouton en trop ?
    - suppression d'un irrégulier : idem
    - première utilisation : ouvrir l'onglet module, donner une marche à
