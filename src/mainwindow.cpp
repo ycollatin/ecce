@@ -137,9 +137,13 @@ MainWindow::MainWindow()
     horizontalLayoutBtns->addWidget(bAvAv);
     horizontalLayoutBtns->addWidget(bDebut);
     verticalLayout_3->addLayout(horizontalLayoutBtns);
-
+    /*
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     verticalLayout_3->addItem(verticalSpacer_2);
+    */
+    listWidgetLemmes = new QListWidget(frame);
+    verticalLayout_3->addWidget(listWidgetLemmes);
+
     splitter->addWidget(frame);
     frame1 = new QFrame(splitter);
     frame1->setFrameShape(QFrame::Box);
@@ -641,9 +645,11 @@ void MainWindow::connecte()
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
-    // édition
-    connect(completeur, SIGNAL(activated(QString)), this, SLOT(edLem(QString)));
+    // sélection d'un lemme
+    connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
+    connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
+    // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
@@ -1017,6 +1023,12 @@ void MainWindow::edLem(QString l)
     }
 }
 
+void MainWindow::edLem(const QModelIndex &m)
+{
+    QString lin = qvariant_cast<QString>(m.data());
+    edLem(lin);
+}
+
 void MainWindow::enr()
 {
     if (nLemme == 0) return;
@@ -1073,7 +1085,6 @@ void MainWindow::enr()
     litems.append(lc);
     modele = new QStringListModel(litems);
     modele->setStringList(litems);
-    completeur->setModel(modele);
     if (remplace)
     {
         lemcore->remplaceLemme(nLemme);
@@ -1354,12 +1365,13 @@ void MainWindow::peuple()
     litems = lemcore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
     // compléteur lemmes
-	completeur = new QCompleter;
     modele = new QStringListModel(litems);
-    completeur->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-    completeur->setModel(modele);
-    completeur->setMaxVisibleItems(litems.count());
-    lineEditLemme->setCompleter(completeur);
+    // pour remplacer : QListViewLemmes
+    for (int i=0;i<litems.count();++i)
+    {
+        QString lem = litems.at(i);
+        new QListWidgetItem(lem, listWidgetLemmes);
+    }
     // modèles
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
@@ -1430,7 +1442,6 @@ void MainWindow::reinit()
     plainTextEditVariantes->clear();
     delete lemcore;
     litems.clear();
-    delete completeur;
     delete modele;
     itemsIrr.clear();
     listWidgetM->clear();
@@ -1502,6 +1513,20 @@ void MainWindow::sbar()
     labelScroll->setText(QString("%1 \%").arg(slider->value()));
     forme.clear();
     majInfo(false);
+}
+
+void MainWindow::selLem(QString l)
+{
+    listWidgetLemmes->clear();
+    QString lin;
+    for (int i=0;i<litems.count();++i)
+    {
+        lin = Ch::deramise(litems.at(i));
+        if (lin.startsWith(l))
+            new QListWidgetItem(lin, listWidgetLemmes);
+    }
+    if (listWidgetLemmes->count() == 0) edLem(lin);
+
 }
 
 void MainWindow::siCas()

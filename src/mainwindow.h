@@ -35,7 +35,6 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -110,7 +109,8 @@ class MainWindow : public QMainWindow
         QToolButton *bAv;
         QToolButton *bAvAv;
         QToolButton *bDebut;
-        QSpacerItem *verticalSpacer_2;
+        //QSpacerItem *verticalSpacer_2;
+        QListWidget *listWidgetLemmes;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_2;
         QFormLayout *formLayout;
@@ -141,7 +141,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *verticalLayoutConf;
         QLabel *label_3;
 
-        // test
+        // test de lemmatisation
         QHBoxLayout *horizontalLayoutTest;
         QLabel *labelTest;
         QLineEdit *lineEditTest;
@@ -203,7 +203,6 @@ class MainWindow : public QMainWindow
         QWidget     *widgetM;
         QVBoxLayout *verticalLayoutLM;
         QLabel      *labelM;
-        //QListView   *listViewM;
         QListWidget *listWidgetM;
         QWidget     *widgetLM;
         QVBoxLayout *verticalLayoutD;
@@ -227,7 +226,6 @@ class MainWindow : public QMainWindow
 
         // variables texte
         QStringList       aaa;
-        QCompleter*       completeur;
         QCompleter*       completeurM;
         void              connecte();
         QString           contexte(qint64 p, QString f="");
@@ -326,6 +324,7 @@ class MainWindow : public QMainWindow
         void        editIrr(const QModelIndex &m);
         void        editModule(QString k, QString l, QString f);
         void        edLem(QString l="");
+        void        edLem(const QModelIndex &m);
         void        enr();
         void        enrVar();
         void        initCoches(QStringList lv);
@@ -341,6 +340,7 @@ class MainWindow : public QMainWindow
         //void        reserve();
         void        rotQ();
         void        sbar();
+        void        selLem(QString l);
         void        siCas();
         void        siGenre();
         void        siMod();
