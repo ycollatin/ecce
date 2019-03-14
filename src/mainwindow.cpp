@@ -29,6 +29,7 @@
    - laïci non reconnu
 
    TODO
+   - réordonner les boutons à < << > >> |<
    - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
    - revoir la sélection d'un lemme
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -112,8 +113,8 @@ MainWindow::MainWindow()
     verticalLayout_3->addLayout(layoutScroll);
     // layout boutons
     horizontalLayoutBtns = new QHBoxLayout();
-    bSuppr = new QPushButton(frame);
-    horizontalLayoutBtns->addWidget(bSuppr);
+    //bSuppr = new QPushButton(frame);
+    //horizontalLayoutBtns->addWidget(bSuppr);
     bEchecPrec = new QToolButton();
     bEchecPrec->setDefaultAction(actionEchecPrec);
     horizontalLayoutBtns->addWidget(bEchecPrec);
@@ -130,11 +131,11 @@ MainWindow::MainWindow()
     bAvAv->setDefaultAction(actionAvAv);
     bDebut  = new QToolButton();
     bDebut->setDefaultAction(actionDebut);
-    horizontalLayoutBtns->addWidget(bArr);
+    horizontalLayoutBtns->addWidget(bDebut);
     horizontalLayoutBtns->addWidget(bArrArr);
+    horizontalLayoutBtns->addWidget(bArr);
     horizontalLayoutBtns->addWidget(bAv);
     horizontalLayoutBtns->addWidget(bAvAv);
-    horizontalLayoutBtns->addWidget(bDebut);
     verticalLayout_3->addLayout(horizontalLayoutBtns);
     /*
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -495,14 +496,14 @@ void MainWindow::retranslateUi()
     labelInfo->setText(QApplication::translate("MainWindow",
                                                "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
-    bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
+    //bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
-    boutonEnr->setText(QApplication::translate("MainWindow", "Enregistrer", Q_NULLPTR));
+    boutonEnr->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     boutonLemSuiv->setText(QApplication::translate("MainWindow", "lemme suivant", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
@@ -933,14 +934,6 @@ void MainWindow::editModule(QString k, QString l, QString f)
 
 void MainWindow::edLem(QString l)
 {
-    /*
-    lineEditGrq->clear();
-    lineEditPerfectum->clear();
-    lineSupin->clear();
-    lineMorpho->clear();
-    lineEditTr->clear();
-    textEditFlexion->clear();
-    */
     videForme();
     if (!litems.contains(l))
     {
@@ -950,9 +943,9 @@ void MainWindow::edLem(QString l)
     else
     {
         lemme = lemcore->lemme(l);
-        QString t = "enregistrer ";
+        QString t = enreg;
         QStringList lo;
-        lo << "module"<<"class."<<"ext.";
+        lo << " module"<<" class."<<" ext.";
         t.append(lo.at(lemme->origin()));
         boutonEnr->setText(t);
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
@@ -1052,7 +1045,7 @@ void MainWindow::enr()
         {
             QString lci = QString("%1%2").arg(lc).arg(i);
             if (i == 1) lci = lc;
-            if (litems.contains(lci))
+            if (!litems.contains(lci))
                 continue;
             else
             {
@@ -1683,6 +1676,7 @@ void MainWindow::videForme()
     lineMorpho->clear();
     lineEditTr->clear();
     textEditFlexion->clear();
+    boutonEnr->setText(enreg);
 }
 
 void MainWindow::videMorph()

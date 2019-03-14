@@ -80,17 +80,16 @@ class MainWindow : public QMainWindow
         QAction *actionQuitter;
         //QAction *actionCopier;
 
-        QWidget *centralWidget;
+        QWidget     *centralWidget;
         QVBoxLayout *verticalLayout;
         QHBoxLayout *layoutInfo;
-        QLabel *labelInfo;
-        //QLabel *labelPos;
-        QTabWidget *tabWidget;
+        QLabel      *labelInfo;
+        QTabWidget  *tabWidget;
         // onglet lexique
-        QWidget *tabLexique;
+        QWidget     *tabLexique;
         QVBoxLayout *verticalLayout_Lex;
-        QSplitter *splitter;
-        QFrame *frame;
+        QSplitter   *splitter;
+        QFrame      *frame;
         QVBoxLayout *verticalLayout_3;
         QTextEdit* editContexte;
         QHBoxLayout *horizontalLayout;
@@ -101,7 +100,7 @@ class MainWindow : public QMainWindow
         QLabel*      labelScroll;
         QSlider*     slider;
         QHBoxLayout *horizontalLayoutBtns;
-        QPushButton *bSuppr;
+        //QPushButton *bSuppr;
         QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
         QToolButton *bArr;
@@ -247,6 +246,7 @@ class MainWindow : public QMainWindow
         "!   mation dans les cas où la chaîne à changer peut se\n"
         "!   trouver à cheval entre radical et désinence.\n"
         "!\n";
+        QString enreg = "enregistrer";
         QString           fichier;
         Flexion*          flexion;
         QTextStream       flux;
