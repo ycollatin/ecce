@@ -14706,6 +14706,7 @@ nummus:argent, monnaie, sesterce
 numquam:(ne...) jamais
 numquid:est-ce que
 numquidnam:est-ce que vraiment ?
+numquis:est-ce que quelqu'un ?
 nunciam:à l'instant
 nunc:maintenant
 nuncupatio:appellation, dénomination, désignation solennelle [d'héritier], dédicace [livre], prononciation solennelle de voeux
