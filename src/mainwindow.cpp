@@ -23,9 +23,8 @@
    FIXME
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
    - avertissement de remplacement erronné.
-   - plantage après un ajout d'irrégulier. pê corrigé.
+   - plantage après un ajout d'irrégulier.
    - mise en gras est mauvaise après édition + retour
-   - la validation d'un lemmes2 affiche le lemme1
    - laïci non reconnu
 
    TODO
@@ -639,7 +638,6 @@ void MainWindow::connecte()
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // sélection d'un lemme
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
-    //connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
@@ -1601,7 +1599,6 @@ void MainWindow::siVx()
 // suppression d'une ligne dans un fichier
 void MainWindow::suppr(QString l, QString f)
 {
-    qDebug()<< "suppr "<<qPrintable(l + " " + f);
     QStringList lignes = lisLignes(f);
     QRegExp sep("\\W");
     int i = 0;
@@ -1609,7 +1606,6 @@ void MainWindow::suppr(QString l, QString f)
     {
         if (lignes.at(i) == l)
         {
-            qDebug()<<"touché";
             lignes.removeAt(i);
         }
         else ++i;
