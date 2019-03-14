@@ -923,6 +923,7 @@ pere:lego
 R:3:3,0
 des+:122,123:3:ēs;ēst
 des+:163-168:3:ēss$em
+des:187:3:ēssĕ
 
 modele:capio
 pere:lego
@@ -972,6 +973,7 @@ des:302:3:īrī
 
 modele:scio
 pere:audio
+des+:127-132:3:ībăm;ībās;ībăt;ībāmŭs;ībātĭs;ībānt
 des+:133-138:3:ībō̆;ībĭs;ībĭt;ībĭmŭs;ībĭtĭs;ībūnt
 
 modele:fio
