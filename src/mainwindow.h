@@ -353,6 +353,7 @@ class MainWindow : public QMainWindow
         void        supprIrr();
         void        supprM();
         void        teste(QString f);
+        void        videForme();
         void        videMorph();
 };
 

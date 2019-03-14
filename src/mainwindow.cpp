@@ -21,22 +21,22 @@
 /*
 
    FIXME
-   - seque non lemmatisé
+   - amicaque non lemmatisé
+   - erreur de provenance dans le bouton enregistrer, et avertissement erronné.
    - plantage après un ajout d'irrégulier
    - mise en gras est mauvaise après édition + retour
    - la validation d'un lemmes2 affiche le lemme1
    - laïci non reconnu
-   - difficulté d'affiche des données avec le compléteur lemmes
 
    TODO
-   - implémenter la suppression d'un lemme. Un bouton en trop ?
-   - suppression d'un irrégulier : idem
+   - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
+   - revoir la sélection d'un lemme
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
    - suppression d'un lemme : trouver une syntaxe :
-     prévoir une gestion des lignes lemmes commentées
+     prévoir une gestion des lignes lemmes commentées ?
 */
 
 #include <QFileDialog>
@@ -646,7 +646,7 @@ void MainWindow::connecte()
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // sélection d'un lemme
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
-    connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
+    //connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(edLem(QString)));
     connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
@@ -833,11 +833,10 @@ void MainWindow::echec()
                 {
                     Lemme* nl = nml.keys().at(j);
                     ml.insert(nl, nml.value(nl));
-                    if (j==0) lineEditLemme->setText(nl->cle());
                 }
             }
         }
-        // échec, essayer sans vg
+        // échec, essayer sans vg (vargraph)
         if (ml.isEmpty())
             ml = lemcore->lemmatiseM(forme, true, 0, false);
         // évaluation de la lemmatisation, arrêt si elle a échoué
@@ -866,6 +865,7 @@ void MainWindow::echec()
             // mise à jour du pointeur et de l'info
             posFC = flux.pos();
             majInfo();
+            videForme();
         }
     }
     posFC = flux.pos();
@@ -933,12 +933,15 @@ void MainWindow::editModule(QString k, QString l, QString f)
 
 void MainWindow::edLem(QString l)
 {
+    /*
     lineEditGrq->clear();
     lineEditPerfectum->clear();
     lineSupin->clear();
     lineMorpho->clear();
     lineEditTr->clear();
     textEditFlexion->clear();
+    */
+    videForme();
     if (!litems.contains(l))
     {
         lemme = 0;
@@ -946,22 +949,19 @@ void MainWindow::edLem(QString l)
     }
     else
     {
-        if (lemme == 0) lemme = lemcore->lemme(Ch::deramise(l));
-        if (lemme != 0)
-        {
-            QString t = "enregistrer ";
-            QStringList lo;
-            lo << "module"<<"class."<<"ext.";
-            t.append(lo.at(lemme->origin()));
-            boutonEnr->setText(t);
-            // si lem est issu de lem_ext, modifier l'intitulé du bouton
-            textEditFlexion->setText(flexion->tableau(lemme));
-            lineEditGrq->setText(lemme->champ0());
-            comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
-            lineMorpho->setText(lemme->indMorph());
-            lineEditTr->setText(lemme->traduction("fr"));
-            lignesVisibles(comboBoxModele->currentText());
-        }
+        lemme = lemcore->lemme(l);
+        QString t = "enregistrer ";
+        QStringList lo;
+        lo << "module"<<"class."<<"ext.";
+        t.append(lo.at(lemme->origin()));
+        boutonEnr->setText(t);
+        // si lem est issu de lem_ext, modifier l'intitulé du bouton
+        textEditFlexion->setText(flexion->tableau(lemme));
+        lineEditGrq->setText(lemme->champ0());
+        comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
+        lineMorpho->setText(lemme->indMorph());
+        lineEditTr->setText(lemme->traduction("fr"));
+        lignesVisibles(comboBoxModele->currentText());
         // radicaux
         for (int i=0;i<lemme->nbRadicaux();++i)
         {
@@ -1514,18 +1514,20 @@ void MainWindow::sbar()
     majInfo(false);
 }
 
+// Affiche dans listWidgetLemmes les lemmes débutant par l
 void MainWindow::selLem(QString l)
 {
     listWidgetLemmes->clear();
+    l = Ch::deramise(l);
     QString lin;
     for (int i=0;i<litems.count();++i)
     {
-        lin = Ch::deramise(litems.at(i));
+        lin = litems.at(i);
         if (lin.startsWith(l))
             new QListWidgetItem(lin, listWidgetLemmes);
     }
-    if (listWidgetLemmes->count() == 0) edLem(lin);
-
+    if (listWidgetLemmes->count() == 1)
+        edLem(listWidgetLemmes->item(0)->text());
 }
 
 void MainWindow::siCas()
@@ -1671,6 +1673,16 @@ void MainWindow::teste(QString f)
         }
     }
     labelLemTest->setText(test);
+}
+
+void MainWindow::videForme()
+{
+    lineEditGrq->clear();
+    lineEditPerfectum->clear();
+    lineSupin->clear();
+    lineMorpho->clear();
+    lineEditTr->clear();
+    textEditFlexion->clear();
 }
 
 void MainWindow::videMorph()
