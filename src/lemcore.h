@@ -139,7 +139,7 @@ class LemCore : public QObject
     bool                   inv(Lemme *l, const MapLem ml);
     MapLem                 lemmatise(QString f);  // lemmatise une forme
     // lemmatiseM lemmatise une forme en contexte
-    MapLem                 lemmatiseM(QString f, bool debPhr = true, int etape  =0, bool vgr=true);
+    MapLem                 lemmatiseM(QString f, bool debPhr = true, int etape = 0, bool vgr=true);
     Lemme*                 lemme(QString l);
     Lemme*                 lemmeDisque(QString l);
     // lemmes(ml) renvoie la liste des graphies des lemmes
@@ -156,6 +156,7 @@ class LemCore : public QObject
     void                   lireHyphen (QString fichierHyphen);
     QStringList            listeLemmesLa();
     QStringList            lModeles();
+    QString                mapToString(QString f, MapLem m);
     Modele*                modele(QString m);
     QString                morpho(int i);
     void                   reinitRads();
