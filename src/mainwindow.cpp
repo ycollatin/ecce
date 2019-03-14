@@ -21,15 +21,14 @@
 /*
 
    FIXME
-   - amicaque non lemmatisé
-   - erreur de provenance dans le bouton enregistrer, et avertissement erronné.
-   - plantage après un ajout d'irrégulier
+   - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
+   - avertissement de remplacement erronné.
+   - plantage après un ajout d'irrégulier. pê corrigé.
    - mise en gras est mauvaise après édition + retour
    - la validation d'un lemmes2 affiche le lemme1
    - laïci non reconnu
 
    TODO
-   - réordonner les boutons à < << > >> |<
    - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
    - revoir la sélection d'un lemme
    - première utilisation : ouvrir l'onglet module, donner une marche à
@@ -113,8 +112,6 @@ MainWindow::MainWindow()
     verticalLayout_3->addLayout(layoutScroll);
     // layout boutons
     horizontalLayoutBtns = new QHBoxLayout();
-    //bSuppr = new QPushButton(frame);
-    //horizontalLayoutBtns->addWidget(bSuppr);
     bEchecPrec = new QToolButton();
     bEchecPrec->setDefaultAction(actionEchecPrec);
     horizontalLayoutBtns->addWidget(bEchecPrec);
@@ -137,13 +134,8 @@ MainWindow::MainWindow()
     horizontalLayoutBtns->addWidget(bAv);
     horizontalLayoutBtns->addWidget(bAvAv);
     verticalLayout_3->addLayout(horizontalLayoutBtns);
-    /*
-    verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    verticalLayout_3->addItem(verticalSpacer_2);
-    */
     listWidgetLemmes = new QListWidget(frame);
     verticalLayout_3->addWidget(listWidgetLemmes);
-
     splitter->addWidget(frame);
     frame1 = new QFrame(splitter);
     frame1->setFrameShape(QFrame::Box);
@@ -188,7 +180,7 @@ MainWindow::MainWindow()
     horizontalLayout_3->setSpacing(6);
     boutonEnr = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonEnr);
-    boutonSuppr = new QPushButton(frame1);
+    boutonSuppr = new QPushButton(frame1);     // suppr. d'un lemme
     horizontalLayout_3->addWidget(boutonSuppr);
     boutonLemSuiv = new QPushButton(frame1);
     horizontalLayout_3->addWidget(boutonLemSuiv);
@@ -652,9 +644,8 @@ void MainWindow::connecte()
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
     connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
-    //connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
+    connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(supprLemme()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
-    //connect(bSuppr, SIGNAL(clicked()), this, SLOT(suppr()));
     connect(slider, SIGNAL(sliderMoved(int)), SLOT(sbar()));
     connect(actionArr, SIGNAL(triggered()), this, SLOT(arr()));
     connect(actionArrArr, SIGNAL(triggered()), this, SLOT(arrArr()));
@@ -1607,19 +1598,26 @@ void MainWindow::siVx()
     majLinMorph();
 }
 
+// suppression d'une ligne dans un fichier
 void MainWindow::suppr(QString l, QString f)
 {
-    std::cout<< "suppr "<<qPrintable(l + " " + f);
-}
-
-void MainWindow::supprLa()
-{
-    if (lemme == 0) return;
-    QString cle = lemme->cle();
-    // litems
-    litems.removeAt(litems.indexOf(cle));
-    suppr(ligneLa(), ajDir+"/lemmes.la");
-    suppr(ligneFr(), ajDir+"/lemmes.fr");
+    qDebug()<< "suppr "<<qPrintable(l + " " + f);
+    QStringList lignes = lisLignes(f);
+    QRegExp sep("\\W");
+    int i = 0;
+    while (i<lignes.count())
+    {
+        if (lignes.at(i) == l)
+        {
+            qDebug()<<"touché";
+            lignes.removeAt(i);
+        }
+        else ++i;
+    }
+    QFile file(f);
+    file.open(QFile::WriteOnly);
+    QTextStream(&file) << lignes.join('\n');
+    file.close();
 }
 
 void MainWindow::supprIrr()
@@ -1627,10 +1625,23 @@ void MainWindow::supprIrr()
     QList<QListWidgetItem*> liste = listWidgetIrr->selectedItems();
     for (int i=0;i<liste.count();++i)
     {
-        listWidgetIrr->removeItemWidget(liste.at(i));
+        QListWidgetItem* item = liste.at(i);
+        QString txt = item->text();
+        delete item;
+        suppr(txt, ajDir+"/irregs.la");
     }
 }
 
+void MainWindow::supprLemme()
+{
+    if (lemme == 0) return;
+    QString cle = lemme->cle();
+    litems.removeAt(litems.indexOf(cle));
+    suppr(ligneLa(), ajDir+"/lemmes.la");
+    suppr(ligneFr(), ajDir+"/lemmes.fr");
+}
+
+// suppression de module
 void MainWindow::supprM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();

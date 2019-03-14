@@ -100,7 +100,6 @@ class MainWindow : public QMainWindow
         QLabel*      labelScroll;
         QSlider*     slider;
         QHBoxLayout *horizontalLayoutBtns;
-        //QPushButton *bSuppr;
         QToolButton *bEchecPrec;
         QToolButton *bEchecSuiv;
         QToolButton *bArr;
@@ -349,7 +348,7 @@ class MainWindow : public QMainWindow
         void        siTps();
         void        siVx();
         void        suppr(QString l, QString f);
-        void        supprLa();
+        void        supprLemme();
         void        supprIrr();
         void        supprM();
         void        teste(QString f);
