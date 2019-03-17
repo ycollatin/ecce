@@ -28,6 +28,7 @@
    - laïci non reconnu
 
    TODO
+   - attention, lisModeles() ne vide plus la liste des modèles
    - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
    - revoir la sélection d'un lemme
    - première utilisation : ouvrir l'onglet module, donner une marche à
