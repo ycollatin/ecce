@@ -578,7 +578,7 @@ des+:25:1:quāndăm
 modele:quilibet
 pere:qui
 R:1:8,0
-sufd:lĭbĕt
+sufd:lĭbĕt,lŭbĕt
 
 modele:quinam
 pere:qui
@@ -629,19 +629,6 @@ abs:14-17,19-36,38,40,41,42-48
 des:13,18:1:īsquĭs,īcquĭs;ōquō
 des:37,39,42:1:īdquĭd,īcquĭd;īdquĭd,īcquĭd;ōquō
 pos:p
-
-modele:qualiscumque
-pere:plus
-R:1:8,0
-R:4:6,0
-sufd:cūnquĕ
-sufd:cūmquĕ
-
-modele:quantuscumque
-pere:nonus
-R:0:8,0
-sufd:cūnquĕ
-sufd:cūmquĕ
 
 modele:ego
 R:0:K
