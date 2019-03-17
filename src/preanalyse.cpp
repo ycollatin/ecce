@@ -111,7 +111,7 @@ void MainWindow::enrVar()
     f.close();
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     lemcore->lisVarGraph();
-    lemcore->lisModeles();
+    lemcore->lisModeles(lemcore->resDir()+"modeles.la");
     lemcore->reinitRads();
     qApp->restoreOverrideCursor();
 }

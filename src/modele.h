@@ -86,6 +86,7 @@ class Modele : public QObject
     QString            genRadical(int r);
     QString            gr();
     QString            grq();
+    void               interprete(QStringList ll);
     static QList<int>  listeI(QString l);
     QList<int>         morphos();
     QChar              pos();
