@@ -28,8 +28,6 @@
    - laïci non reconnu
 
    TODO
-   - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
-   - revoir la sélection d'un lemme
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -69,7 +67,6 @@ MainWindow::MainWindow()
     labelInfo = new QLabel(centralWidget);
     // label de position
     layoutInfo->addWidget(labelInfo);
-    //verticalLayout->addWidget(labelInfo);
     verticalLayout->addLayout(layoutInfo);
 
     // conteneur des onglets
