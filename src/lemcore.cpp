@@ -83,7 +83,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
         lisMorphos(QFileInfo(nfl).suffix());
     }
     lisVarGraph();
-    lisModeles();
+    lisModeles(_resDir + "modeles.la");
     lisModule();
     lisLexique(1);
     lisTags(false);
@@ -1073,10 +1073,9 @@ void LemCore::lisExtension()
  * \brief Lecture des modèles, synthèse et enregistrement
  *        de leurs désinences
  */
-void LemCore::lisModeles()
+void LemCore::lisModeles(QString nf)
 {
-    _modeles.clear();
-    QStringList lignes = lignesFichier(_resDir + "modeles.la");
+    QStringList lignes = lignesFichier(nf);
     int max = lignes.count()-1;
     QStringList sl;
     for (int i=0;i<=max;++i)
@@ -1090,9 +1089,24 @@ void LemCore::lisModeles()
         QStringList eclats = l.split(":");
         if ((eclats.at(0) == "modele" || i == max) && !sl.empty())
         {
-            Modele *m = new Modele(sl, this);
-            _modeles.insert(m->gr(), m);
-            sl.clear();
+            // fin de la liste : ajouter la dernière ligne à sl
+            if (i==max) sl.append(l);
+            // extraction du nom du modèle
+            QString nom = sl.at(0).section(":",1,1);
+            Modele* m = _modeles.value(nom);
+            if (m == 0)
+            {
+                // si le modèle n'existe pas
+                Modele *m = new Modele(sl, this);
+                _modeles.insert(m->gr(), m);
+                sl.clear();
+            }
+            else
+            {
+                // sinon, c'est une modification
+                m->interprete(sl);
+                sl.clear();
+            }
         }
         sl.append(l);
     }
@@ -1360,6 +1374,7 @@ void LemCore::lisModule()
 {
     lisFichierLexique(_ajDir+"lemmes.la", 0);
     lisTraductions(_ajDir+"lemmes.fr");
+    lisModeles(_ajDir+"modeles.la");
 }
 
 /**
