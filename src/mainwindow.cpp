@@ -21,6 +21,8 @@
 /*
 
    FIXME
+   - Bogue Collatinus : /deni/ affiche une flexion singulier.
+   - amicine non lemmatisé.
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
    - avertissement de remplacement erronné.
    - plantage après un ajout d'irrégulier.
