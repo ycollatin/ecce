@@ -78,6 +78,7 @@ class MainWindow : public QMainWindow
         QAction *actionOuvrir;
         QAction *actionQuant;
         QAction *actionQuitter;
+        QAction *actionRouvrir;
         //QAction *actionCopier;
 
         QWidget     *centralWidget;
@@ -337,7 +338,9 @@ class MainWindow : public QMainWindow
         void        paquet();
         void        preAn();
         //void        reserve();
+        void        retLem();
         void        rotQ();
+        void        rouvrir();
         void        sbar();
         void        selLem(QString l);
         void        siCas();

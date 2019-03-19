@@ -21,8 +21,8 @@
 /*
 
    FIXME
+   - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
-   - amicine non lemmatisé.
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
    - avertissement de remplacement erronné.
    - plantage après un ajout d'irrégulier.
@@ -30,6 +30,7 @@
    - laïci non reconnu
 
    TODO
+   - fonction de rechargement du texte
    - attention, lisModeles() ne vide plus la liste des modèles
    - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
    - revoir la sélection d'un lemme
@@ -61,6 +62,7 @@ MainWindow::MainWindow()
     actionEchecSuiv = new QAction(this);
     actionOuvrir    = new QAction(this);
     actionQuitter   = new QAction(this);
+    actionRouvrir   = new QAction(this);
     // ui
     centralWidget = new QWidget(this);
     verticalLayout = new QVBoxLayout(centralWidget);
@@ -405,6 +407,7 @@ MainWindow::MainWindow()
     menuFichier->addSeparator();
     menuFichier->addAction(actionDiff);
     menuFichier->addAction(actionOuvrir);
+    menuFichier->addAction(actionRouvrir);
     mainToolBar->addAction(actionQuant);
     menuFichier->addAction(actionQuitter);
     // bare d'état
@@ -486,6 +489,7 @@ void MainWindow::retranslateUi()
     actionQuant->setShortcut(QApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
     actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
     actionQuitter->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
+    actionRouvrir->setText(QApplication::translate("MainWindow", "Réouvrir"));
     labelInfo->setText(QApplication::translate("MainWindow",
                                                "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
@@ -637,9 +641,11 @@ void MainWindow::connecte()
     // fichier
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
+    connect(actionRouvrir, SIGNAL(triggered()), this, SLOT(rouvrir()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     // sélection d'un lemme
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
+    connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(retLem()));
     connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
@@ -1435,6 +1441,13 @@ void MainWindow::reinit()
     qApp->restoreOverrideCursor();
 }
 
+void MainWindow::retLem()
+{
+    if (listWidgetLemmes->count() == 0) return;
+    listWidgetLemmes->setCurrentRow(0, QItemSelectionModel::Select);
+    edLem(listWidgetLemmes->item(0)->text());
+}
+
 void MainWindow::retro(int pas)
 {
     //posFC -= pas;
@@ -1487,6 +1500,11 @@ void MainWindow::rotQ()
             break;
         }
     }
+}
+
+void MainWindow::rouvrir()
+{
+    if (!fichier.isEmpty()) ouvrir(fichier);
 }
 
 void MainWindow::sbar()
