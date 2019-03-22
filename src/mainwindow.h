@@ -75,6 +75,7 @@ class MainWindow : public QMainWindow
         QAction *actionDiff;
         QAction *actionEchecPrec;
         QAction *actionEchecSuiv;
+        QAction *actionEnr;
         QAction *actionOuvrir;
         QAction *actionQuant;
         QAction *actionQuitter;
@@ -127,7 +128,7 @@ class MainWindow : public QMainWindow
         QLabel *labelTr;
         QLineEdit *lineEditTr;
         QHBoxLayout *horizontalLayout_3;
-        QPushButton *boutonEnr;
+        QToolButton *boutonEnr;
         QPushButton *boutonSuppr;
         QPushButton* boutonLemSuiv;
         QTextEdit *textEditFlexion;
@@ -327,6 +328,7 @@ class MainWindow : public QMainWindow
         void        edLem(const QModelIndex &m);
         void        enr();
         void        enrVar();
+        void        fermer();
         void        initCoches(QStringList lv);
         //void        insereLigne(QString l, QString f);
         void        instM();

@@ -21,6 +21,7 @@
 /*
 
    FIXME
+   - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
@@ -60,6 +61,7 @@ MainWindow::MainWindow()
     actionDiff      = new QAction(this);
     actionEchecPrec = new QAction(this);
     actionEchecSuiv = new QAction(this);
+    actionEnr       = new QAction(this);
     actionOuvrir    = new QAction(this);
     actionQuitter   = new QAction(this);
     actionRouvrir   = new QAction(this);
@@ -181,7 +183,8 @@ MainWindow::MainWindow()
     verticalLayout_2->addLayout(formLayout);
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
-    boutonEnr = new QPushButton(frame1);
+    boutonEnr = new QToolButton(frame1);
+    boutonEnr->setDefaultAction(actionEnr);
     horizontalLayout_3->addWidget(boutonEnr);
     boutonSuppr = new QPushButton(frame1);     // suppr. d'un lemme
     horizontalLayout_3->addWidget(boutonSuppr);
@@ -480,9 +483,13 @@ void MainWindow::retranslateUi()
     actionEchecSuiv->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
     actionDebut->setText("|<");
     actionArrArr->setText("<<");
+    actionArrArr->setShortcut(QApplication::translate("MainWindow", "Ctrl+K", Q_NULLPTR));
     actionArr->setText("<");
+    actionArr->setShortcut(QApplication::translate("MainWindow", "Ctrl+H", Q_NULLPTR));
     actionAv->setText(">");
     actionAvAv->setText(">>");
+    actionEnr->setText("enregistrer");
+    actionEnr->setShortcut(QApplication::translate("MainWindow", "Ctrl+M", Q_NULLPTR));
     actionOuvrir->setText(QApplication::translate("MainWindow", "Ouvrir un fichier texte"));
     actionOuvrir->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
     actionQuant->setText(QApplication::translate("MainWindow", "a\304\203\304\201", Q_NULLPTR));
@@ -500,7 +507,7 @@ void MainWindow::retranslateUi()
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
-    boutonEnr->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
+    //boutonEnr->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     boutonLemSuiv->setText(QApplication::translate("MainWindow", "lemme suivant", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
@@ -642,14 +649,16 @@ void MainWindow::connecte()
     //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     connect(actionRouvrir, SIGNAL(triggered()), this, SLOT(rouvrir()));
-    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    //connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(fermer()));
     // sélection d'un lemme
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
     connect(lineEditLemme, SIGNAL(returnPressed()), this, SLOT(retLem()));
     connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
-    connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
+    //connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
+    connect(actionEnr, SIGNAL(triggered()), this, SLOT(enr()));
     connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(supprLemme()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
     connect(slider, SIGNAL(sliderMoved(int)), SLOT(sbar()));
@@ -864,6 +873,7 @@ void MainWindow::echec()
             posFC = flux.pos();
             majInfo();
             videForme();
+            lineEditLemme->setFocus();
         }
     }
     posFC = flux.pos();
@@ -1080,6 +1090,16 @@ void MainWindow::enr()
         lemme = nLemme;
     }
     else lemcore->ajLemme(nLemme);
+}
+
+void MainWindow::fermer()
+{
+    QMessageBox boite(QMessageBox::Question, tr("Quitter"), 
+                      "Quitter Ecce ?", 0, this);
+    boite.addButton("oui", QMessageBox::AcceptRole);
+    boite.addButton("non", QMessageBox::RejectRole);
+    int rep = boite.exec();
+    if (rep == QMessageBox::AcceptRole) close();
 }
 
 void MainWindow::instM()
@@ -1443,9 +1463,12 @@ void MainWindow::reinit()
 
 void MainWindow::retLem()
 {
-    if (listWidgetLemmes->count() == 0) return;
-    listWidgetLemmes->setCurrentRow(0, QItemSelectionModel::Select);
-    edLem(listWidgetLemmes->item(0)->text());
+    if (listWidgetLemmes->count() > 0)
+    {
+        listWidgetLemmes->setCurrentRow(0, QItemSelectionModel::Select);
+        edLem(listWidgetLemmes->item(0)->text());
+    }
+    lineEditGrq->setFocus();
 }
 
 void MainWindow::retro(int pas)
