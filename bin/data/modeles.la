@@ -1054,6 +1054,10 @@ des:265,266:2:ŭm;ū
 des:375-386:2:ŭs;ĕ;ŭm;ī;ō;ō;ī;ī;ōs;ōrŭm;īs;īs
 des:387-398:2:ă;ă;ăm;āe;āe;ā;āe;āe;ās;ārŭm;īs;īs
 des:399-410:2:ŭm;ŭm;ŭm;ī;ō;ō;ă;ă;ă;ōrŭm;īs;īs
+! adj. verbal
+des+:339-350:0:ānd$lupus
+des+:351-362:0:ānd$uita
+des+:363-374:0:ānd$templum
 pos:v
 
 modele:uereor
