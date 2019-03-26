@@ -31,10 +31,7 @@
    - laïci non reconnu
 
    TODO
-   - fonction de rechargement du texte
-   - attention, lisModeles() ne vide plus la liste des modèles
-   - implémenter la suppression d'un lemme, d'un irrég. Un bouton en trop ?
-   - revoir la sélection d'un lemme
+   - supprimer les < et > qui coupent les mots.
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
