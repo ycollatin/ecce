@@ -21,6 +21,7 @@
 /*
 
    FIXME
+   - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
@@ -497,14 +498,12 @@ void MainWindow::retranslateUi()
     labelInfo->setText(QApplication::translate("MainWindow",
                                                "Ecce - chargement…", Q_NULLPTR));
     labelLemme->setText(QApplication::translate("MainWindow", "Lemme", Q_NULLPTR));
-    //bSuppr->setText(QApplication::translate("MainWindow", "suppr.", Q_NULLPTR));
     labelGrq->setText(QApplication::translate("MainWindow", "Forme canonique, avec quantit\303\251s", Q_NULLPTR));
     labelModele->setText(QApplication::translate("MainWindow", "Mod\303\250le", Q_NULLPTR));
     labelPerfectum->setText(QApplication::translate("MainWindow", "rad. parfait", Q_NULLPTR));
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
-    //boutonEnr->setText(QApplication::translate("MainWindow", "enregistrer", Q_NULLPTR));
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     boutonLemSuiv->setText(QApplication::translate("MainWindow", "lemme suivant", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
@@ -654,7 +653,6 @@ void MainWindow::connecte()
     connect(listWidgetLemmes, SIGNAL(pressed(QModelIndex)), this, SLOT(edLem(QModelIndex)));
     // édition
     connect(actionQuant, SIGNAL(triggered()), this, SLOT(rotQ()));
-    //connect(boutonEnr, SIGNAL(clicked()), this, SLOT(enr()));
     connect(actionEnr, SIGNAL(triggered()), this, SLOT(enr()));
     connect(boutonSuppr, SIGNAL(clicked()), this, SLOT(supprLemme()));
     connect(boutonLemSuiv, SIGNAL(clicked()), this, SLOT(lemSuiv()));
@@ -1028,6 +1026,7 @@ void MainWindow::edLem(const QModelIndex &m)
 void MainWindow::enr()
 {
     if (nLemme == 0) return;
+    boutonEnr->setFocus();
     // radicaux et morphologie
     QString ltr = lineEditTr->text();
     QString grq = lineEditGrq->text();
