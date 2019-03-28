@@ -1523,7 +1523,7 @@ void MainWindow::rotQ()
 
 void MainWindow::rouvrir()
 {
-    if (!fichier.isEmpty()) ouvrir(fichier);
+    if (!fichier.isEmpty()) ouvrir(fichier, posFC);
 }
 
 void MainWindow::sbar()
