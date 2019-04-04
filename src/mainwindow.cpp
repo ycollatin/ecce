@@ -792,6 +792,88 @@ void MainWindow::debut()
 
 void MainWindow::echec()
 {
+    qDebug()<<"echec, posFc"<<posFC;
+    qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
+    labelVG->clear();
+    flux.seek(posFC);
+    // chercher une frontière de mots
+    QChar c = '\0';
+    while (!c.isSpace() && !flux.atEnd())
+        flux >> c;
+    QString lin;
+    bool arret = false;
+    qint64 posEchec = flux.pos();
+    while(!flux.atEnd() && !arret)
+    {
+        lin = flux.readLine();
+        qDebug()<<"   lin"<<lin;
+        QStringList formes = lin.split(QRegExp("\\b"));
+        for (int i = 1;i<formes.count();i+=2)
+        {
+            forme = formes.at(i); 
+            if (forme.toInt() != 0) continue;
+            qDebug()<<"    "<<forme;
+            ml = lemcore->lemmatiseM(forme, true);
+            // appliquer les règles aval
+            QStringList lfti = lemcore->ti(forme);
+            for (int i=0;i<lfti.count();++i)
+            {
+                QString fti = lfti.at(i);
+                if (fti != forme)
+                {
+                    MapLem nml = lemcore->lemmatiseM(fti, true, 0, false);
+                    for(int j=0;j<nml.count();++j)
+                    {
+                        Lemme* nl = nml.keys().at(j);
+                        ml.insert(nl, nml.value(nl));
+                    }
+                }
+            }
+            // échec, essayer sans vg (vargraph)
+            if (ml.isEmpty())
+                ml = lemcore->lemmatiseM(forme, true, 0, false);
+            // évaluation de la lemmatisation, arrêt si elle a échoué
+            arret = true;
+            if (!ml.isEmpty())
+            {
+                // sinon arrêt seulement si une lemmatisation vient du
+                // réservoir
+                for (int i=0;i<ml.keys().count();++i)
+                    arret = arret && ml.keys().at(i)->origin() > 1;
+            }
+            if (arret)
+            {
+               qDebug()<< "     !arret";
+                if (!ml.isEmpty())
+                    lineEditLemme->setText(ml.keys().at(0)->cle());
+                else lineEditLemme->setText(forme);
+                // historique des échecs
+                iLemSuiv = -1;
+                lemSuiv();
+                echecs.append(posEchec);
+                // liste des graphies envoyées au lemmatiseur
+                QStringList lgr = lemcore->ti(forme);
+                lgr.append(lemcore->vg(forme));
+                lgr.removeDuplicates();
+                labelVG->setText(lgr.join(" "));
+                // mise à jour du pointeur et de l'info
+                posFC = flux.pos();
+                majInfo();
+                videForme();
+                lineEditLemme->setFocus();
+            }
+            qDebug()<<"     oka";
+        }
+        qDebug()<<"   okb";
+    }
+    qDebug()<<"okc";
+    posFC = flux.pos();
+    qApp->restoreOverrideCursor();
+}
+
+/*
+void MainWindow::echec()
+{
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     labelVG->clear();
     flux.seek(posFC);
@@ -874,6 +956,7 @@ void MainWindow::echec()
     posFC = flux.pos();
     qApp->restoreOverrideCursor();
 }
+*/
 
 void MainWindow::echecPrec()
 {
@@ -1469,9 +1552,6 @@ void MainWindow::retLem()
 
 void MainWindow::retro(int pas)
 {
-    //posFC -= pas;
-    //if (posFC < 0) posFC = 0;
-    // flux.seek(posFC);
     if (flux.pos() > pas) flux.seek(flux.pos() - pas);
     else flux.seek(0);
     QChar c='\0';
