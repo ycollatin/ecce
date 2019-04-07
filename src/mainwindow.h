@@ -215,7 +215,8 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonPaquet;
         QPushButton *pushButtonInstM;
         QLabel      *labelInfoM;
-        QSpacerItem *verticalSpacerM;
+        //QSpacerItem *verticalSpacerM;
+        QTextEdit   *editInfoM;
         // menu et barrre d'état
         QMenuBar *menuBar;
         QMenu *menuFichier;
@@ -269,7 +270,8 @@ class MainWindow : public QMainWindow
         QStringListModel* modeleIrr;
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
-        void              peuple();
+        void              peupleLexiques();
+        void              peupleModules();
         void              reinit();
         qint64            tailleF;
 

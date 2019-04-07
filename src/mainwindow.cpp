@@ -21,6 +21,7 @@
 /*
 
    FIXME
+   - Chiffres romains
    - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
@@ -31,7 +32,7 @@
    - laïci non reconnu (tréma)
 
    TODO
-   - faire apparaître l'interface avant peuplement.
+   - établir une liste des erreurs, donc à passer.
    - activation d'un nouveau module : décider des modules de
      référence. Souvent classique + lem_ext, mais on peut imaginer
      * classique + lem_ext + hagio
@@ -388,8 +389,10 @@ MainWindow::MainWindow()
     verticalLayoutD->addWidget(pushButtonInstM);
     labelInfoM = new QLabel(widgetM);
     verticalLayoutD->addWidget(labelInfoM);
-    verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    verticalLayoutD->addItem(verticalSpacerM);
+    editInfoM = new QTextEdit(widgetM);
+    verticalLayoutD->addWidget(editInfoM);
+    //verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //verticalLayoutD->addItem(verticalSpacerM);
     splitterM->addWidget(widgetM);
     verticalLayoutM->addWidget(splitterM);
     tabWidget->addTab(tabM, QString());
@@ -461,7 +464,9 @@ MainWindow::MainWindow()
         << "UŬŪ"
         << "YЎȲ";
     connecte();
-    peuple();
+    lemcore = 0;
+    modele = 0;
+    peupleModules();
 }
 
 /*
@@ -566,7 +571,9 @@ MainWindow::~MainWindow()
 void MainWindow::activerM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
+    QString exModule = module;
     module = item->text();
+    if (module != exModule) posFC = 0;
     QSettings settings("Collatinus", "ecce");
     settings.beginGroup("lexique");
     settings.setValue("module", module);
@@ -1318,6 +1325,14 @@ void MainWindow::paquet()
     QString nom = item->text();
     QString rep = nom;
     rep.prepend(modDir);
+    // enregistrer le fichier d'info
+    QString chInfo = editInfoM->toPlainText();
+    QFile f(rep+"/info.txt");
+    f.open(QIODevice::WriteOnly);
+    QTextStream (&f) << chInfo;
+    f.close();
+
+    // compresser toutes les données
     QDir dir(rep);
     dir.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
     QString sortie = QString("%1/%2.col")
@@ -1347,24 +1362,9 @@ void MainWindow::paquet()
     labelInfoM->setText(info.toLatin1());
 }
 
-void MainWindow::peuple()
+void MainWindow::peupleLexiques()
 {
-    // définir d'abord les répertoires de l'appli
-    // et le répertoire personnel, où sont les modules lexicaux
-    resDir = Ch::chemin("collatinus/"+module,'d');
-    if (!resDir.endsWith('/')) resDir.append('/');
-    modDir = Ch::chemin("collatinus/", 'p');
-    if (!modDir.endsWith('/')) modDir.append('/');
-    if (!module.isEmpty())
-    {
-        ajDir = modDir + module;
-        if (!ajDir.endsWith('/')) ajDir.append('/');
-    }
-    else
-    {
-        ajDir.clear();
-        tabWidget->setCurrentIndex(3);
-    }
+    // chargement des lexiques
     lemcore = new LemCore(this, resDir, ajDir);
     lemcore->setExtension(true);
     lemcore->setCible("fr");
@@ -1415,7 +1415,27 @@ void MainWindow::peuple()
     for (int i=0;i<2;++i) lVx    << lemcore->voix(i);
     iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
     iTps = 0; iVx = 0;
+}
 
+void MainWindow::peupleModules()
+{
+    tabWidget->setCurrentIndex(3);
+    // définir d'abord les répertoires de l'appli
+    // et le répertoire personnel, où sont les modules lexicaux
+    resDir = Ch::chemin("collatinus/"+module,'d');
+    if (!resDir.endsWith('/')) resDir.append('/');
+    modDir = Ch::chemin("collatinus/", 'p');
+    if (!modDir.endsWith('/')) modDir.append('/');
+    if (!module.isEmpty())
+    {
+        ajDir = modDir + module;
+        if (!ajDir.endsWith('/')) ajDir.append('/');
+    }
+    else
+    {
+        ajDir.clear();
+        tabWidget->setCurrentIndex(3);
+    }
     // modules, peupler la liste
     QDir chModules(modDir);
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
@@ -1427,7 +1447,63 @@ void MainWindow::peuple()
         if (ni->text() == module) item = ni;
     }
     if (item != 0) listWidgetM->setCurrentItem(item);
+    // info du module
+    QStringList info = LemCore::lignesFichier(ajDir+"info.txt");
+    editInfoM->setText(info.join("<br/>\n"));
     majInfo();
+    /*
+    // chargement des lexiques
+    lemcore = new LemCore(this, resDir, ajDir);
+    lemcore->setExtension(true);
+    lemcore->setCible("fr");
+    flexion = new Flexion(lemcore);
+    // lemmes
+    litems = lemcore->cles();
+    qSort(litems.begin(), litems.end(), Ch::sort_i);
+    // compléteur lemmes
+    modele = new QStringListModel(litems);
+    for (int i=0;i<litems.count();++i)
+    {
+        QString lem = litems.at(i);
+        new QListWidgetItem(lem, listWidgetLemmes);
+    }
+    // modèles
+    lmodeles = lemcore->lModeles();
+    comboBoxModele->addItems(lmodeles);
+    // irréguliers
+    itemsIrr = lisLignes(ajDir+"irregs.la", true);
+    for (int i=0;i<itemsIrr.count();++i)
+    {
+        new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
+    }
+    // morphos
+    lMorphos.clear();
+    QStringList listeM = lemcore->lignesFichier(resDir+"morphos.fr");
+    for (int i=0;i<listeM.count();++i)
+    {
+        QString lin = listeM.at(i).simplified();
+        if (lin == "nominatif") break;
+        lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
+    }
+    // variantes graphiques
+    lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
+    plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
+    // cocher les cases correspondantes
+    initCoches(lvarGraph);
+
+    // listes pour les morphos irregs
+    lCas << ""; lGenre << ""; lMod << ""; lNb << "";
+    lPers << ""; lTps<<""; lVx << "";
+    for (int i=0;i<6;++i) lCas   << lemcore->cas(i);
+    for (int i=0;i<3;++i) lGenre << lemcore->genre(i);
+    for (int i=0;i<9;++i) lMod   << lemcore->modes(i);
+    for (int i=0;i<2;++i) lNb    << lemcore->nombre(i);
+    lPers <<"1ère"<<"2ème"<<"3ème";
+    for (int i=0;i<6;++i) lTps   << lemcore->temps(i);
+    for (int i=0;i<2;++i) lVx    << lemcore->voix(i);
+    iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
+    iTps = 0; iVx = 0;
+    */
 }
 
 void MainWindow::porro(int pas)
@@ -1447,15 +1523,16 @@ void MainWindow::reinit()
 {
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     plainTextEditVariantes->clear();
-    delete lemcore;
+    if (lemcore != 0) delete lemcore;
     litems.clear();
-    delete modele;
+    if (modele != 0) delete modele;
     itemsIrr.clear();
     listWidgetM->clear();
     lvarGraph.clear();
     // recharger toutes les données
-    posFC = 0;
-    peuple();
+    peupleModules();
+    peupleLexiques();
+    tabWidget->setCurrentIndex(0);
     qApp->restoreOverrideCursor();
 }
 

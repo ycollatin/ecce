@@ -145,7 +145,7 @@ class LemCore : public QObject
     // lemmes(ml) renvoie la liste des graphies des lemmes
     QStringList            lemmes(MapLem ml);
     // Lit les lignes d'un fichier. Est devenu public.
-    QStringList            lignesFichier(QString nf);
+    QStringList static     lignesFichier(QString nf);
     QStringList            lignesVG();
     void                   lisModeles(QString nf);
     void                   lisModule();
