@@ -25,14 +25,18 @@
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
-   - un lemme corrigé apparaît deux fois dans la liste sous la ligne de saisie lemmes
+   - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
+     saisie lemmes
    - avertissement de remplacement erronné.
-   - plantage après un ajout d'irrégulier.
-   - mise en gras est mauvaise après édition + retour
-   - laïci non reconnu
+   - laïci non reconnu (tréma)
 
    TODO
-   - supprimer les < et > qui coupent les mots.
+   - faire apparaître l'interface avant peuplement.
+   - activation d'un nouveau module : décider des modules de
+     référence. Souvent classique + lem_ext, mais on peut imaginer
+     * classique + lem_ext + hagio
+     * classique + plaute
+   - option de nettoyage du texte ?
    - première utilisation : ouvrir l'onglet module, donner une marche à
      suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
@@ -45,6 +49,7 @@
 #include <QMessageBox>
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
+#include <QThread>
 #include <mainwindow.h>
 
 MainWindow::MainWindow()
@@ -435,6 +440,7 @@ MainWindow::MainWindow()
     }
     settings.endGroup();
 
+
     // liste des lignes demandant des quantités
     lignes
         << lineEditGrq
@@ -454,9 +460,8 @@ MainWindow::MainWindow()
         << "OŎŌ"
         << "UŬŪ"
         << "YЎȲ";
-
-    peuple();
     connecte();
+    peuple();
 }
 
 /*
@@ -1369,7 +1374,6 @@ void MainWindow::peuple()
     qSort(litems.begin(), litems.end(), Ch::sort_i);
     // compléteur lemmes
     modele = new QStringListModel(litems);
-    // pour remplacer : QListViewLemmes
     for (int i=0;i<litems.count();++i)
     {
         QString lem = litems.at(i);
