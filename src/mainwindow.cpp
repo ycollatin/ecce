@@ -21,7 +21,6 @@
 /*
 
    FIXME
-   - Chiffres romains
    - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
@@ -38,8 +37,7 @@
      * classique + lem_ext + hagio
      * classique + plaute
    - option de nettoyage du texte ?
-   - première utilisation : ouvrir l'onglet module, donner une marche à
-     suivre dans le label d'info.
+   - peuplement à l'ouverture : donner une marche à suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
    - suppression d'un lemme : trouver une syntaxe :
