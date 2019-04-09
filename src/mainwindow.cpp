@@ -31,12 +31,17 @@
    - laïci non reconnu (tréma)
 
    TODO
-   - établir une liste des erreurs, donc à passer.
+   - Les lexiques sont déplacables dans une liste ordonnée. Le
+     premier lexique chargé désactive ses homonymes dans les suivants.
+   - Dans la liste des modules : le classique activé par défaut,
+     en dernière position
    - activation d'un nouveau module : décider des modules de
      référence. Souvent classique + lem_ext, mais on peut imaginer
      * classique + lem_ext + hagio
      * classique + plaute
-   - option de nettoyage du texte ?
+   - Un nouvel outil pourrait servir :
+     à nettoyer un texte ?
+     à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ? 
    - peuplement à l'ouverture : donner une marche à suivre dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
