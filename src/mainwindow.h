@@ -31,6 +31,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -215,8 +216,14 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonPaquet;
         QPushButton *pushButtonInstM;
         QLabel      *labelInfoM;
-        //QSpacerItem *verticalSpacerM;
         QTextEdit   *editInfoM;
+        QGroupBox   *groupBoxReserv;
+        QHBoxLayout *hLayReserv;
+        QListView   *listViewReserv;
+        QVBoxLayout *vLayReserv;
+        QPushButton *bReservHaut;
+        QPushButton *bReservBas;
+        QSpacerItem *spacerHB;
         // menu et barrre d'état
         QMenuBar *menuBar;
         QMenu *menuFichier;

@@ -394,12 +394,28 @@ MainWindow::MainWindow()
     verticalLayoutD->addWidget(labelInfoM);
     editInfoM = new QTextEdit(widgetM);
     verticalLayoutD->addWidget(editInfoM);
-    //verticalSpacerM = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    //verticalLayoutD->addItem(verticalSpacerM);
+    // réservoir et réglage de priorité
+    groupBoxReserv = new QGroupBox(widgetM);
+    hLayReserv = new QHBoxLayout(groupBoxReserv);
+    hLayReserv->setSpacing(6);
+    hLayReserv->setContentsMargins(11, 11, 11, 11);
+    listViewReserv = new QListView(groupBoxReserv);
+    hLayReserv->addWidget(listViewReserv);
+    vLayReserv = new QVBoxLayout();
+    vLayReserv->setSpacing(6);
+    bReservHaut = new QPushButton(groupBoxReserv);
+    vLayReserv->addWidget(bReservHaut);
+    bReservBas = new QPushButton(groupBoxReserv);
+    vLayReserv->addWidget(bReservBas);
+    spacerHB = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    vLayReserv->addItem(spacerHB);
+    hLayReserv->addLayout(vLayReserv);
+    verticalLayoutD->addWidget(groupBoxReserv);
+
+    // intégration et index courant
     splitterM->addWidget(widgetM);
     verticalLayoutM->addWidget(splitterM);
     tabWidget->addTab(tabM, QString());
-    // intégration et index courant
     setCentralWidget(centralWidget);
     tabWidget->setCurrentIndex(0);
     // barre d'outils
@@ -422,7 +438,7 @@ MainWindow::MainWindow()
     menuFichier->addAction(actionRouvrir);
     mainToolBar->addAction(actionQuant);
     menuFichier->addAction(actionQuitter);
-    // bare d'état
+    // barre d'état
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
     // textes
@@ -559,6 +575,9 @@ void MainWindow::retranslateUi()
     pushButtonPaquet->setText(QApplication::translate("MainWindow", "générer un paquet", Q_NULLPTR));
     pushButtonInstM->setText(QApplication::translate("MainWindow", "installer un paquet", Q_NULLPTR));
     labelInfoM->setText("info modules");
+    groupBoxReserv->setTitle(QApplication::translate("Ecce", "Réservoirs"));
+    bReservHaut->setText("▲");
+    bReservBas->setText("▼");
 
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
