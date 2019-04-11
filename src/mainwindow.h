@@ -219,7 +219,7 @@ class MainWindow : public QMainWindow
         QTextEdit   *editInfoM;
         QGroupBox   *groupBoxReserv;
         QHBoxLayout *hLayReserv;
-        QListView   *listViewReserv;
+        QListWidget *lwReserv;
         QVBoxLayout *vLayReserv;
         QPushButton *bReservHaut;
         QPushButton *bReservBas;
@@ -237,25 +237,25 @@ class MainWindow : public QMainWindow
         QCompleter*       completeurM;
         void              connecte();
         QString           contexte(qint64 p, QString f="");
-        QString docVarGraph =
-        "!          vargraph.la\n"
-        "!\n"
-        "!  Dans ce fichier sont enregistrées les variantes\n"
-        "! graphiques du corpus traité. Chaque ligne est\n"
-        "! composée de deux chaînes séparées\n"
-        "! - soit par le caractère ';' :\n"
-        "!   à gauche, la graphie classique, à droite la graphie\n"
-        "!   alternative, même si elle n'est pas toujours utilisée.\n" 
-        "!   Les désinences et les radicaux sont calculés en\n" 
-        "!   fonction de ces transformations, et les formes du\n"
-        "!   texte sont elles aussi transformées.\n"
-        "! - soit par le caractère '>' : à gauche une expression\n"
-        "!   rationnelle qui permet de retrouver la graphie\n"
-        "!   classique, à droite du '>'. On recourt à cette transfor-\n"
-        "!   mation dans les cas où la chaîne à changer peut se\n"
-        "!   trouver à cheval entre radical et désinence.\n"
-        "!\n";
-        QString enreg = "enregistrer";
+        QString           docVarGraph =
+            "!          vargraph.la\n"
+            "!\n"
+            "!  Dans ce fichier sont enregistrées les variantes\n"
+            "! graphiques du corpus traité. Chaque ligne est\n"
+            "! composée de deux chaînes séparées\n"
+            "! - soit par le caractère ';' :\n"
+            "!   à gauche, la graphie classique, à droite la graphie\n"
+            "!   alternative, même si elle n'est pas toujours utilisée.\n" 
+            "!   Les désinences et les radicaux sont calculés en\n" 
+            "!   fonction de ces transformations, et les formes du\n"
+            "!   texte sont elles aussi transformées.\n"
+            "! - soit par le caractère '>' : à gauche une expression\n"
+            "!   rationnelle qui permet de retrouver la graphie\n"
+            "!   classique, à droite du '>'. On recourt à cette transfor-\n"
+            "!   mation dans les cas où la chaîne à changer peut se\n"
+            "!   trouver à cheval entre radical et désinence.\n"
+            "!\n";
+        QString           enreg = "enregistrer";
         QString           fichier;
         Flexion*          flexion;
         QTextStream       flux;
@@ -270,16 +270,11 @@ class MainWindow : public QMainWindow
         QStringList       litems;
         Lemme*            lemme = 0;
         QStringList       lmodeles;
-        void              majInfo(bool barre=true);
-        void              majLinMorph();
         MapLem            ml;
         QStringListModel* modele;
         QStringListModel* modeleIrr;
         QStringListModel* modeleM; // morphos
         Lemme*            nLemme = 0;
-        void              peupleLexiques();
-        void              peupleModules();
-        void              reinit();
         qint64            tailleF;
 
         // irréguliers
@@ -311,9 +306,14 @@ class MainWindow : public QMainWindow
         QStringList       lvarGraph;
         qint64            posFC;
         QList<qint64>     echecs;  // liste des positions d'échec
-        // navigation
-        void        porro(int pas);
-        void        retro(int pas);
+        // fonctions
+        void              majInfo(bool barre=true);
+        void              majLinMorph();
+        void              peupleLexiques();
+        void              peupleModules();
+        void              porro(int pas);
+        void              reinit();
+        void              retro(int pas);
 
     private slots:
         void        activerM();
@@ -348,7 +348,9 @@ class MainWindow : public QMainWindow
         void        ouvrir(QString nf="", qint64 p=0);
         void        paquet();
         void        preAn();
-        //void        reserve();
+        //void      reserve();
+        void        reserveB();
+        void        reserveH();
         void        retLem();
         void        rotQ();
         void        rouvrir();

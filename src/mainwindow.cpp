@@ -399,8 +399,8 @@ MainWindow::MainWindow()
     hLayReserv = new QHBoxLayout(groupBoxReserv);
     hLayReserv->setSpacing(6);
     hLayReserv->setContentsMargins(11, 11, 11, 11);
-    listViewReserv = new QListView(groupBoxReserv);
-    hLayReserv->addWidget(listViewReserv);
+    lwReserv = new QListWidget(groupBoxReserv);
+    hLayReserv->addWidget(lwReserv);
     vLayReserv = new QVBoxLayout();
     vLayReserv->setSpacing(6);
     bReservHaut = new QPushButton(groupBoxReserv);
@@ -738,7 +738,8 @@ void MainWindow::connecte()
     connect(pushButtonSupprM, SIGNAL(clicked()), this, SLOT(supprM()));
     connect(pushButtonPaquet, SIGNAL(clicked()), this, SLOT(paquet()));
     connect(pushButtonInstM, SIGNAL(clicked()), this, SLOT(instM()));
-
+    connect(bReservBas, SIGNAL(clicked()), this, SLOT(reserveB()));
+    connect(bReservHaut, SIGNAL(clicked()), this, SLOT(reserveH()));
 }
 
 QString MainWindow::contexte(qint64 p, QString f)
@@ -1466,66 +1467,21 @@ void MainWindow::peupleModules()
     for (int i=0;i<lm.count();++i)
     {
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
-        if (ni->text() == module) item = ni;
+        new QListWidgetItem(lm.at(i), lwReserv);
+        if (ni->text() == module)
+        {
+            item = ni;
+            // lemmes.la et lem_ext.la sont toujours présents
+            // juste après le module choisi
+            new QListWidgetItem("classique", lwReserv);
+            new QListWidgetItem("extension", lwReserv);
+        }
     }
     if (item != 0) listWidgetM->setCurrentItem(item);
     // info du module
     QStringList info = LemCore::lignesFichier(ajDir+"info.txt");
     editInfoM->setText(info.join("<br/>\n"));
     majInfo();
-    /*
-    // chargement des lexiques
-    lemcore = new LemCore(this, resDir, ajDir);
-    lemcore->setExtension(true);
-    lemcore->setCible("fr");
-    flexion = new Flexion(lemcore);
-    // lemmes
-    litems = lemcore->cles();
-    qSort(litems.begin(), litems.end(), Ch::sort_i);
-    // compléteur lemmes
-    modele = new QStringListModel(litems);
-    for (int i=0;i<litems.count();++i)
-    {
-        QString lem = litems.at(i);
-        new QListWidgetItem(lem, listWidgetLemmes);
-    }
-    // modèles
-    lmodeles = lemcore->lModeles();
-    comboBoxModele->addItems(lmodeles);
-    // irréguliers
-    itemsIrr = lisLignes(ajDir+"irregs.la", true);
-    for (int i=0;i<itemsIrr.count();++i)
-    {
-        new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
-    }
-    // morphos
-    lMorphos.clear();
-    QStringList listeM = lemcore->lignesFichier(resDir+"morphos.fr");
-    for (int i=0;i<listeM.count();++i)
-    {
-        QString lin = listeM.at(i).simplified();
-        if (lin == "nominatif") break;
-        lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
-    }
-    // variantes graphiques
-    lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
-    plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
-    // cocher les cases correspondantes
-    initCoches(lvarGraph);
-
-    // listes pour les morphos irregs
-    lCas << ""; lGenre << ""; lMod << ""; lNb << "";
-    lPers << ""; lTps<<""; lVx << "";
-    for (int i=0;i<6;++i) lCas   << lemcore->cas(i);
-    for (int i=0;i<3;++i) lGenre << lemcore->genre(i);
-    for (int i=0;i<9;++i) lMod   << lemcore->modes(i);
-    for (int i=0;i<2;++i) lNb    << lemcore->nombre(i);
-    lPers <<"1ère"<<"2ème"<<"3ème";
-    for (int i=0;i<6;++i) lTps   << lemcore->temps(i);
-    for (int i=0;i<2;++i) lVx    << lemcore->voix(i);
-    iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
-    iTps = 0; iVx = 0;
-    */
 }
 
 void MainWindow::porro(int pas)
@@ -1556,6 +1512,38 @@ void MainWindow::reinit()
     peupleLexiques();
     tabWidget->setCurrentIndex(0);
     qApp->restoreOverrideCursor();
+}
+
+// baisse la priorité dans le chargement des lexique
+void MainWindow::reserveB() 
+{
+    for (int i=0;i<lwReserv->count()-1;++i)
+    {
+        // détecter l'item surligné
+        QListWidgetItem *li = lwReserv->item(i);
+        if (li->isSelected())
+        {
+            // le déplacer
+            lwReserv->takeItem(i);
+            lwReserv->insertItem(i+1, li);
+        }
+    }
+}
+
+// hausse la priorité dans le chargement des lexique
+void MainWindow::reserveH()
+{
+    for (int i=1;i<lwReserv->count();++i)
+    {
+        // détecter l'item surligné
+        QListWidgetItem *li = lwReserv->item(i);
+        if (li->isSelected())
+        {
+            // le déplacer
+            lwReserv->takeItem(i);
+            lwReserv->insertItem(i-1, li);
+        }
+    }
 }
 
 void MainWindow::retLem()
