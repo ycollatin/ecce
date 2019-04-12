@@ -21,6 +21,7 @@
 /*
 
    FIXME
+   - Vulsinus est inaccessible par la ligne de recherche (U/V u/v)
    - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
@@ -407,6 +408,8 @@ MainWindow::MainWindow()
     vLayReserv->addWidget(bReservHaut);
     bReservBas = new QPushButton(groupBoxReserv);
     vLayReserv->addWidget(bReservBas);
+    bReservNul = new QPushButton(groupBoxReserv);
+    vLayReserv->addWidget(bReservNul);
     spacerHB = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     vLayReserv->addItem(spacerHB);
     hLayReserv->addLayout(vLayReserv);
@@ -578,6 +581,7 @@ void MainWindow::retranslateUi()
     groupBoxReserv->setTitle(QApplication::translate("Ecce", "Réservoirs"));
     bReservHaut->setText("▲");
     bReservBas->setText("▼");
+    bReservNul->setText("▬");
 
     menuFichier->setTitle(QApplication::translate("MainWindow", "&Fichier", Q_NULLPTR));
     //menu_Aide->setTitle(QApplication::translate("MainWindow", "&Aide", Q_NULLPTR));
@@ -740,6 +744,7 @@ void MainWindow::connecte()
     connect(pushButtonInstM, SIGNAL(clicked()), this, SLOT(instM()));
     connect(bReservBas, SIGNAL(clicked()), this, SLOT(reserveB()));
     connect(bReservHaut, SIGNAL(clicked()), this, SLOT(reserveH()));
+    connect(bReservNul, SIGNAL(clicked()), this, SLOT(reserveX()));
 }
 
 QString MainWindow::contexte(qint64 p, QString f)
@@ -1467,7 +1472,6 @@ void MainWindow::peupleModules()
     for (int i=0;i<lm.count();++i)
     {
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
-        new QListWidgetItem(lm.at(i), lwReserv);
         if (ni->text() == module)
         {
             item = ni;
@@ -1476,6 +1480,7 @@ void MainWindow::peupleModules()
             new QListWidgetItem("classique", lwReserv);
             new QListWidgetItem("extension", lwReserv);
         }
+        else new QListWidgetItem(lm.at(i), lwReserv);
     }
     if (item != 0) listWidgetM->setCurrentItem(item);
     // info du module
@@ -1517,21 +1522,27 @@ void MainWindow::reinit()
 // baisse la priorité dans le chargement des lexique
 void MainWindow::reserveB() 
 {
-    for (int i=0;i<lwReserv->count()-1;++i)
+    int cr = lwReserv->currentRow();
+    if (cr < lwReserv->count()-1)
     {
-        // détecter l'item surligné
-        QListWidgetItem *li = lwReserv->item(i);
-        if (li->isSelected())
-        {
-            // le déplacer
-            lwReserv->takeItem(i);
-            lwReserv->insertItem(i+1, li);
-        }
+        lwReserv->insertItem(cr+1, lwReserv->takeItem(cr));
+        lwReserv->setCurrentRow(cr+1);
     }
 }
 
 // hausse la priorité dans le chargement des lexique
 void MainWindow::reserveH()
+{
+    int cr = lwReserv->currentRow();
+    if (cr > 0)
+    {
+        lwReserv->insertItem(cr-1, lwReserv->takeItem(cr));
+        lwReserv->setCurrentRow(cr-1);
+    }
+}
+
+// Désactivation du chargement des lexique
+void MainWindow::reserveX()
 {
     for (int i=1;i<lwReserv->count();++i)
     {
@@ -1539,9 +1550,11 @@ void MainWindow::reserveH()
         QListWidgetItem *li = lwReserv->item(i);
         if (li->isSelected())
         {
-            // le déplacer
-            lwReserv->takeItem(i);
-            lwReserv->insertItem(i-1, li);
+            // le désactiver, ou l'activer
+            QString t = li->text(); 
+            if (t.endsWith(" ignoré"))
+                li->setText(t.left(t.size()-7));
+            else li->setText(li->text() + " ignoré");
         }
     }
 }

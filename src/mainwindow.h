@@ -223,6 +223,7 @@ class MainWindow : public QMainWindow
         QVBoxLayout *vLayReserv;
         QPushButton *bReservHaut;
         QPushButton *bReservBas;
+        QPushButton *bReservNul;
         QSpacerItem *spacerHB;
         // menu et barrre d'état
         QMenuBar *menuBar;
@@ -351,6 +352,7 @@ class MainWindow : public QMainWindow
         //void      reserve();
         void        reserveB();
         void        reserveH();
+        void        reserveX();  // désactivation 
         void        retLem();
         void        rotQ();
         void        rouvrir();
