@@ -41,7 +41,7 @@
  * de lecture des données : modèles, lexique,
  * traductions et irréguliers.
  */
-LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(parent)
+LemCore::LemCore(QObject *parent, QString resDir, QStringList ajDir) : QObject(parent)
 {
     if (resDir.isEmpty())
     {
@@ -51,7 +51,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
     else _resDir = resDir;
     if (!ajDir.isEmpty())
     {
-        _ajDir = ajDir;
+        _ajDir = ajDir.at(0);
         if (!_ajDir.endsWith('/')) _ajDir.append('/');
     }
     _extension = false;
@@ -84,8 +84,15 @@ LemCore::LemCore(QObject *parent, QString resDir, QString ajDir) : QObject(paren
     }
     lisVarGraph();
     lisModeles(_resDir + "modeles.la");
-    lisModule();
-    lisLexique(1);
+    for (int i=0;i<ajDir.count();++i)
+    {
+        QString nl = ajDir.at(i);
+        if (nl == "classique")
+            lisLexique(1);
+        else if (ajDir.at(i) == "extension")
+           lisExtension();
+        else lisModule(ajDir.at(i));
+    }
     lisTags(false);
     lisTraductions(true, false);
     if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
@@ -1372,11 +1379,11 @@ void LemCore::setExtension(bool e)
     }
 }
 
-void LemCore::lisModule()
+void LemCore::lisModule(QString m) 
 {
-    lisFichierLexique(_ajDir+"lemmes.la", 0);
-    lisTraductions(_ajDir+"lemmes.fr");
-    lisModeles(_ajDir+"modeles.la");
+    lisFichierLexique(m+"/lemmes.la", 0);
+    lisTraductions(m+"/lemmes.fr");
+    lisModeles(m+"/modeles.la");
 }
 
 /**

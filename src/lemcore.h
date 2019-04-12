@@ -115,7 +115,7 @@ class LemCore : public QObject
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.
 
    public:
-    LemCore(QObject *parent = 0, QString resDir="", QString ajDir="");
+    LemCore(QObject *parent, QString resDir, QStringList ajDir);
     void                   ajDesinence(Desinence *d);
     QString                ajDir();  // accesseurs chemins
     QString                dirLa();  //     " ...
@@ -148,7 +148,7 @@ class LemCore : public QObject
     QStringList static     lignesFichier(QString nf);
     QStringList            lignesVG();
     void                   lisModeles(QString nf);
-    void                   lisModule();
+    void                   lisModule(QString m);
     //void                   lisVarGraph(QString nf);
     void                   lisVarGraph();
     void                   lisVarGraph(QStringList lignes);

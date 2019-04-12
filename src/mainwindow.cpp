@@ -1392,8 +1392,14 @@ void MainWindow::paquet()
 
 void MainWindow::peupleLexiques()
 {
+    // liste des lexiques à charger
+    QStringList llex;
+    llex.append(ajDir);
+    for (int i=0;i<lwReserv->count();++i)
+        if (!lwReserv->item(i)->text().endsWith("inactif"))
+            llex.append(lwReserv->item(i)->text());
     // chargement des lexiques
-    lemcore = new LemCore(this, resDir, ajDir);
+    lemcore = new LemCore(this, resDir, llex);
     lemcore->setExtension(true);
     lemcore->setCible("fr");
     flexion = new Flexion(lemcore);
