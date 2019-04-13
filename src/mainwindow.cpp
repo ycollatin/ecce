@@ -21,6 +21,8 @@
 /*
 
    FIXME
+   - supprimé peupleModules dans reinit -> plantage lors de la création de paquet
+   - Après utilisation, doublons dans la liste des modules ??
    - Vulsinus est inaccessible par la ligne de recherche (U/V u/v)
    - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
@@ -1518,8 +1520,8 @@ void MainWindow::reinit()
     itemsIrr.clear();
     listWidgetM->clear();
     lvarGraph.clear();
-    // recharger toutes les données
-    peupleModules();
+    // (re)charger toutes les données
+    //peupleModules();
     peupleLexiques();
     tabWidget->setCurrentIndex(0);
     qApp->restoreOverrideCursor();
