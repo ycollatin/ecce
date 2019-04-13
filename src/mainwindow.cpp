@@ -816,11 +816,11 @@ void MainWindow::creerM()
     settings.beginGroup("lexique");
     settings.setValue("module", module);
     settings.endGroup();
-    // recharger toutes les données
-    reinit();
     // affichage
     QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     listWidgetM->setCurrentItem(item);
+    // recharger toutes les données
+    reinit();
 }
 
 void MainWindow::debut()
@@ -1394,6 +1394,15 @@ void MainWindow::paquet()
 
 void MainWindow::peupleLexiques()
 {
+    // plainTextEditVariantes->clear();
+    if (lemcore != 0) delete lemcore;
+    litems.clear();
+    if (modele != 0) delete modele;
+    itemsIrr.clear();
+    // listWidgetM->clear();
+    lvarGraph.clear();
+    // (re)charger toutes les données
+    // peupleModules();
     // liste des lexiques à charger
     QStringList llex;
     llex.append(ajDir);
@@ -1513,6 +1522,7 @@ void MainWindow::porro(int pas)
 void MainWindow::reinit()
 {
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
+    /*
     plainTextEditVariantes->clear();
     if (lemcore != 0) delete lemcore;
     litems.clear();
@@ -1522,6 +1532,7 @@ void MainWindow::reinit()
     lvarGraph.clear();
     // (re)charger toutes les données
     //peupleModules();
+    */
     peupleLexiques();
     tabWidget->setCurrentIndex(0);
     qApp->restoreOverrideCursor();
