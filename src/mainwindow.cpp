@@ -21,8 +21,6 @@
 /*
 
    FIXME
-   - supprimé peupleModules dans reinit -> plantage lors de la création de paquet
-   - Après utilisation, doublons dans la liste des modules ??
    - Vulsinus est inaccessible par la ligne de recherche (U/V u/v)
    - Qqf plantage après ajout d'irrégulier
    - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
@@ -34,18 +32,12 @@
    - laïci non reconnu (tréma)
 
    TODO
-   - Les lexiques sont déplacables dans une liste ordonnée. Le
-     premier lexique chargé désactive ses homonymes dans les suivants.
-   - Dans la liste des modules : le classique activé par défaut,
-     en dernière position
-   - activation d'un nouveau module : décider des modules de
-     référence. Souvent classique + lem_ext, mais on peut imaginer
-     * classique + lem_ext + hagio
-     * classique + plaute
+   - romain en majuscules : VI (6) prioritaire
+     en minuscules        : vi (vis) prioritaire
    - Un nouvel outil pourrait servir :
      à nettoyer un texte ?
      à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ? 
-   - peuplement à l'ouverture : donner une marche à suivre dans le label d'info.
+   - peuplement à l'ouverture : donner une marche à suivre en rouge dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
    - suppression d'un lemme : trouver une syntaxe :
@@ -942,7 +934,7 @@ void MainWindow::editIrr(const QModelIndex &m)
  * \brief écrit sur le disque dans le fichier f les changements
  * La ligne l de clé k. Si la clé est introuvable, la ligne
  * est ajoutée à sa place dans l'ordre alpha. Sinon, la ligne
- * l remplace la lignre trouvée.
+ * l remplace la ligne trouvée.
  */
 void MainWindow::editModule(QString k, QString l, QString f)
 {
@@ -1522,17 +1514,6 @@ void MainWindow::porro(int pas)
 void MainWindow::reinit()
 {
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
-    /*
-    plainTextEditVariantes->clear();
-    if (lemcore != 0) delete lemcore;
-    litems.clear();
-    if (modele != 0) delete modele;
-    itemsIrr.clear();
-    listWidgetM->clear();
-    lvarGraph.clear();
-    // (re)charger toutes les données
-    //peupleModules();
-    */
     peupleLexiques();
     tabWidget->setCurrentIndex(0);
     qApp->restoreOverrideCursor();
