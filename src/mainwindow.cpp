@@ -32,6 +32,8 @@
    - laïci non reconnu (tréma)
 
    TODO
+   - désactiver par défaut les autres modules ;
+   - enregistrer la config dans les préférences ;
    - romain en majuscules : VI (6) prioritaire
      en minuscules        : vi (vis) prioritaire
    - Un nouvel outil pourrait servir :
