@@ -1234,7 +1234,7 @@ QString MainWindow::ligneFr()
     if (lemme != 0) cl = lemme->cleF();
     else if (nLemme != 0) cl = nLemme->cleF();
     else return "";
-    return QString("%1|%2")
+    return QString("%1:%2")
         .arg(cl)
         .arg(lineEditTr->text());
 }
