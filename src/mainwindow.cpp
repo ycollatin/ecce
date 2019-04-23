@@ -23,7 +23,6 @@
    FIXME
    - Vulsinus est inaccessible par la ligne de recherche (U/V u/v)
    - Qqf plantage après ajout d'irrégulier
-   - Suppression d'un lemme dans .local : la traduction n'est pas supprimée
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
@@ -1075,7 +1074,7 @@ void MainWindow::enr()
     QString lc = linLa.section(QRegExp("[=|]"),0,0);
     lc = Ch::atone(lc);
     // lc est-il un homographe ?
-    bool remplace = true;
+    bool remplace = false;
     if (lemme != 0 && lemme->origin() < 2)
     {
         for (int i=1;i<4;++i)
@@ -1086,6 +1085,7 @@ void MainWindow::enr()
                 continue;
             else
             {
+                remplace = true;
                 QMessageBox boite(QMessageBox::Question, tr("lexique"), 
                 "Le lexique a un lemme "+lc, 0, this);
                 boite.addButton("Remplacer",QMessageBox::YesRole);
