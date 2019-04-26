@@ -31,6 +31,7 @@
    - laïci non reconnu (tréma)
 
    TODO
+   - afficher les lignes de lemmes.la et .fr, irregs.la en construction.
    - désactiver par défaut les autres modules ;
    - enregistrer la config dans les préférences ;
    - romain en majuscules : VI (6) prioritaire
@@ -184,6 +185,10 @@ MainWindow::MainWindow()
     lineEditTr = new QLineEdit(frame1);
     formLayout->setWidget(5, QFormLayout::FieldRole, lineEditTr);
     verticalLayout_2->addLayout(formLayout);
+    labelLa = new QLabel(frame1);
+    verticalLayout_2->addWidget(labelLa);
+    labelFr = new QLabel(frame1);
+    verticalLayout_2->addWidget(labelFr);
     horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
     boutonEnr = new QToolButton(frame1);
@@ -531,6 +536,8 @@ void MainWindow::retranslateUi()
     labelSupin->setText(QApplication::translate("MainWindow", "rad. supin", Q_NULLPTR));
     labelMorpho->setText(QApplication::translate("MainWindow", "morphologie", Q_NULLPTR));
     labelTr->setText(QApplication::translate("MainWindow", "traductions", Q_NULLPTR));
+    labelLa->setText("ligne dans lemmes.la");
+    labelFr->setText("ligne dans lemmes.fr");
     boutonSuppr->setText(QApplication::translate("MainWindow", "supprimer", Q_NULLPTR));
     boutonLemSuiv->setText(QApplication::translate("MainWindow", "lemme suivant", Q_NULLPTR));
     tabWidget->setTabText(tabWidget->indexOf(tabLexique),
@@ -1200,6 +1207,9 @@ QString MainWindow::ligneLa(QString modl)
     nLemme = new Lemme(ret, 0, lemcore);
     nLemme->ajTrad(lineEditTr->text(), "fr");
     textEditFlexion->setText(flexion->tableau(nLemme));
+    // màj de labelLa et labelFr
+    labelLa->setText(ret);
+    labelFr->setText(QString("%1:%2").arg(Ch::atone(grq)).arg(lineEditTr->text()));
     return ret;
 }
 

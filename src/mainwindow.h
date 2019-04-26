@@ -110,7 +110,6 @@ class MainWindow : public QMainWindow
         QToolButton *bAv;
         QToolButton *bAvAv;
         QToolButton *bDebut;
-        //QSpacerItem *verticalSpacer_2;
         QListWidget *listWidgetLemmes;
         QFrame *frame1;
         QVBoxLayout *verticalLayout_2;
@@ -128,6 +127,8 @@ class MainWindow : public QMainWindow
         QLineEdit *lineMorpho;
         QLabel *labelTr;
         QLineEdit *lineEditTr;
+        QLabel* labelLa;
+        QLabel* labelFr;
         QHBoxLayout *horizontalLayout_3;
         QToolButton *boutonEnr;
         QPushButton *boutonSuppr;
