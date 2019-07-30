@@ -23736,7 +23736,7 @@ vitrearius:verrier
 vitricus:beau-père (mari de la mère qui a des enfants d'un autre lit)
 vitreum:verre (brisé)
 vitrum:verre, pastel (ou guède, plante donnant une couleur bleue)
-vitreus:de verre q(uitrea, orum : objets de verre)
+vitreus:de verre (uitrea, orum : objets de verre)
 vitta:la bandelette, le ruban
 vittatus:orné de bandelettes, orné de rubans, pavoisé
 vitula:génisse
@@ -23922,7 +23922,7 @@ Zephyrus:zéphyr (vent d'ouest)
 Zetes:Zetes (fils de Borée et d'Orithye, un Argonaute)
 Zethus:Zethus (fils de Jupiter et d'Antiope, frère d'Amphion)
 Zetus:Zéthos
-Zeugma2:Zeugma2 (ville de Coelé-Syrie, sur l'Euphrate)
+Zeugma2:Zeugma (ville de Coelé-Syrie, sur l'Euphrate)
 Zeuxis:Zeuxis (peintre grec)
 Ziobetis:Ziobetis (fleuve de l'Hyrcarnie)
 Zmintheus:Sminthien, tueur de souris (une épithèt d'Apollon)
