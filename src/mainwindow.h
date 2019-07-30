@@ -236,6 +236,7 @@ class MainWindow : public QMainWindow
 
         // variables texte
         QStringList       aaa;
+		QString			  chOuvrir;
         QCompleter*       completeurM;
         void              connecte();
         QString           contexte(qint64 p, QString f="");

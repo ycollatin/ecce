@@ -48,8 +48,8 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
+#include <quazip5/quazip.h>
+#include <quazip5/quazipfile.h>
 #include <QThread>
 #include <mainwindow.h>
 
@@ -485,6 +485,7 @@ MainWindow::MainWindow()
         << "OŎŌ"
         << "UŬŪ"
         << "YЎȲ";
+	chOuvrir = "./";
     connecte();
     lemcore = 0;
     modele = 0;
@@ -845,11 +846,17 @@ void MainWindow::echec()
     {
         forme.clear();
         // c est une lettre. Finir le mot.
-        while (c.isLetter() || c.category()==QChar::Mark_NonSpacing)
+        while (!flux.atEnd() && (c.isLetter() || c.category()==QChar::Mark_NonSpacing))
             flux >> c;
+		if (flux.atEnd()) {
+			break;
+		}
         // aller au début du mot suivant.
-        while (!c.isLetter())
+        while (!flux.atEnd() && !c.isLetter())
             flux >> c;
+		if (flux.atEnd()) {
+			break;
+		}
         posEchec = flux.pos();
         // lire la forme
         do
@@ -860,7 +867,6 @@ void MainWindow::echec()
         while (!flux.atEnd()
                && (c.isLetter()
                    || c.category()==QChar::Mark_NonSpacing)); 
-
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -1270,7 +1276,7 @@ void MainWindow::ouvrir(QString nf, qint64 p)
 {
     if (nf.isEmpty())
     {
-        fichier = QFileDialog::getOpenFileName(0, "Fichier à analyser", "./");
+        fichier = QFileDialog::getOpenFileName(0, "Fichier à analyser", chOuvrir);
     }
     else fichier = nf;
     if (fichier.isEmpty()) return;
@@ -1293,6 +1299,8 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     settings.endGroup();
     majInfo();
     echecs.clear();
+	QDir dir;
+	chOuvrir = dir.filePath(fichier);
 }
 
 void MainWindow::majInfo(bool barre)
