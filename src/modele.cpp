@@ -279,8 +279,8 @@ void Modele::interprete(QStringList ll)
                 //_pere = parent->modele(eclats.at(1));
                 _pere = _lemmatiseur->modele(eclats.at(1));
                 break;
-            case 2:  // des+: désinences s'ajoutant à celles du père
-            case 3:  // des: désinences écrasant celles du père
+            case 2: // des: désinences écrasant celles du père
+            case 3: // des+: désinences s'ajoutant à celles du père
                 {
                     QList<int> li = listeI(eclats.at(1));
                     int r = eclats.at(2).toInt();
