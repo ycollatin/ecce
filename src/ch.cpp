@@ -123,7 +123,7 @@ QString Ch::atone(QString a, bool bdc)
 /**
  * \fn Ch:chemin(QString f, char t)
  * \brief chemin complet du fichier f, de type t
- * 'e' = exécutable
+ * 'e' = extension
  * 'd' = données
  * 'p' = données perso
  */
