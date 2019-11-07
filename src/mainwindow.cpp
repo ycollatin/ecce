@@ -31,6 +31,7 @@
    - laïci non reconnu (tréma)
 
    TODO
+   - Prendre en compte les modèles, et les éditer.
    - afficher les lignes de lemmes.la et .fr, irregs.la en construction.
    - désactiver par défaut les autres modules ;
    - enregistrer la config dans les préférences ;
@@ -1526,25 +1527,16 @@ void MainWindow::peupleListeModules()
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     QListWidgetItem* item = 0;
     listWidgetM->clear();
+	new QListWidgetItem("classique", lwReserv);
+	new QListWidgetItem("extension", lwReserv);
     for (int i=0;i<lm.count();++i)
     {
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
-        if (ni->text() == module)
-        {
-            item = ni;
-            // lemmes.la et lem_ext.la sont toujours présents
-            new QListWidgetItem("classique", lwReserv);
-            new QListWidgetItem("extension", lwReserv);
-        }
+        if (ni->text() == module) item = ni;
         else new QListWidgetItem(lm.at(i), lwReserv);
     }
     if (item != 0) listWidgetM->setCurrentItem(item);
     // info du module
-	/*
-    infoM = LemCore::lignesFichier(ajDir+"info.txt");
-    editInfoM->setText(info.join("<br/>\n"));
-    majInfo();
-	*/
 	majInfoM();
 }
 
