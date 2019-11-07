@@ -88,6 +88,7 @@ class MainWindow : public QMainWindow
         QHBoxLayout *layoutInfo;
         QLabel      *labelInfo;
         QTabWidget  *tabWidget;
+
         // onglet lexique
         QWidget     *tabLexique;
         QVBoxLayout *verticalLayout_Lex;
@@ -134,6 +135,7 @@ class MainWindow : public QMainWindow
         QPushButton *boutonSuppr;
         QPushButton* boutonLemSuiv;
         QTextEdit *textEditFlexion;
+
         // onglet variantes graphiques
         QWidget *tabVarGraph;
         QVBoxLayout *verticalLayout_5;
@@ -166,6 +168,7 @@ class MainWindow : public QMainWindow
         QPlainTextEdit *plainTextEditVariantes;
         QWidget *layoutWidget1;
         QPushButton *btnEnrVar;
+
         // onglet irréguliers
         QWidget *tabIrr;
         QVBoxLayout *verticalLayout_I;
@@ -178,7 +181,6 @@ class MainWindow : public QMainWindow
         QLabel *labelFormeIrr;
         QLabel *labelMorphoIrr;
         QHBoxLayout *horizontalLayout_2;
-        //QPushButton *pushButtonReinit;
         QLineEdit *linIrreg;
         QLineEdit *lineEditNumMorpho;
         QLabel *labelNumMorpho;
@@ -198,6 +200,7 @@ class MainWindow : public QMainWindow
         QPushButton *bsupprIrr;
         QSpacerItem *spacerIrrBas;
         QListWidget *listWidgetIrr;
+
         // onglet modules lexicaux
         QWidget     *tabM;
         QVBoxLayout *verticalLayoutM;
@@ -265,6 +268,7 @@ class MainWindow : public QMainWindow
         QString           forme;
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         int               iLemSuiv;
+		QStringList		  infoM;
         LemCore*          lemcore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
@@ -351,6 +355,7 @@ class MainWindow : public QMainWindow
         QString     ligneLa(QString modl="");
         void        lignesVisibles(QString chModele);
         QStringList lisLignes(QString nf, bool ignoreComm=false);
+		void		majInfoM();   // mise à jour de l'info du module sélectionné
         void        ouvrir(QString nf="", qint64 p=0);
         void        paquet();
         void        preAn();

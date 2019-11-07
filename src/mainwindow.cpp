@@ -687,10 +687,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::connecte()
 {
     // fichier
-    //connect(actionCopier, SIGNAL(triggered()), this, SLOT(copier()));
     connect(actionOuvrir, SIGNAL(triggered()), this, SLOT(ouvrir()));
     connect(actionRouvrir, SIGNAL(triggered()), this, SLOT(rouvrir()));
-    //connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(fermer()));
     // sélection d'un lemme
     connect(lineEditLemme, SIGNAL(textChanged(QString)), this, SLOT(selLem(QString)));
@@ -744,6 +742,7 @@ void MainWindow::connecte()
     connect(bAjIrr, SIGNAL(clicked()), this, SLOT(ajIrr()));
     connect(bsupprIrr, SIGNAL(clicked()), this, SLOT(supprIrr()));
     // modules lexicaux
+	connect(listWidgetM, SIGNAL(itemSelectionChanged()), this, SLOT(majInfoM()));
     connect(pushButtonCreeM, SIGNAL(clicked()), this, SLOT(creerM()));
     connect(pushButtonActM, SIGNAL(clicked()), this, SLOT(activerM()));
     connect(pushButtonSupprM, SIGNAL(clicked()), this, SLOT(supprM()));
@@ -1276,6 +1275,16 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
     return retour;
 }
 
+void MainWindow::majInfoM()
+{
+	qDebug()<<"majInfoM";
+    QString dirm = listWidgetM->currentItem()->text();
+	qDebug()<<"dirm"<<dirm;
+    QStringList llm = LemCore::lignesFichier(modDir + dirm + "/info.txt");
+	qDebug()<<"llm"<<llm;
+	editInfoM->setText(llm.join("<br/>"));
+}
+
 void MainWindow::ouvrir(QString nf, qint64 p)
 {
     if (nf.isEmpty())
@@ -1524,7 +1533,6 @@ void MainWindow::peupleListeModules()
         {
             item = ni;
             // lemmes.la et lem_ext.la sont toujours présents
-            // juste après le module choisi
             new QListWidgetItem("classique", lwReserv);
             new QListWidgetItem("extension", lwReserv);
         }
@@ -1532,9 +1540,12 @@ void MainWindow::peupleListeModules()
     }
     if (item != 0) listWidgetM->setCurrentItem(item);
     // info du module
-    QStringList info = LemCore::lignesFichier(ajDir+"info.txt");
+	/*
+    infoM = LemCore::lignesFichier(ajDir+"info.txt");
     editInfoM->setText(info.join("<br/>\n"));
     majInfo();
+	*/
+	majInfoM();
 }
 
 void MainWindow::porro(int pas)
