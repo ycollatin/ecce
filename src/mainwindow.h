@@ -309,11 +309,14 @@ class MainWindow : public QMainWindow
         QStringList       lvarGraph;
         qint64            posFC;
         QList<qint64>     echecs;  // liste des positions d'échec
+		// préférences
+		QSettings* 		  settings;
+
         // fonctions
         void              majInfo(bool barre=true);
         void              majLinMorph();
         void              peupleLexiques();
-        void              peupleModules();
+        void              peupleListeModules();
         void              porro(int pas);
         void              reinit();
         void              retro(int pas);

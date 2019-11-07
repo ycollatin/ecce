@@ -55,6 +55,11 @@
 
 MainWindow::MainWindow()
 {
+	QCoreApplication::setOrganizationName("Collatinus");
+	QCoreApplication::setOrganizationDomain("biblissima.fr");
+	QCoreApplication::setApplicationName("Ecce");
+	settings = new QSettings;
+
     // actions
     actionArr       = new QAction(this);
     actionArrArr    = new QAction(this);
@@ -446,24 +451,24 @@ MainWindow::MainWindow()
     setStatusBar(statusBar);
     // textes
     retranslateUi();
-    QSettings settings("Collatinus", "ecce");
+    //QSettings settings;
     // état de la fenêtre
-    settings.beginGroup("fenetre");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    settings.endGroup();
+    settings->beginGroup("fenetre");
+    restoreGeometry(settings->value("geometry").toByteArray());
+    settings->endGroup();
     // dernier fichier chargé
-    settings.beginGroup("fichiers");
-    fichier = settings.value("fichier", "").toString();
-    posFC = settings.value("signet","0").toLongLong();
-    forme = settings.value("forme", "").toString();
-    settings.endGroup();
-    settings.beginGroup("lexique");
-    module = settings.value("module", "").toString();
+    settings->beginGroup("fichiers");
+    fichier = settings->value("fichier", "").toString();
+    posFC = settings->value("signet","0").toLongLong();
+    forme = settings->value("forme", "").toString();
+    settings->endGroup();
+    settings->beginGroup("lexique");
+    module = settings->value("module", "").toString();
     if (!fichier.isEmpty())
     {
         ouvrir(fichier, posFC);
     }
-    settings.endGroup();
+    settings->endGroup();
 
 
     // liste des lignes demandant des quantités
@@ -489,7 +494,7 @@ MainWindow::MainWindow()
     connecte();
     lemcore = 0;
     modele = 0;
-    peupleModules();
+    peupleListeModules();
 }
 
 /*
@@ -603,10 +608,10 @@ void MainWindow::activerM()
     QString exModule = module;
     module = item->text();
     if (module != exModule) posFC = 0;
-    QSettings settings("Collatinus", "ecce");
-    settings.beginGroup("lexique");
-    settings.setValue("module", module);
-    settings.endGroup();
+    //QSettings settings("Collatinus", "ecce");
+    settings->beginGroup("lexique");
+    settings->setValue("module", module);
+    settings->endGroup();
     // recharger toutes les données
     reinit();
 }
@@ -665,18 +670,17 @@ QString MainWindow::cle(QString ligne)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    QSettings settings("Collatinus", "ecce");
-    settings.beginGroup("fenetre");
-    settings.setValue("geometry", saveGeometry());
-    //settings.setValue("windowState", saveState());
-    settings.endGroup();
-    settings.beginGroup("lexique");
-    settings.setValue("module", module);
-    settings.endGroup();
-    settings.beginGroup("fichiers");
-    settings.setValue("signet", posFC);
-    settings.setValue("forme", forme);
-    settings.endGroup();
+    //QSettings settings("Collatinus", "ecce");
+    settings->beginGroup("fenetre");
+    settings->setValue("geometry", saveGeometry());
+    settings->endGroup();
+    settings->beginGroup("lexique");
+    settings->setValue("module", module);
+    settings->endGroup();
+    settings->beginGroup("fichiers");
+    settings->setValue("signet", posFC);
+    settings->setValue("forme", forme);
+    settings->endGroup();
     QMainWindow::closeEvent(event);
 }
 
@@ -813,10 +817,10 @@ void MainWindow::creerM()
     fv.close();
     module = moduletmp;
     // sauver le nom du nouveau module
-    QSettings settings("Collatinus", "ecce");
-    settings.beginGroup("lexique");
-    settings.setValue("module", module);
-    settings.endGroup();
+    //QSettings settings("Collatinus", "ecce");
+    settings->beginGroup("lexique");
+    settings->setValue("module", module);
+    settings->endGroup();
     // affichage
     QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     listWidgetM->setCurrentItem(item);
@@ -1293,10 +1297,10 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     if (posFC > 0) posFC--;
     else debut();
     flux.seek(posFC);
-    QSettings settings("Collatinus", "ecce");
-    settings.beginGroup("fichiers");
-    settings.setValue("fichier", fichier);
-    settings.endGroup();
+    //QSettings settings("Collatinus", "ecce");
+    settings->beginGroup("fichiers");
+    settings->setValue("fichier", fichier);
+    settings->endGroup();
     majInfo();
     echecs.clear();
 	QDir dir;
@@ -1406,21 +1410,36 @@ void MainWindow::paquet()
 
 void MainWindow::peupleLexiques()
 {
-    // plainTextEditVariantes->clear();
+    // vider les données existantes
     if (lemcore != 0) delete lemcore;
     litems.clear();
     if (modele != 0) delete modele;
     itemsIrr.clear();
-    // listWidgetM->clear();
     lvarGraph.clear();
+
     // (re)charger toutes les données
-    // peupleModules();
     // liste des lexiques à charger
     QStringList llex;
     llex.append(ajDir);
     for (int i=0;i<lwReserv->count();++i)
         if (!lwReserv->item(i)->text().endsWith("inactif"))
             llex.append(lwReserv->item(i)->text());
+	/*
+		else
+		{
+			//QSettings settings("Collatinus", "ecce");
+			settings->beginGroup("reservoirs");
+			for (int i=1;i<lwReserv->count();++i)
+			{
+				// détecter l'item surligné
+				QListWidgetItem *li = lwReserv->item(i);
+            	QString t = li->text(); 
+				if (t.endsWith(" ignoré"))
+					settings->setValue(t.left(t.size()-7), "ignoré");
+			}
+			settings->endGroup();
+		}
+	*/
     // chargement des lexiques
     lemcore = new LemCore(this, resDir, llex);
     lemcore->setExtension(true);
@@ -1474,7 +1493,7 @@ void MainWindow::peupleLexiques()
     iTps = 0; iVx = 0;
 }
 
-void MainWindow::peupleModules()
+void MainWindow::peupleListeModules()
 {
     tabWidget->setCurrentIndex(3);
     // définir d'abord les répertoires de l'appli
@@ -1533,6 +1552,7 @@ void MainWindow::porro(int pas)
 
 void MainWindow::reinit()
 {
+
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     peupleLexiques();
     tabWidget->setCurrentIndex(0);
