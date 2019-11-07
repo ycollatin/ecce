@@ -1384,6 +1384,8 @@ void LemCore::lisModule(QString m)
     lisFichierLexique(m+"/lemmes.la", 0);
     lisTraductions(m+"/lemmes.fr");
     lisModeles(m+"/modeles.la");
+	QStringList ll = lignesFichier(m+"/vargraph.la");
+	lisVarGraph(ll);
 }
 
 /**
