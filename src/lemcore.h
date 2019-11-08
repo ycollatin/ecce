@@ -109,7 +109,7 @@ class LemCore : public QObject
     void lisTags(bool tout = false);
 
     QString _resDir;          // Le chemin du répertoire de ressources
-    QString _ajDir;           // chemin du répertoire des ajouts personnels
+    //QString _ajDir;           // chemin du répertoire des ajouts personnels
     bool _extLoaded; // = true après chargement de l'extension
     // Lorsque j'ai chargé l'extension, je dois pouvoir ignorer les analyses qui en viennent.
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.

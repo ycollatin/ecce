@@ -49,11 +49,13 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList ajDir) : QObject(p
         if (!_resDir.endsWith('/')) _resDir.append('/');
     }
     else _resDir = resDir;
+	/*
     if (!ajDir.isEmpty())
     {
         _ajDir = ajDir.at(0);
         if (!_ajDir.endsWith('/')) _ajDir.append('/');
     }
+	*/
     _extension = false;
     _extLoaded = false;
     _nbrLoaded = false;
@@ -95,7 +97,7 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList ajDir) : QObject(p
     }
     lisTags(false);
     lisTraductions(true, false);
-    if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
+    //if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
     lisIrreguliers(_resDir+"irregs.la");
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values())
@@ -414,10 +416,12 @@ void LemCore::ajDesinence(Desinence *d)
     _desinences.insert(gr, d);
 }
 
+/*
 QString LemCore::ajDir()
 {
     return _ajDir;
 }
+*/
 
 bool LemCore::estRomain(QString f)
 {
@@ -1193,7 +1197,7 @@ void LemCore::lisTraductions(QString nf)
 
 void LemCore::lisVarGraph()
 {
-    _lignesVG = lignesFichier(_ajDir+"vargraph.la");
+    _lignesVG = lignesFichier(_resDir+"vargraph.la");
     lisVarGraph(_lignesVG);
 }
 
