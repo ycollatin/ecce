@@ -21,17 +21,21 @@
 /*
 
    FIXME
-   - Vulsinus est inaccessible par la ligne de recherche (U/V u/v)
-   - Qqf plantage après ajout d'irrégulier
+
+   - Les paradigmes modeles.la du module sont mal chargés, alors qu'ils le
+	 sont apparemment bien dans C12. Je crois qu'ils écrasent les donnée
+	 classiques.
+   - échec précédent inopérant
+   - indiquer clairement les raccourcis dans un endroit visible
+   - dans lemcore.cpp:, le créateur de LemCore prend en paramètre la liste ajDir,
+     dont seul le premier item est utilisé sous _ajDir.
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
      saisie lemmes
-   - avertissement de remplacement erronné.
-   - laïci non reconnu (tréma)
 
    TODO
-   - Prendre en compte les modèles, et les éditer.
+   - Prendre en compte les modèles, et les éditer ?
    - afficher les lignes de lemmes.la et .fr, irregs.la en construction.
    - désactiver par défaut les autres modules ;
    - enregistrer la config dans les préférences ;
@@ -210,7 +214,6 @@ MainWindow::MainWindow()
     verticalLayout_2->addWidget(textEditFlexion);
     splitter->addWidget(frame1);
     verticalLayout_Lex->addWidget(splitter);
-    tabWidget->addTab(tabLexique, QString());
 
     // onglet variantes graphiques
     tabVarGraph = new QWidget();
@@ -282,8 +285,6 @@ MainWindow::MainWindow()
     splitter_2->addWidget(layoutWidget1);
     splitterVarGraph->addWidget(splitter_2);
     verticalLayout_5->addWidget(splitterVarGraph);
-    tabWidget->addTab(tabVarGraph, QString());
-    verticalLayout->addWidget(tabWidget);
 
     // onglet irréguliers
     tabIrr = new QWidget();
@@ -356,7 +357,6 @@ MainWindow::MainWindow()
     listWidgetIrr = new QListWidget(splitterIrr);
     splitterIrr->addWidget(listWidgetIrr);
     verticalLayout_I->addWidget(splitterIrr);
-    tabWidget->addTab(tabIrr, QString());
 
     // onglet Modules
     tabM = new QWidget();
@@ -420,13 +420,22 @@ MainWindow::MainWindow()
     vLayReserv->addItem(spacerHB);
     hLayReserv->addLayout(vLayReserv);
     verticalLayoutD->addWidget(groupBoxReserv);
-
     // intégration et index courant
     splitterM->addWidget(widgetM);
     verticalLayoutM->addWidget(splitterM);
+
+	// ajout des onglets
     tabWidget->addTab(tabM, QString());
+    tabWidget->addTab(tabLexique, QString());
+    tabWidget->addTab(tabIrr, QString());
+    tabWidget->addTab(tabVarGraph, QString());
+
+	// ajout du Tabwidget et sélection du tab modules
+    verticalLayout->addWidget(tabWidget);
+    tabWidget->setCurrentIndex(tabWidget->indexOf(tabM));
+
     setCentralWidget(centralWidget);
-    tabWidget->setCurrentIndex(0);
+
     // barre d'outils
     mainToolBar = new QToolBar(this);
     mainToolBar->addAction(actionOuvrir);
@@ -1278,11 +1287,8 @@ QStringList MainWindow::lisLignes(QString nf, bool ignoreComm)
 
 void MainWindow::majInfoM()
 {
-	qDebug()<<"majInfoM";
     QString dirm = listWidgetM->currentItem()->text();
-	qDebug()<<"dirm"<<dirm;
     QStringList llm = LemCore::lignesFichier(modDir + dirm + "/info.txt");
-	qDebug()<<"llm"<<llm;
 	editInfoM->setText(llm.join("<br/>"));
 }
 
@@ -1468,12 +1474,14 @@ void MainWindow::peupleLexiques()
     // modèles
     lmodeles = lemcore->lModeles();
     comboBoxModele->addItems(lmodeles);
+
     // irréguliers
     itemsIrr = lisLignes(ajDir+"irregs.la", true);
     for (int i=0;i<itemsIrr.count();++i)
     {
         new QListWidgetItem(itemsIrr.at(i), listWidgetIrr);
     }
+
     // morphos
     lMorphos.clear();
     QStringList listeM = lemcore->lignesFichier(resDir+"morphos.fr");
@@ -1483,6 +1491,7 @@ void MainWindow::peupleLexiques()
         if (lin == "nominatif") break;
         lMorphos.insert(lin.section(':',0,0).toInt(), lin.section(':',1,1));
     }
+
     // variantes graphiques
     lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
@@ -1505,7 +1514,7 @@ void MainWindow::peupleLexiques()
 
 void MainWindow::peupleListeModules()
 {
-    tabWidget->setCurrentIndex(3);
+    tabWidget->setCurrentIndex(tabWidget->indexOf(tabM));
     // définir d'abord les répertoires de l'appli
     // et le répertoire personnel, où sont les modules lexicaux
     resDir = Ch::chemin("collatinus/"+module,'d');
@@ -1520,7 +1529,7 @@ void MainWindow::peupleListeModules()
     else
     {
         ajDir.clear();
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(tabWidget->indexOf(tabM));
     }
     // modules, peupler la liste
     QDir chModules(modDir);
@@ -1558,7 +1567,7 @@ void MainWindow::reinit()
 
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
     peupleLexiques();
-    tabWidget->setCurrentIndex(0);
+    tabWidget->setCurrentIndex(tabWidget->indexOf(tabLexique));
     qApp->restoreOverrideCursor();
 }
 
