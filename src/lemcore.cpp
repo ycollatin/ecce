@@ -1110,7 +1110,7 @@ void LemCore::lisModeles(QString nf)
             if (m == 0)
             {
                 // si le modèle n'existe pas
-                Modele *m = new Modele(sl, this);
+                m = new Modele(sl, this);
                 _modeles.insert(m->gr(), m);
                 sl.clear();
             }
