@@ -81,7 +81,6 @@ class MainWindow : public QMainWindow
         QAction *actionQuant;
         QAction *actionQuitter;
         QAction *actionRouvrir;
-        //QAction *actionCopier;
 
         QWidget     *centralWidget;
         QVBoxLayout *verticalLayout;
@@ -215,7 +214,6 @@ class MainWindow : public QMainWindow
         QPushButton *pushButtonCreeM;
         QLineEdit   *lineEditM;
         QPushButton *pushButtonActM;
-        QPushButton *pushButtonDesactM;
         QPushButton *pushButtonSupprM;
         QPushButton *pushButtonPaquet;
         QPushButton *pushButtonInstM;

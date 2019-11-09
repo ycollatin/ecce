@@ -22,9 +22,8 @@
 
    FIXME
 
-   - Les paradigmes modeles.la du module sont mal chargés, alors qu'ils le
-	 sont apparemment bien dans C12. Je crois qu'ils écrasent les donnée
-	 classiques.
+   - "mihi" n'est pas lemmatisé dans Plaute
+   - retours à la ligne ignorés dans le texte.
    - échec précédent inopérant
    - indiquer clairement les raccourcis dans un endroit visible
    - dans lemcore.cpp:, le créateur de LemCore prend en paramètre la liste ajDir,
@@ -389,8 +388,6 @@ MainWindow::MainWindow()
     verticalLayoutD->addLayout(horizontalLayoutM);
     pushButtonActM = new QPushButton(widgetM);
     verticalLayoutD->addWidget(pushButtonActM);
-    pushButtonDesactM = new QPushButton(widgetM);
-    verticalLayoutD->addWidget(pushButtonDesactM);
     pushButtonSupprM = new QPushButton(widgetM);
     verticalLayoutD->addWidget(pushButtonSupprM);
     pushButtonPaquet = new QPushButton(widgetM);
@@ -590,8 +587,6 @@ void MainWindow::retranslateUi()
     labelM->setText(QApplication::translate("MainWindow", "modules", Q_NULLPTR));
     pushButtonCreeM->setText(QApplication::translate("MainWindow", "Cr\303\251er un module ", Q_NULLPTR));
     pushButtonActM->setText(QApplication::translate("MainWindow", "activer ce module", Q_NULLPTR));
-    pushButtonDesactM->setText(QApplication::translate("MainWindow",
-                                                       "d\303\251sactiver le module courant", Q_NULLPTR));
     pushButtonSupprM->setText(QApplication::translate("MainWindow", "supprimer ce module", Q_NULLPTR));
     pushButtonPaquet->setText(QApplication::translate("MainWindow", "générer un paquet", Q_NULLPTR));
     pushButtonInstM->setText(QApplication::translate("MainWindow", "installer un paquet", Q_NULLPTR));
@@ -615,10 +610,10 @@ MainWindow::~MainWindow()
 void MainWindow::activerM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
+	if (!item->isSelected()) return;
     QString exModule = module;
     module = item->text();
     if (module != exModule) posFC = 0;
-    //QSettings settings("Collatinus", "ecce");
     settings->beginGroup("lexique");
     settings->setValue("module", module);
     settings->endGroup();
