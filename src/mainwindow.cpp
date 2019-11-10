@@ -458,7 +458,6 @@ MainWindow::MainWindow()
     setStatusBar(statusBar);
     // textes
     retranslateUi();
-    //QSettings settings;
     // état de la fenêtre
     settings->beginGroup("fenetre");
     restoreGeometry(settings->value("geometry").toByteArray());
@@ -884,6 +883,7 @@ void MainWindow::echec()
             QString fti = lfti.at(i);
             if (fti != forme)
             {
+			    //MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
                 MapLem nml = lemcore->lemmatiseM(fti, true, 0, false);
                 for(int j=0;j<nml.count();++j)
                 {
@@ -925,7 +925,7 @@ void MainWindow::echec()
             lineEditLemme->setFocus();
         }
     }
-    posFC = flux.pos();
+    posFC = flux.pos()-1;
     qApp->restoreOverrideCursor();
 }
 
@@ -1308,7 +1308,6 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     if (posFC > 0) posFC--;
     else debut();
     flux.seek(posFC);
-    //QSettings settings("Collatinus", "ecce");
     settings->beginGroup("fichiers");
     settings->setValue("fichier", fichier);
     settings->endGroup();
@@ -1431,29 +1430,28 @@ void MainWindow::peupleLexiques()
     // (re)charger toutes les données
     // liste des lexiques à charger
     QStringList llex;
-    llex.append(ajDir);
+	// d'abord le module sélectionné
+    llex.append(module);
+	// puis les réservoirs
+	settings->beginGroup("reservoirs");
     for (int i=0;i<lwReserv->count();++i)
-        if (!lwReserv->item(i)->text().endsWith("inactif"))
-            llex.append(lwReserv->item(i)->text());
-	/*
+	{
+		QString textitem = lwReserv->item(i)->text();
+        if (!textitem.endsWith("ignoré"))
+            llex.append(textitem);
 		else
 		{
 			//QSettings settings("Collatinus", "ecce");
-			settings->beginGroup("reservoirs");
 			for (int i=1;i<lwReserv->count();++i)
 			{
-				// détecter l'item surligné
-				QListWidgetItem *li = lwReserv->item(i);
-            	QString t = li->text(); 
-				if (t.endsWith(" ignoré"))
-					settings->setValue(t.left(t.size()-7), "ignoré");
+				settings->setValue(textitem.left(textitem.size()-7), "ignoré");
 			}
-			settings->endGroup();
 		}
-	*/
+	}
+	settings->endGroup();
     // chargement des lexiques
     lemcore = new LemCore(this, resDir, llex);
-    lemcore->setExtension(true);
+    //lemcore->setExtension(true);
     lemcore->setCible("fr");
     flexion = new Flexion(lemcore);
     // lemmes
@@ -1533,12 +1531,17 @@ void MainWindow::peupleListeModules()
     listWidgetM->clear();
 	new QListWidgetItem("classique", lwReserv);
 	new QListWidgetItem("extension", lwReserv);
+	settings->beginGroup("reservoirs");
     for (int i=0;i<lm.count();++i)
     {
+		// chercher si le module était ignoré à la dernière session
+		if (settings->value(lm.at(i)).toString() == "ignoré")
+			lm[i].append(" ignoré");
         QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
         if (ni->text() == module) item = ni;
         else new QListWidgetItem(lm.at(i), lwReserv);
     }
+	settings->endGroup();
     if (item != 0) listWidgetM->setCurrentItem(item);
     // info du module
 	majInfoM();
