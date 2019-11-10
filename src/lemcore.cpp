@@ -26,8 +26,6 @@
 
 #include "lemcore.h"
 
-#include <QDebug>
-
 // #include <QElapsedTimer>
 // #define DEBOG
 // #define VERIF_TRAD
@@ -41,25 +39,21 @@
  * de lecture des données : modèles, lexique,
  * traductions et irréguliers.
  */
-LemCore::LemCore(QObject *parent, QString resDir, QStringList ajDir) : QObject(parent)
+LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(parent)
 {
+	// chemins des data et modules
     if (resDir.isEmpty())
     {
         _resDir = Ch::chemin("collatinus/data",'d');
         if (!_resDir.endsWith('/')) _resDir.append('/');
     }
     else _resDir = resDir;
-	/*
-    if (!ajDir.isEmpty())
-    {
-        _ajDir = ajDir.at(0);
-        if (!_ajDir.endsWith('/')) _ajDir.append('/');
-    }
-	*/
+	QString ajDir = Ch::chemin("collatinus/", 'p');
+
     _extension = false;
     _extLoaded = false;
     _nbrLoaded = false;
-    //_cible = "fr en es";
+
     _cible << "fr" << "en" << "es";
     // Par défaut, la langue cible est le français. L'anglais est le second choix
     // (si une traduction n'existe pas en français, on la cherche en anglais).
@@ -86,24 +80,23 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList ajDir) : QObject(p
     }
     lisVarGraph();
     lisModeles(_resDir + "modeles.la");
-    for (int i=0;i<ajDir.count();++i)
+    for (int i=0;i<llex.count();++i)
     {
-        QString nl = ajDir.at(i);
+        QString nl = llex.at(i);
         if (nl == "classique")
             lisLexique(1);
-        else if (ajDir.at(i) == "extension")
+        else if (nl == "extension")
            lisExtension();
-        else lisModule(ajDir.at(i));
+        else lisModule(ajDir+nl);
     }
     lisTags(false);
     lisTraductions(true, false);
-    //if (!ajDir.isEmpty()) lisIrreguliers(_ajDir+"irregs.la");
     lisIrreguliers(_resDir+"irregs.la");
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values())
     {
         QString t = l->traduction("fr");
-        if (t == "") qDebug() << l->cle() << "non traduit.";
+        if (t == "") std::cerr << qPrintable(l->cle() << "non traduit.";
     }
 #endif
 }
@@ -403,7 +396,6 @@ int LemCore::aRomano(QString f)
     return res;
 }
 
-
 /**
  * \fn void LemCore::ajDesinence (Desinence *d)
  * \brief ajoute la désinence d dans la map des
@@ -416,19 +408,17 @@ void LemCore::ajDesinence(Desinence *d)
     _desinences.insert(gr, d);
 }
 
-/*
-QString LemCore::ajDir()
-{
-    return _ajDir;
-}
-*/
-
 bool LemCore::estRomain(QString f)
 {
     f = f.toUpper();
     return !(f.contains(QRegExp ("[^IVXLCDM]"))
              || f.contains("IL")
              || f.contains("IVI"));
+}
+
+bool LemCore::existeDes(QString d)
+{
+	return _desinences.contains(d);
 }
 
 /**
@@ -628,7 +618,7 @@ QString LemCore::desassimq(QString a)
 }
 
 /**
- * \fn MapLem LemCore::lemmatise (QString f)
+ * \fn MapLem LemCore::lemmatise(QString f)
  * \brief Le cœur du lemmatiseur
  *
  *  renvoie une QMap<Lemme*,QStringlist> contenant
@@ -637,27 +627,15 @@ QString LemCore::desassimq(QString a)
  *  - pour chacun de ces lemmes la QStringList des morphologies
  *    correspondant à la forme.
  */
+
 MapLem LemCore::lemmatise(QString f)
 {
     MapLem result;
     if (f.isEmpty()) return result;
-    // romains
-    if (estRomain(f) && !_lemmes.contains(f))
-    {
-        QString lin = QString("%1|inv|||adj. num.|1").arg(f);
-        Lemme *romain = new Lemme(lin, 0, this);
-        int nr = aRomano(f);
-        romain->ajTrad(QString("%1").arg(nr), "fr");
-        _lemmes.insert(f, romain);
-        SLem sl = {f,416,""};
-        QList<SLem> lsl;
-        lsl.append(sl);
-        result.insert(romain, lsl);
-    }
     QString f_lower = f.toLower();
     int cnt_v = f_lower.count("v");
     bool V_maj = f[0] == 'V';
-    //QString fBrut = f;
+    QString fBrut = f;
     f = Ch::deramise(f);
     // formes irrégulières
     QList<Irreg *> lirr = _irregs.values(f);
@@ -691,7 +669,6 @@ MapLem LemCore::lemmatise(QString f)
         {
             Radical* rad = lrad.at(ir);
             Lemme *l = rad->lemme();
-            //foreach (Desinence *des, ldes)
             for (int id=0;id<ldes.count();++id)
             {
                 Desinence *des = ldes.at(id);
@@ -729,7 +706,6 @@ MapLem LemCore::lemmatise(QString f)
         }
         if (!res.isEmpty()) result = res;
     }
-    /*
     // romains
     if (estRomain(fBrut) && !_lemmes.contains(fBrut))
     {
@@ -742,8 +718,20 @@ MapLem LemCore::lemmatise(QString f)
         QList<SLem> lsl;
         lsl.append(sl);
         result.insert(romain, lsl);
+        /*
+        QString f1 = f.toUpper();
+        f.replace('U','V');
+        QString lin = QString("%1|inv|||adj. num.|1").arg(f);
+        Lemme *romain = new Lemme(lin, 0, this);
+        int nr = aRomano(f);
+        romain->ajTrad(QString("%1").arg(nr), "fr");
+        _lemmes.insert(f1, romain);
+        SLem sl = {f1,416,""};
+        QList<SLem> lsl;
+        lsl.append(sl);
+        result.insert(romain, lsl);
+        */
     }
-    */
     return result;
 }
 
@@ -812,7 +800,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
     MapLem mm;
     if (f.isEmpty()) return mm;
     // appliquer les règles de variantes graphiques
-    if (vgr) f = Ch::deramise(vg(f));
+    if (vgr) f = vg(Ch::deramise(f));
     if ((etape > 3) || (etape <0)) // Condition terminale
     {
         MapLem nml = lemmatise(f);
@@ -828,7 +816,7 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
             }
             // cas des mots entièrement en majuscules
             nf[0] = nf[0].toUpper();
-            nmm = lemmatise(vg(nf));
+            nmm = lemmatise(vg(Ch::deramise(nf)));
             for (int i=0;i<nmm.count();++i)
             {
                 Lemme* nl = nmm.keys().at(i);
@@ -1112,14 +1100,13 @@ void LemCore::lisModeles(QString nf)
                 // si le modèle n'existe pas
                 m = new Modele(sl, this);
                 _modeles.insert(m->gr(), m);
-                sl.clear();
             }
             else
             {
                 // sinon, c'est une modification
                 m->interprete(sl);
-                sl.clear();
             }
+			sl.clear();
         }
         sl.append(l);
     }
@@ -1139,7 +1126,6 @@ QStringList LemCore::listeLemmesLa()
  */
 void LemCore::lisTraductions(bool base, bool extension)
 {
-//    QString nrep = _resDir;
     QDir rep;
     if (!base && !extension) return;
     if (base && extension)
@@ -1197,14 +1183,13 @@ void LemCore::lisTraductions(QString nf)
 
 void LemCore::lisVarGraph()
 {
+    _reglesVG.clear();
     _lignesVG = lignesFichier(_resDir+"vargraph.la");
     lisVarGraph(_lignesVG);
 }
 
 void LemCore::lisVarGraph(QStringList lignes)
 {
-    _reglesVG.clear();
-    _reglesCi.clear();
     for (int i=0;i<lignes.count();++i)
     {
         QString l = lignes.at(i);
@@ -1385,10 +1370,13 @@ void LemCore::setExtension(bool e)
 
 void LemCore::lisModule(QString m) 
 {
-    lisFichierLexique(m+"/lemmes.la", 0);
-    lisTraductions(m+"/lemmes.fr");
-    lisModeles(m+"/modeles.la");
-	QStringList ll = lignesFichier(m+"/vargraph.la");
+	if (m.endsWith("ignoré")) return;
+	if (!m.endsWith("/")) m.append("/");
+    lisModeles(m+"modeles.la");
+    lisFichierLexique(m+"lemmes.la", 0);
+    lisTraductions(m+"lemmes.fr");
+	lisIrreguliers(m+"irregs.la");
+	QStringList ll = lignesFichier(m+"vargraph.la");
 	lisVarGraph(ll);
 }
 

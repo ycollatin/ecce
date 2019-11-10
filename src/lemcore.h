@@ -115,7 +115,7 @@ class LemCore : public QObject
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.
 
    public:
-    LemCore(QObject *parent, QString resDir, QStringList ajDir);
+    LemCore(QObject *parent, QString resDir, QStringList llex);
     void                   ajDesinence(Desinence *d);
     QString                ajDir();  // accesseurs chemins
     QString                dirLa();  //     " ...
@@ -136,6 +136,7 @@ class LemCore : public QObject
     bool                   estAbr(QString m);
     // Pour remplacer Ch::abrev.contains(m) avec la liste des abréviations chargées.
     static bool            estRomain(QString f);
+	bool				   existeDes(QString d);
     bool                   inv(Lemme *l, const MapLem ml);
     MapLem                 lemmatise(QString f);  // lemmatise une forme
     // lemmatiseM lemmatise une forme en contexte
