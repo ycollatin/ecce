@@ -64,7 +64,7 @@ class Modele : public QObject
    private:
     QList<int> _absents;
     QStringList static const cles;
-    QMultiMap<int, Desinence *> _desinences;
+    QMultiMap<int, Desinence*> _desinences;
     QMap<int, QString> _genRadicaux;
     QString _gr;
     QString _grq;

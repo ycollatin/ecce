@@ -16,7 +16,7 @@
  *  along with COLLATINUS; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * © Yves Ouvrard, 2009 - 2016
+ * © Yves Ouvrard, 2009 - 2019
  */
 
 #include "modele.h"
@@ -36,6 +36,7 @@
  */
 Desinence::Desinence(QString d, int morph, int nr, Modele *parent)
 {
+    _modele = qobject_cast<Modele *>(parent);
     // der, le dernier caractère de d, s'il est un nombre, donne le degré de
     // rareté de la désinence, qui est 10 par défaut.
     int der = -1;
@@ -53,7 +54,6 @@ Desinence::Desinence(QString d, int morph, int nr, Modele *parent)
     _gr = Ch::atone(_grq);
     _morpho = morph;
     _numR = nr;
-    _modele = qobject_cast<Modele *>(parent);
 }
 
 /**
@@ -136,8 +136,6 @@ Modele::Modele(QStringList ll, LemCore *parent)
     _pos = '\0';
     interprete(ll);
 }
-
-
 
 /**
  * \fn bool Modele::absent (int a)
@@ -255,8 +253,9 @@ void Modele::interprete(QStringList ll)
 {
     QRegExp re("[:;]([\\w]*)\\+{0,1}(\\$\\w+)");
     QMultiMap<QString, int> msuff;
-    foreach (QString l, ll)
+	for(int i=0;i<ll.count();++i)
     {
+		QString l = ll.at(i);
         // remplacement des variables par leur valeur
         while (re.indexIn(l) > -1)
         {
@@ -282,8 +281,13 @@ void Modele::interprete(QStringList ll)
             case 2: // des: désinences écrasant celles du père
             case 3: // des+: désinences s'ajoutant à celles du père
                 {
+					//  des:15-18:1:mē;mĕī;mĭhĭ,mī;mē
+					//   0    1   2      3   
+					//   li est la liste des n° de morpho des désinences en
                     QList<int> li = listeI(eclats.at(1));
+					// r est le n° de radical
                     int r = eclats.at(2).toInt();
+					// ld est la liste des désinences
                     QStringList ld = eclats.at(3).split(';');
                     for (int i = 0; i < li.count(); ++i)
                     {
@@ -292,9 +296,11 @@ void Modele::interprete(QStringList ll)
                             ldd = ld.at(i).split(',');
                         else
                             ldd = ld.last().split(',');
-                        foreach (QString g, ldd)
+						for (int j=0;j<ldd.count();++j)
                         {
+							QString g = ldd.at(j);
                             Desinence *nd = new Desinence(g, li.at(i), r, this);
+                            _desinences.insert(nd->morphoNum(), nd);
                             _desinences.insert(nd->morphoNum(), nd);
                             _lemmatiseur->ajDesinence(nd);
                         }
@@ -302,20 +308,22 @@ void Modele::interprete(QStringList ll)
                     // si des+, aller chercher les autres désinences chez le père :
                     if (p == 3 && _pere != 0)
                     {
-                        foreach (int i, li)
+                        //foreach (int i, li)
+						for(int j=0;j<li.count();++j)
                         {
-                            QList<Desinence *> ldp = _pere->desinences(i);
+							int nd = li.at(j);
+                            QList<Desinence *> ldp = _pere->desinences(nd);
                             foreach (Desinence *dp, ldp)
                             {
                                 // cloner la désinece
                                 Desinence *dh = clone(dp);
-                                _desinences.insert(i, dh);
+                                _desinences.insert(nd, dh);
                                 _lemmatiseur->ajDesinence(dh);
                             }
                         }
-                    }
-                    break;
-                }
+					}
+					break;
+				}
             case 4:  // R:n: radical n
                 {
                     int nr = eclats.at(1).toInt();
@@ -423,8 +431,6 @@ void Modele::interprete(QStringList ll)
         _lemmatiseur->ajDesinence(dsuf);
     }
 }
-
-
 
 /**
  * \fn QList<int> Modele::listeI (QString l)
