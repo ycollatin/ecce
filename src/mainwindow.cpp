@@ -613,9 +613,7 @@ void MainWindow::activerM()
     QString exModule = module;
     module = item->text();
     if (module != exModule) posFC = 0;
-    settings->beginGroup("lexique");
-    settings->setValue("module", module);
-    settings->endGroup();
+	majSettings();
     // recharger toutes les données
     reinit();
 }
@@ -674,7 +672,7 @@ QString MainWindow::cle(QString ligne)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    //QSettings settings("Collatinus", "ecce");
+	/*
     settings->beginGroup("fenetre");
     settings->setValue("geometry", saveGeometry());
     settings->endGroup();
@@ -685,6 +683,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     settings->setValue("signet", posFC);
     settings->setValue("forme", forme);
     settings->endGroup();
+	*/
+	majSettings();
     QMainWindow::closeEvent(event);
 }
 
@@ -1308,9 +1308,9 @@ void MainWindow::ouvrir(QString nf, qint64 p)
     if (posFC > 0) posFC--;
     else debut();
     flux.seek(posFC);
-    settings->beginGroup("fichiers");
-    settings->setValue("fichier", fichier);
-    settings->endGroup();
+    //settings->beginGroup("fichiers");
+    //settings->setValue("fichier", fichier);
+    //settings->endGroup();
     majInfo();
     echecs.clear();
 	QDir dir;
@@ -1375,6 +1375,38 @@ void MainWindow::majLinMorph()
     }
 }
 
+void MainWindow::majSettings()
+{
+    settings->beginGroup("fenetre");
+    settings->setValue("geometry", saveGeometry());
+    settings->endGroup();
+    settings->beginGroup("lexique");
+    settings->setValue("module", module);
+    settings->endGroup();
+    settings->beginGroup("fichiers");
+    settings->setValue("fichier", fichier);
+    settings->setValue("signet", posFC);
+    settings->setValue("forme", forme);
+    settings->endGroup();
+
+    settings->beginGroup("lexique");
+    settings->setValue("module", module);
+    settings->endGroup();
+
+	settings->beginGroup("reservoirs");
+	settings->remove("");
+	for (int i=0;i<lwReserv->count();++i)
+	{
+		QString textitem = lwReserv->item(i)->text();
+		if (textitem.endsWith("ignoré"))
+		{
+			textitem.chop(7);
+			settings->setValue(textitem, "ignoré");
+		}
+	}
+    settings->endGroup();
+}
+
 void MainWindow::paquet()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
@@ -1418,6 +1450,12 @@ void MainWindow::paquet()
     labelInfoM->setText(info.toLatin1());
 }
 
+/* 
+ * \fn void MainWindow::peupleLexiques()
+ * \brief crée un lemmatiseur, et charge les données
+ *    modulaires, puis les données classiques et les 
+ *    réservoirs.
+ */
 void MainWindow::peupleLexiques()
 {
     // vider les données existantes
@@ -1433,22 +1471,12 @@ void MainWindow::peupleLexiques()
 	// d'abord le module sélectionné
     llex.append(module);
 	// puis les réservoirs
-	settings->beginGroup("reservoirs");
     for (int i=0;i<lwReserv->count();++i)
 	{
 		QString textitem = lwReserv->item(i)->text();
         if (!textitem.endsWith("ignoré"))
             llex.append(textitem);
-		else
-		{
-			//QSettings settings("Collatinus", "ecce");
-			for (int i=1;i<lwReserv->count();++i)
-			{
-				settings->setValue(textitem.left(textitem.size()-7), "ignoré");
-			}
-		}
 	}
-	settings->endGroup();
     // chargement des lexiques
     lemcore = new LemCore(this, resDir, llex);
     //lemcore->setExtension(true);
@@ -1529,8 +1557,8 @@ void MainWindow::peupleListeModules()
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     QListWidgetItem* item = 0;
     listWidgetM->clear();
-	new QListWidgetItem("classique", lwReserv);
-	new QListWidgetItem("extension", lwReserv);
+	//new QListWidgetItem("classique", lwReserv);
+	//new QListWidgetItem("extension", lwReserv);
 	settings->beginGroup("reservoirs");
     for (int i=0;i<lm.count();++i)
     {
@@ -1594,7 +1622,7 @@ void MainWindow::reserveH()
 // Désactivation du chargement des lexique
 void MainWindow::reserveX()
 {
-    for (int i=1;i<lwReserv->count();++i)
+    for (int i=0;i<lwReserv->count();++i)
     {
         // détecter l'item surligné
         QListWidgetItem *li = lwReserv->item(i);

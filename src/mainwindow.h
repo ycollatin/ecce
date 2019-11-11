@@ -317,6 +317,7 @@ class MainWindow : public QMainWindow
         // fonctions
         void              majInfo(bool barre=true);
         void              majLinMorph();
+		void			  majSettings();
         void              peupleLexiques();
         void              peupleListeModules();
         void              porro(int pas);
