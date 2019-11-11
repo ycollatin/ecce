@@ -42,7 +42,7 @@
      en minuscules        : vi (vis) prioritaire
    - Un nouvel outil pourrait servir :
      à nettoyer un texte ?
-     à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ? 
+     à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ?
    - peuplement à l'ouverture : donner une marche à suivre en rouge dans le label d'info.
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
@@ -873,7 +873,7 @@ void MainWindow::echec()
         }
         while (!flux.atEnd()
                && (c.isLetter()
-                   || c.category()==QChar::Mark_NonSpacing)); 
+                   || c.category()==QChar::Mark_NonSpacing));
         // la forme est compète. Lemmatisation
         ml = lemcore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -1107,7 +1107,7 @@ void MainWindow::enr()
             else
             {
                 remplace = true;
-                QMessageBox boite(QMessageBox::Question, tr("lexique"), 
+                QMessageBox boite(QMessageBox::Question, tr("lexique"),
                 "Le lexique a un lemme "+lc, 0, this);
                 boite.addButton("Remplacer",QMessageBox::YesRole);
                 boite.addButton("Ajouter",QMessageBox::NoRole);
@@ -1145,7 +1145,7 @@ void MainWindow::enr()
 
 void MainWindow::fermer()
 {
-    QMessageBox boite(QMessageBox::Question, tr("Quitter"), 
+    QMessageBox boite(QMessageBox::Question, tr("Quitter"),
                       "Quitter Ecce ?", 0, this);
     boite.addButton("oui", QMessageBox::AcceptRole);
     boite.addButton("non", QMessageBox::RejectRole);
@@ -1450,10 +1450,10 @@ void MainWindow::paquet()
     labelInfoM->setText(info.toLatin1());
 }
 
-/* 
+/*
  * \fn void MainWindow::peupleLexiques()
  * \brief crée un lemmatiseur, et charge les données
- *    modulaires, puis les données classiques et les 
+ *    modulaires, puis les données classiques et les
  *    réservoirs.
  */
 void MainWindow::peupleLexiques()
@@ -1578,7 +1578,7 @@ void MainWindow::peupleListeModules()
 void MainWindow::porro(int pas)
 {
     posFC += pas;
-    if (posFC >= tailleF) 
+    if (posFC >= tailleF)
         posFC = tailleF - 1;
     QChar c;
     flux.seek(posFC);
@@ -1598,7 +1598,7 @@ void MainWindow::reinit()
 }
 
 // baisse la priorité dans le chargement des lexique
-void MainWindow::reserveB() 
+void MainWindow::reserveB()
 {
     int cr = lwReserv->currentRow();
     if (cr < lwReserv->count()-1)
@@ -1629,7 +1629,7 @@ void MainWindow::reserveX()
         if (li->isSelected())
         {
             // le désactiver, ou l'activer
-            QString t = li->text(); 
+            QString t = li->text();
             if (t.endsWith(" ignoré"))
                 li->setText(t.left(t.size()-7));
             else li->setText(li->text() + " ignoré");
