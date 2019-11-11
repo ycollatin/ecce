@@ -88,6 +88,8 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(pa
 	for (int i=0;i<llex.count();++i)
 		lisModule(ajDir+llex.at(i));
     lisLexique(1);
+	for (int i=0;i<llex.count();++i)
+		lisIrreguliers(ajDir+llex.at(i)+"/irregs.la");
     lisTraductions(true, false);
     setExtension(true);
     lisTags(false);
@@ -1374,8 +1376,8 @@ void LemCore::lisModule(QString m)
     lisModeles(m+"modeles.la");
     lisFichierLexique(m+"lemmes.la", 0);
     lisTraductions(m+"lemmes.fr");
-	lisIrreguliers(m+"irregs.la");
 	lisVarGraph(m+"vargraph.la");
+	//lisIrreguliers(m+"irregs.la");
 }
 
 /**
