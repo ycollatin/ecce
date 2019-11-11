@@ -127,7 +127,6 @@ Lemme::Lemme(const QString linea, const int origin, QObject *parent, QString k)
         }
     }
     _lemmatiseur->ajRadicaux(this);
-
     _indMorph = eclats.at(4);
     QRegExp c("cf\\.\\s(\\w+)$");
     int pos = c.indexIn(_indMorph);
