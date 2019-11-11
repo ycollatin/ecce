@@ -19,6 +19,9 @@
  * © Yves Ouvrard, 2009 - 2019
  */
 
+// non reconnues : ambissint ambissit duint ipsemet internosse quicquam
+//  poteremur hostibus
+
 /**
  * \file lemmatiseur.cpp
  * \brief module de lemmatisation des formes latines
@@ -78,20 +81,16 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(pa
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-    lisVarGraph();
-    lisModeles(_resDir + "modeles.la");
-    for (int i=0;i<llex.count();++i)
-    {
-        QString nl = llex.at(i);
-        if (nl == "classique")
-            lisLexique(1);
-        else if (nl == "extension")
-           lisExtension();
-        else lisModule(ajDir+nl);
-    }
-    lisTags(false);
-    lisTraductions(true, false);
+	_reglesVG.clear();
+    lisVarGraph(_resDir+"vargraph.la");
+    lisModeles(_resDir+"modeles.la");
     lisIrreguliers(_resDir+"irregs.la");
+	for (int i=0;i<llex.count();++i)
+		lisModule(ajDir+llex.at(i));
+    lisLexique(1);
+    lisTraductions(true, false);
+    setExtension(true);
+    lisTags(false);
 #ifdef VERIF_TRAD
     foreach (Lemme *l, _lemmes.values())
     {
@@ -441,9 +440,9 @@ void LemCore::ajRadicaux(Lemme *l)
         foreach (Radical *r, lr)
         {
             if (r == 0) continue;
+            QString gr = r->gr();
             // conserver le 'h' en fin de radical (trah.o)
-            QString gr = vg(r->gr());
-            if (!gr.endsWith("trah")) gr = vg(r->gr());
+            if (!gr.endsWith("trah")) gr = vg(gr);
             _radicaux.insert(Ch::deramise(gr), r);
         }
     }
@@ -1026,7 +1025,8 @@ void LemCore::lisIrreguliers(QString nf)
 
 /**
  * \fn void LemCore::lisFichierLexique(filepath)
- * \brief Lecture des lemmes
+ * \brief Lecture des lemmes. Le lemme déjà existant
+ *  dans _lemmes est ignoré.
  */
 void LemCore::lisFichierLexique(QString filepath, int orig)
 {
@@ -1181,10 +1181,9 @@ void LemCore::lisTraductions(QString nf)
     }
 }
 
-void LemCore::lisVarGraph()
+void LemCore::lisVarGraph(QString nf)
 {
-    _reglesVG.clear();
-    _lignesVG = lignesFichier(_resDir+"vargraph.la");
+    _lignesVG = lignesFichier(nf);
     lisVarGraph(_lignesVG);
 }
 
@@ -1368,7 +1367,7 @@ void LemCore::setExtension(bool e)
     }
 }
 
-void LemCore::lisModule(QString m) 
+void LemCore::lisModule(QString m)
 {
 	if (m.endsWith("ignoré")) return;
 	if (!m.endsWith("/")) m.append("/");
@@ -1376,8 +1375,7 @@ void LemCore::lisModule(QString m)
     lisFichierLexique(m+"lemmes.la", 0);
     lisTraductions(m+"lemmes.fr");
 	lisIrreguliers(m+"irregs.la");
-	QStringList ll = lignesFichier(m+"vargraph.la");
-	lisVarGraph(ll);
+	lisVarGraph(m+"vargraph.la");
 }
 
 /**
@@ -1523,7 +1521,9 @@ QString LemCore::vg(QString c)
     bool maj = c.at(0).isUpper();
     c = c.toLower();
     for (int i=0;i<_reglesVG.count();++i)
+	{
         c = _reglesVG.at(i)->transf(c);
+	}
     if (c.isEmpty()) return c;
     if (maj) c[0] = c.at(0).toUpper();
     return c;
