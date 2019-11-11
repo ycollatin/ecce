@@ -123,30 +123,36 @@ QString Ch::atone(QString a, bool bdc)
 /**
  * \fn Ch:chemin(QString f, char t)
  * \brief chemin complet du fichier f, de type t
- * 'e' = extension
  * 'd' = données
  * 'p' = données perso
+ * autre = extension
  */
 QString Ch::chemin(QString f, char t)
 {
-    if (t == 'd')
-    {
-        // si un data/ existe à côté de l'exécutable, le retourner
-        QString adpd = qApp->applicationDirPath()+"/data/";
-        if (QFile::exists(adpd)) return adpd;
-        QString dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
-                                             f, QStandardPaths::LocateDirectory);
-        return dir;
-    }
-    QString ret;
-    if (t == 'p')
-    {
-        ret = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-        if (!ret.endsWith('/')) ret.append('/');
-        ret.append(f);
-        return ret;
-    }
-    return qApp->applicationDirPath()+"/ext/";
+	QString dir;
+	switch(t)
+	{
+		case 'd':
+			{
+				// si un data/ existe à côté de l'exécutable, le retourner
+				dir = qApp->applicationDirPath()+"/data/";
+				if (!QFile::exists(dir))
+					dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+												 f, QStandardPaths::LocateDirectory);
+				break;
+			}
+		case 'p':
+			{
+				dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+				if (!dir.endsWith('/')) dir.append('/');
+				dir.append(f);
+				break;
+			}
+		default:
+			dir = qApp->applicationDirPath()+"/ext/";
+	}
+	if (!dir.endsWith('/')) dir.append('/');
+    return dir;
 }
 
 /**
