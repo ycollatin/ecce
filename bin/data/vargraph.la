@@ -1,10 +1,16 @@
 !          vargraph.la
 !
 !  Dans ce fichier sont enregistrées les variantes
-! graphiques du corpus traité. Chaque ligne est
-! composée de deux chaînes séparées par le caractère ';'
+! graphiques du corpus traité. Chaque ligne représente
+! une règle de transformation, et consiste en deux 
+! chaînes séparées par le caractère ';' ou le caractère '>'.
+! La première chaîne est la graphie classique, la
+! seconde est la variante du corpus traité. Si on emploie
+! le séparateur ';', les radicaux seront tous transformés
+! par la règle dès l'initialisation, et les formes subiront
+! elles aussi cette transformation avant d'être lemmatisées.
+! Si le séparateur est '>', il n'y aura pas de transformation
+! à l'initialisation. La forme passera une première fois dans
+! le lemmatiseur, sera ensuite transformée par la règle et
+! passera une seconde fois dans le lemmatiseur.
 !
-h;
-ti;ci
-mn;mpn
-ph;f
