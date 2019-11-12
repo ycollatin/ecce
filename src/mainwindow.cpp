@@ -1479,7 +1479,6 @@ void MainWindow::peupleLexiques()
 	}
     // chargement des lexiques
     lemcore = new LemCore(this, resDir, llex);
-    //lemcore->setExtension(true);
     lemcore->setCible("fr");
     flexion = new Flexion(lemcore);
     // lemmes
