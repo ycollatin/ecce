@@ -84,13 +84,13 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(pa
 	_reglesVG.clear();
     lisVarGraph(_resDir+"vargraph.la");
     lisModeles(_resDir+"modeles.la");
-    lisIrreguliers(_resDir+"irregs.la");
 	for (int i=0;i<llex.count();++i)
 		lisModule(ajDir+llex.at(i));
     lisLexique(1);
+    lisIrreguliers(_resDir+"irregs.la");
+    lisTraductions(true, false);
 	for (int i=0;i<llex.count();++i)
 		lisIrreguliers(ajDir+llex.at(i)+"/irregs.la");
-    lisTraductions(true, false);
     setExtension(true);
     lisTags(false);
 #ifdef VERIF_TRAD
@@ -1008,7 +1008,7 @@ void LemCore::lisIrreguliers(QString nf)
     for (int i=0;i<lignes.count();++i)
     {
         QString lin = lignes.at(i);
-        Irreg *irr = new Irreg(lin, this);
+		Irreg *irr = new Irreg(lin, this);
         if (irr != 0 && irr->lemme() != 0)
         {
             QString gr = Ch::deramise(irr->gr());
