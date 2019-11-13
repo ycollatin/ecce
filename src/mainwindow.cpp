@@ -22,9 +22,6 @@
 
    FIXME
 
-   - Après d'une création de module, les éditions se retrouvent dans le module
-     de la session précédente.
-   - le suffixe "ignoré" apparaît dans la liste des modules disponibles
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
      saisie lemmes
    - retours à la ligne ignorés dans le texte, au début
@@ -829,8 +826,8 @@ void MainWindow::creerM()
     // affichage
     QListWidgetItem* item = new QListWidgetItem(module, listWidgetM);
     listWidgetM->setCurrentItem(item);
-    // recharger toutes les données
-    reinit();
+	// réinitialiser la liste des modules 
+	peupleListeModules();
 }
 
 void MainWindow::debut()
@@ -1558,6 +1555,7 @@ void MainWindow::peupleListeModules()
     QStringList lm = chModules.entryList(QStringList() << "*", QDir::NoDotAndDotDot | QDir::Dirs);
     QListWidgetItem* item = 0;
     listWidgetM->clear();
+	lwReserv->clear();
 	//new QListWidgetItem("classique", lwReserv);
 	//new QListWidgetItem("extension", lwReserv);
 	settings->beginGroup("reservoirs");
