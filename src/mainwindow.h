@@ -227,6 +227,7 @@ class MainWindow : public QMainWindow
         QPushButton *bReservBas;
         QPushButton *bReservNul;
         QSpacerItem *spacerHB;
+
         // menu et barrre d'état
         QMenuBar *menuBar;
         QMenu *menuFichier;
