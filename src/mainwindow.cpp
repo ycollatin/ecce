@@ -22,16 +22,18 @@
 
    FIXME
 
-   - "mihi" n'est pas lemmatisé dans Plaute
-   - retours à la ligne ignorés dans le texte.
-   - échec précédent inopérant
+   - Après d'une création de module, les éditions se retrouvent dans le module
+     de la session précédente.
+   - le suffixe "ignoré" apparaît dans la liste des modules disponibles
+   - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
+     saisie lemmes
+   - retours à la ligne ignorés dans le texte, au début
+   - échec précédent inopérant à la 1ère demande
    - indiquer clairement les raccourcis dans un endroit visible
    - dans lemcore.cpp:, le créateur de LemCore prend en paramètre la liste ajDir,
      dont seul le premier item est utilisé sous _ajDir.
    - Collatinus : adeo a des formes passive à ajouter : adita est, itur, itum est...
    - Bogue Collatinus : /deni/ affiche une flexion singulier.
-   - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
-     saisie lemmes
 
    TODO
    - Prendre en compte les modèles, et les éditer ?
@@ -1561,10 +1563,10 @@ void MainWindow::peupleListeModules()
 	settings->beginGroup("reservoirs");
     for (int i=0;i<lm.count();++i)
     {
+        QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
 		// chercher si le module était ignoré à la dernière session
 		if (settings->value(lm.at(i)).toString() == "ignoré")
 			lm[i].append(" ignoré");
-        QListWidgetItem* ni = new QListWidgetItem(lm.at(i), listWidgetM);
         if (ni->text() == module) item = ni;
         else new QListWidgetItem(lm.at(i), lwReserv);
     }
@@ -1853,6 +1855,7 @@ void MainWindow::supprLemme()
 }
 
 // suppression de module
+// TODO à compléter
 void MainWindow::supprM()
 {
     QListWidgetItem* item = listWidgetM->currentItem();
