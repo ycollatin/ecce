@@ -1170,7 +1170,8 @@ void MainWindow::instM()
     {
         QuaZipFile zipFile(&zip);
         if (!zipFile.open(QIODevice::ReadOnly)) continue;
-        QFile out(zipFile.getActualFileName());
+        //QFile out(zipFile.getActualFileName());
+        QFile out(nmod);
         if (!out.open(QIODevice::WriteOnly)) continue;;
         char c;
         while (zipFile.getChar(&c)) out.putChar(c);
