@@ -36,13 +36,11 @@
    - Prendre en compte les modèles, et les éditer ?
    - afficher les lignes de lemmes.la et .fr, irregs.la en construction.
    - désactiver par défaut les autres modules ;
-   - enregistrer la config dans les préférences ;
    - romain en majuscules : VI (6) prioritaire
      en minuscules        : vi (vis) prioritaire
    - Un nouvel outil pourrait servir :
-     à nettoyer un texte ?
-     à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ?
-   - peuplement à l'ouverture : donner une marche à suivre en rouge dans le label d'info.
+     . à nettoyer un texte ?
+     . à établir une liste errata, pro:lege, qui sera utilisée pour lemmatiser un texte ?
    - prendre les listes dans LemCore plutôt que dans les fichiers.
      (seulement pour irregs).
    - suppression d'un lemme : trouver une syntaxe :
