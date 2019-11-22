@@ -58,6 +58,20 @@
 #include <flexion.h>
 #include <lemcore.h>
 
+class MainWindow;
+
+class EditLatin : public QTextEdit
+{
+    Q_OBJECT
+
+   private:
+    MainWindow *mainwindow;
+
+   public:
+    EditLatin(QWidget *parent);
+    bool event(QEvent *event);
+};
+
 class MainWindow : public QMainWindow
 {
 
@@ -66,6 +80,7 @@ class MainWindow : public QMainWindow
     public:
         MainWindow();
         ~MainWindow();
+		LemCore* lemcore();
 
     private:
         QAction *actionArr;
@@ -94,7 +109,8 @@ class MainWindow : public QMainWindow
         QSplitter   *splitter;
         QFrame      *frame;
         QVBoxLayout *verticalLayout_3;
-        QTextEdit* editContexte;
+        //QTextEdit* editContexte;
+		EditLatin   *editContexte;
         QHBoxLayout *horizontalLayout;
         QLabel *labelLemme;
         QLineEdit *lineEditLemme;
@@ -268,7 +284,7 @@ class MainWindow : public QMainWindow
         QString           gabaritLa = "%1|%2|%3|%4|%5|%6";
         int               iLemSuiv;
 		QStringList		  infoM;
-        LemCore*          lemcore;
+        LemCore*          lemCore;
         QString           ligneFr();
         QList<QLineEdit*> lignes;
         QStringList       lis();

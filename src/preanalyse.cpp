@@ -110,9 +110,9 @@ void MainWindow::enrVar()
     flux << plainTextEditVariantes->toPlainText();
     f.close();
     qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
-    lemcore->lisVarGraph(lemcore->resDir()+"vargraph.la");
-    lemcore->lisModeles(lemcore->resDir()+"modeles.la");
-    lemcore->reinitRads();
+    lemCore->lisVarGraph(lemCore->resDir()+"vargraph.la");
+    lemCore->lisModeles(lemCore->resDir()+"modeles.la");
+    lemCore->reinitRads();
     qApp->restoreOverrideCursor();
 }
 

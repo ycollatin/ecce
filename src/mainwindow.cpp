@@ -51,10 +51,73 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QToolTip>
 #include <quazip5/quazip.h>
 #include <quazip5/quazipfile.h>
 #include <QThread>
 #include <mainwindow.h>
+
+/**
+ * \fn EditLatin::EditLatin (QWidget *parent): QTextEdit (parent)
+ * \brief Créateur de la classe EditLatin, dérivée de
+ * QTextEdit afin de pouvoir redéfinir l'action
+ * connectée au clic de souris sur un mot ou après
+ * sélection d'une portion de texte.
+ */
+EditLatin::EditLatin(QWidget *parent) : QTextEdit(parent)
+{
+    mainwindow = qobject_cast<MainWindow *>(parent);
+}
+
+/**
+ * \fn bool EditLatin::event(QEvent *event)
+ * \brief Captation du survol de la souris pour
+ *        afficher dans une bulle lemmatisation et
+ *        analyses morphologiques.
+ */
+bool EditLatin::event(QEvent *event)
+{
+    switch (event->type())
+    {
+        case QEvent::ToolTip:
+        {
+			if (mainwindow == 0 || (mainwindow->lemcore() == 0)) return QWidget::event(event);
+            QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+            QPoint P = mapFromGlobal(helpEvent->globalPos());
+            QTextCursor tc = cursorForPosition(P);
+            tc.select(QTextCursor::WordUnderCursor);
+            QString mot = tc.selectedText();
+            if (mot.isEmpty())
+                return QWidget::event(event);
+            //QString txtBulle = mainwindow->_lemmatiseur->lemmatiseT(
+            MapLem res = mainwindow->lemcore()->lemmatiseM(mot, true);
+    		QString txtBulle;
+			QTextStream fl(&txtBulle);
+			for (int i=0;i<res.count();++i)
+			{
+				Lemme* lem = res.keys().at(i);
+				QList<SLem> lsl = res.value(lem);
+				fl<<lem->humain();
+				for (int j=0;j<lsl.count();++j)
+				{
+					fl<<"<br/>"<<mainwindow->lemcore()->morpho(lsl.at(j).morpho);
+				}
+				fl<<"<br/>";
+			}
+            if (txtBulle.isEmpty()) return true;
+            // S'il n'y a qu'une ponctuation sous le curseur la lemmatisation donne un string vide.
+            txtBulle.prepend("<p style='white-space:pre'>");
+            txtBulle.append("</p>");
+            QRect rect(P.x()-20,P.y()-10,40,40); // Je définis un rectangle autour de la position actuelle.
+            QToolTip::setFont(font());
+            QToolTip::showText(helpEvent->globalPos(), txtBulle.trimmed(),
+                               this, rect); // La bulle disparaît si le curseur sort du rectangle.
+            return true;
+        }
+        default:
+            return QTextEdit::event(event);
+    }
+}
 
 MainWindow::MainWindow()
 {
@@ -107,7 +170,8 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-    editContexte = new QTextEdit(frame);
+    //editContexte = new QTextEdit(frame);
+	editContexte = new EditLatin(this);
     editContexte->setReadOnly(true);
     verticalLayout_3->addWidget(editContexte);
     horizontalLayout = new QHBoxLayout();
@@ -497,7 +561,7 @@ MainWindow::MainWindow()
         << "YЎȲ";
 	chOuvrir = "./";
     connecte();
-    lemcore = 0;
+    lemCore = 0;
     modele = 0;
     peupleListeModules();
 }
@@ -505,11 +569,11 @@ MainWindow::MainWindow()
 /*
 void MainWindow::reserve()
 {
-    lemme = lemcore->lemmeDisque(lineEditLemme->text());
+    lemme = lemCore->lemmeDisque(lineEditLemme->text());
     if (lemme != 0)
     {
         edLem("-reserve");
-        lineEditTr->setText(lemcore->trDisque(lemme->cle()));
+        lineEditTr->setText(lemCore->trDisque(lemme->cle()));
     }
 }
 */
@@ -623,8 +687,8 @@ void MainWindow::ajIrr()
         .arg(linIrreg->text())
         .arg(Ch::deramise(linLemmeIrr->text()))
         .arg(lineEditNumMorpho->text());
-    Irreg* irreg = new Irreg(lin, lemcore);
-    lemcore->ajIrreg(irreg);
+    Irreg* irreg = new Irreg(lin, lemCore);
+    lemCore->ajIrreg(irreg);
     editModule(linIrreg->text(), lin, ajDir+"irregs.la");
     new QListWidgetItem(lin, listWidgetIrr);
 }
@@ -874,16 +938,16 @@ void MainWindow::echec()
                && (c.isLetter()
                    || c.category()==QChar::Mark_NonSpacing));
         // la forme est compète. Lemmatisation
-        ml = lemcore->lemmatiseM(forme, true);
+        ml = lemCore->lemmatiseM(forme, true);
         // appliquer les règles aval
-        QStringList lfti = lemcore->ti(forme);
+        QStringList lfti = lemCore->ti(forme);
         for (int i=0;i<lfti.count();++i)
         {
             QString fti = lfti.at(i);
             if (fti != forme)
             {
 			    //MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
-                MapLem nml = lemcore->lemmatiseM(fti, true, 0, false);
+                MapLem nml = lemCore->lemmatiseM(fti, true, 0, false);
                 for(int j=0;j<nml.count();++j)
                 {
                     Lemme* nl = nml.keys().at(j);
@@ -893,7 +957,7 @@ void MainWindow::echec()
         }
         // échec, essayer sans vg (vargraph)
         if (ml.isEmpty())
-            ml = lemcore->lemmatiseM(forme, true, 0, false);
+            ml = lemCore->lemmatiseM(forme, true, 0, false);
         // évaluation de la lemmatisation, arrêt si elle a échoué
         arret = true;
         if (!ml.isEmpty())
@@ -913,8 +977,8 @@ void MainWindow::echec()
             lemSuiv();
             echecs.append(posEchec);
             // liste des graphies envoyées au lemmatiseur
-            QStringList lgr = lemcore->ti(forme);
-            lgr.append(lemcore->vg(forme));
+            QStringList lgr = lemCore->ti(forme);
+            lgr.append(lemCore->vg(forme));
             lgr.removeDuplicates();
             labelVG->setText(lgr.join(" "));
             // mise à jour du pointeur et de l'info
@@ -997,7 +1061,7 @@ void MainWindow::edLem(QString l)
     }
     else
     {
-        lemme = lemcore->lemme(l);
+        lemme = lemCore->lemme(l);
         QString t = enreg;
         QStringList lo;
         lo << " module"<<" class."<<" ext.";
@@ -1006,7 +1070,7 @@ void MainWindow::edLem(QString l)
         // si lem est issu de lem_ext, modifier l'intitulé du bouton
         textEditFlexion->setText(flexion->tableau(lemme));
         lineEditGrq->setText(lemme->champ0());
-        comboBoxModele->setCurrentIndex(lemcore->lModeles().indexOf(lemme->grModele()));
+        comboBoxModele->setCurrentIndex(lemCore->lModeles().indexOf(lemme->grModele()));
         lineMorpho->setText(lemme->indMorph());
         lineEditTr->setText(lemme->traduction("fr"));
         lignesVisibles(comboBoxModele->currentText());
@@ -1136,10 +1200,10 @@ void MainWindow::enr()
     modele->setStringList(litems);
     if (remplace)
     {
-        lemcore->remplaceLemme(nLemme);
+        lemCore->remplaceLemme(nLemme);
         lemme = nLemme;
     }
-    else lemcore->ajLemme(nLemme);
+    else lemCore->ajLemme(nLemme);
 }
 
 void MainWindow::fermer()
@@ -1188,6 +1252,11 @@ void MainWindow::instM()
     activerM();
 }
 
+LemCore* MainWindow::lemcore()
+{
+	return lemCore;
+}
+
 void MainWindow::lemSuiv()
 {
     if (ml.isEmpty()) return;
@@ -1218,7 +1287,7 @@ QString MainWindow::ligneLa(QString modl)
         .arg(lineSupin->text())
         .arg(lineMorpho->text())
         .arg(nbOcc);
-    nLemme = new Lemme(ret, 0, lemcore);
+    nLemme = new Lemme(ret, 0, lemCore);
     nLemme->ajTrad(lineEditTr->text(), "fr");
     textEditFlexion->setText(flexion->tableau(nLemme));
     // màj de labelLa et labelFr
@@ -1229,7 +1298,7 @@ QString MainWindow::ligneLa(QString modl)
 
 void MainWindow::lignesVisibles(QString chModele)
 {
-    Modele* m = lemcore->modele(chModele);
+    Modele* m = lemCore->modele(chModele);
     if (m == 0) return;
     QChar p = m->pos();
     switch (p.toLatin1())
@@ -1459,7 +1528,7 @@ void MainWindow::paquet()
 void MainWindow::peupleLexiques()
 {
     // vider les données existantes
-    if (lemcore != 0) delete lemcore;
+    if (lemCore != 0) delete lemCore;
     litems.clear();
     if (modele != 0) delete modele;
     itemsIrr.clear();
@@ -1478,11 +1547,11 @@ void MainWindow::peupleLexiques()
             llex.append(textitem);
 	}
     // chargement des lexiques
-    lemcore = new LemCore(this, resDir, llex);
-    lemcore->setCible("fr");
-    flexion = new Flexion(lemcore);
+    lemCore = new LemCore(this, resDir, llex);
+    lemCore->setCible("fr");
+    flexion = new Flexion(lemCore);
     // lemmes
-    litems = lemcore->cles();
+    litems = lemCore->cles();
     qSort(litems.begin(), litems.end(), Ch::sort_i);
     // compléteur lemmes
     modele = new QStringListModel(litems);
@@ -1492,7 +1561,7 @@ void MainWindow::peupleLexiques()
         new QListWidgetItem(lem, listWidgetLemmes);
     }
     // modèles
-    lmodeles = lemcore->lModeles();
+    lmodeles = lemCore->lModeles();
     comboBoxModele->addItems(lmodeles);
 
     // irréguliers
@@ -1504,7 +1573,7 @@ void MainWindow::peupleLexiques()
 
     // morphos
     lMorphos.clear();
-    QStringList listeM = lemcore->lignesFichier(resDir+"morphos.fr");
+    QStringList listeM = lemCore->lignesFichier(resDir+"morphos.fr");
     for (int i=0;i<listeM.count();++i)
     {
         QString lin = listeM.at(i).simplified();
@@ -1513,7 +1582,7 @@ void MainWindow::peupleLexiques()
     }
 
     // variantes graphiques
-    lvarGraph = lemcore->lignesFichier(ajDir+"vargraph.la");
+    lvarGraph = lemCore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
     // cocher les cases correspondantes
     initCoches(lvarGraph);
@@ -1521,13 +1590,13 @@ void MainWindow::peupleLexiques()
     // listes pour les morphos irregs
     lCas << ""; lGenre << ""; lMod << ""; lNb << "";
     lPers << ""; lTps<<""; lVx << "";
-    for (int i=0;i<6;++i) lCas   << lemcore->cas(i);
-    for (int i=0;i<3;++i) lGenre << lemcore->genre(i);
-    for (int i=0;i<9;++i) lMod   << lemcore->modes(i);
-    for (int i=0;i<2;++i) lNb    << lemcore->nombre(i);
+    for (int i=0;i<6;++i) lCas   << lemCore->cas(i);
+    for (int i=0;i<3;++i) lGenre << lemCore->genre(i);
+    for (int i=0;i<9;++i) lMod   << lemCore->modes(i);
+    for (int i=0;i<2;++i) lNb    << lemCore->nombre(i);
     lPers <<"1ère"<<"2ème"<<"3ème";
-    for (int i=0;i<6;++i) lTps   << lemcore->temps(i);
-    for (int i=0;i<2;++i) lVx    << lemcore->voix(i);
+    for (int i=0;i<6;++i) lTps   << lemCore->temps(i);
+    for (int i=0;i<2;++i) lVx    << lemCore->voix(i);
     iCas = 0; iGenre = 0; iMod = 0; iNb = 0; iPers = 0;
     iTps = 0; iVx = 0;
 }
@@ -1863,13 +1932,13 @@ void MainWindow::supprM()
 
 void MainWindow::teste(QString f)
 {
-    MapLem res = lemcore->lemmatiseM(f, true);
+    MapLem res = lemCore->lemmatiseM(f, true);
     if (res.isEmpty())
     {
-        QStringList fti = lemcore->ti(f);
+        QStringList fti = lemCore->ti(f);
         for (int i=0;i<fti.count();++i)
         {
-            MapLem ml = lemcore->lemmatiseM(fti.at(i), true);
+            MapLem ml = lemCore->lemmatiseM(fti.at(i), true);
             for (int j=0;j<ml.count();++j)
             {
                 Lemme* nl = ml.keys().at(j);
@@ -1886,7 +1955,7 @@ void MainWindow::teste(QString f)
         fl<<lem->humain();
         for (int j=0;j<lsl.count();++j)
         {
-            fl<<"<br/>"<<lemcore->morpho(lsl.at(j).morpho);
+            fl<<"<br/>"<<lemCore->morpho(lsl.at(j).morpho);
         }
     }
     labelLemTest->setText(test);
