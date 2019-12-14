@@ -19,6 +19,7 @@
  */
 
 /*
+   samedi 14 décembre 2019 : algo de lemmatisation de C12
 
    FIXME
 
