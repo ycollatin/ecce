@@ -78,7 +78,6 @@ class LemCore : public QObject
     QMap<QString, QString> assims;
     QMap<QString, QString> assimsq;
     QMap<QString, QString> _contractions;
-    QMultiMap<QString, Desinence *> _desinences;
     QString decontracte(QString d);
     QMultiMap<QString, Irreg *> _irregs;
     QMap<QString, QString>    _cibles;
@@ -109,7 +108,7 @@ class LemCore : public QObject
     void lisTags(bool tout = false);
 
     QString _resDir;          // Le chemin du répertoire de ressources
-    //QString _ajDir;           // chemin du répertoire des ajouts personnels
+    QString _ajDir;           // chemin du répertoire des ajouts personnels
     bool _extLoaded; // = true après chargement de l'extension
     // Lorsque j'ai chargé l'extension, je dois pouvoir ignorer les analyses qui en viennent.
     bool _nbrLoaded; // Si les nombres ont été chargés, je dois les effacer avant de les charger à nouveau.
@@ -136,11 +135,10 @@ class LemCore : public QObject
     bool                   estAbr(QString m);
     // Pour remplacer Ch::abrev.contains(m) avec la liste des abréviations chargées.
     static bool            estRomain(QString f);
-	bool				   existeDes(QString d);
     bool                   inv(Lemme *l, const MapLem ml);
     MapLem                 lemmatise(QString f);  // lemmatise une forme
     // lemmatiseM lemmatise une forme en contexte
-    MapLem                 lemmatiseM(QString f, bool debPhr = true, int etape = 0, bool vgr=true);
+    MapLem                 lemmatiseM(QString f, bool debPhr = true, int etape  =0, bool vgr=true);
     Lemme*                 lemme(QString l);
     Lemme*                 lemmeDisque(QString l);
     // lemmes(ml) renvoie la liste des graphies des lemmes
@@ -150,13 +148,13 @@ class LemCore : public QObject
     QStringList            lignesVG();
     void                   lisModeles(QString nf);
     void                   lisModule(QString m);
+    //void                   lisVarGraph(QString nf);
     void                   lisVarGraph(QString nf);
     void                   lisVarGraph(QStringList lignes);
     // Lire un fichier de césures étymologiques (non-phonétiques)
     void                   lireHyphen (QString fichierHyphen);
     QStringList            listeLemmesLa();
     QStringList            lModeles();
-    QString                mapToString(QString f, MapLem m);
     Modele*                modele(QString m);
     QString                morpho(int i);
     void                   reinitRads();

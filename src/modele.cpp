@@ -36,7 +36,6 @@
  */
 Desinence::Desinence(QString d, int morph, int nr, Modele *parent)
 {
-    _modele = qobject_cast<Modele *>(parent);
     // der, le dernier caractère de d, s'il est un nombre, donne le degré de
     // rareté de la désinence, qui est 10 par défaut.
     int der = -1;
@@ -51,9 +50,10 @@ Desinence::Desinence(QString d, int morph, int nr, Modele *parent)
     // '-' est la désinence zéro
     if (d == "-") d = "";
     _grq = d;
-    _gr = Ch::atone(_grq);
+    _gr = Ch::deramise(parent->vg(Ch::atone(_grq)));
     _morpho = morph;
     _numR = nr;
+    _modele = qobject_cast<Modele *>(parent);
 }
 
 /**
@@ -131,10 +131,10 @@ void Desinence::setModele(Modele *m)
  */
 Modele::Modele(QStringList ll, LemCore *parent)
 {
-    _lemmatiseur = qobject_cast<LemCore *>(parent);
+    _lemcore = qobject_cast<LemCore *>(parent);
     _pere = 0;
     _pos = '\0';
-    interprete(ll);
+	interprete(ll);
 }
 
 /**
@@ -185,16 +185,10 @@ Desinence *Modele::clone(Desinence *d)
  */
 bool Modele::deja(int m)
 {
-    return _desinences.contains(m);
-}
-
-/**
- * \fn QList<Desinence*> Modele::desinences (int d)
- * \brief Renvoie la liste des désinence de morpho d du modèle.
- */
-QList<Desinence *> Modele::desinences(int d)
-{
-    return _desinences.values(d);
+	QList<Desinence*> valeurs = _desinences.values();
+	for (int i=0;i<valeurs.count();++i)
+		if (valeurs.at(i)->morphoNum() == m) return true;
+	return false;
 }
 
 /**
@@ -204,6 +198,28 @@ QList<Desinence *> Modele::desinences(int d)
 QList<Desinence *> Modele::desinences()
 {
     return _desinences.values();
+}
+
+/**
+ * \fn QList<Desinence*> Modele::desinences (int d)
+ * \brief Renvoie la liste des désinence de morpho d du modèle.
+ */
+QList<Desinence*> Modele::desinences(int d)
+{
+	QList<Desinence*> valeurs = _desinences.values();
+	QList<Desinence*> ret;
+	for (int i=0;i<valeurs.count();++i)
+	{
+		Desinence* des = valeurs.at(i);
+		if (des->morphoNum() == d)
+			ret.append(des);
+	}
+	return ret;
+}
+
+QList<Desinence*> Modele::desinences(QString g, int n)
+{
+	return _desinences.values(qMakePair(g, n));
 }
 
 /**
@@ -249,6 +265,11 @@ QString Modele::genRadical(int r)
     return _genRadicaux[r];
 }
 
+void Modele::insereDes(Desinence* d)
+{
+	_desinences.insert(qMakePair(d->gr(), d->numRad()), d);
+}
+
 void Modele::interprete(QStringList ll)
 {
     QRegExp re("[:;]([\\w]*)\\+{0,1}(\\$\\w+)");
@@ -260,7 +281,7 @@ void Modele::interprete(QStringList ll)
         while (re.indexIn(l) > -1)
         {
             QString v = re.cap(2);
-            QString var = _lemmatiseur->variable(v);
+            QString var = _lemcore->variable(v);
             QString pre = re.cap(1);
             if (!pre.isEmpty()) var.replace(";", ";" + pre);
             l.replace(v, var);
@@ -276,7 +297,7 @@ void Modele::interprete(QStringList ll)
                 break;
             case 1:  // père
                 //_pere = parent->modele(eclats.at(1));
-                _pere = _lemmatiseur->modele(eclats.at(1));
+                _pere = _lemcore->modele(eclats.at(1));
                 break;
             case 2: // des: désinences écrasant celles du père
             case 3: // des+: désinences s'ajoutant à celles du père
@@ -300,15 +321,12 @@ void Modele::interprete(QStringList ll)
                         {
 							QString g = ldd.at(j);
                             Desinence *nd = new Desinence(g, li.at(i), r, this);
-                            _desinences.insert(nd->morphoNum(), nd);
-                            _desinences.insert(nd->morphoNum(), nd);
-                            _lemmatiseur->ajDesinence(nd);
+							insereDes(nd);
                         }
                     }
                     // si des+, aller chercher les autres désinences chez le père :
                     if (p == 3 && _pere != 0)
                     {
-                        //foreach (int i, li)
 						for(int j=0;j<li.count();++j)
                         {
 							int nd = li.at(j);
@@ -317,8 +335,7 @@ void Modele::interprete(QStringList ll)
                             {
                                 // cloner la désinece
                                 Desinence *dh = clone(dp);
-                                _desinences.insert(nd, dh);
-                                _lemmatiseur->ajDesinence(dh);
+								insereDes(dh);
                             }
                         }
 					}
@@ -357,10 +374,9 @@ void Modele::interprete(QStringList ll)
                                 continue;
                             QString nd = d->grq();
                             Ch::allonge (&nd);
-                            Desinence *dsuf = new Desinence
-                                (nd+_suf, d->morphoNum(), d->numRad(), this);
-                            _desinences.insert(dsuf->morphoNum(), dsuf);
-                            _lemmatiseur->ajDesinence(dsuf);
+                            Desinence *dsuf = new Desinence(nd+_suf,
+															d->morphoNum(), d->numRad(), this);
+							insereDes(dsuf);
                         }
                     }
                     break;
@@ -390,8 +406,7 @@ void Modele::interprete(QStringList ll)
                         d->morphoNum()))  // morpho absente chez le descendant
                     continue;
                 Desinence *dh = clone(d);
-                _desinences.insert(dh->morphoNum(), dh);
-                _lemmatiseur->ajDesinence(dh);
+				insereDes(dh);
             }
         }
         // héritage des radicaux
@@ -407,7 +422,7 @@ void Modele::interprete(QStringList ll)
         _absents = _pere->absents();
     }
     // génération des désinences suffixées
-    QList<Desinence *> ldsuf;
+    QList<Desinence*> ldsuf;
     QStringList clefsSuff = msuff.keys();
     clefsSuff.removeDuplicates();
     foreach (QString suff, clefsSuff)
@@ -427,8 +442,7 @@ void Modele::interprete(QStringList ll)
     }
     foreach (Desinence *dsuf, ldsuf)
     {
-        _desinences.insert(dsuf->morphoNum(), dsuf);
-        _lemmatiseur->ajDesinence(dsuf);
+		insereDes(dsuf);
     }
 }
 
@@ -470,7 +484,11 @@ QList<int> Modele::listeI(QString l)
  */
 QList<int> Modele::morphos()
 {
-    return _desinences.keys();
+	QSet<int> set;
+	QList<Desinence*> valeurs = _desinences.values();
+	for (int i=0;i<valeurs.count();++i)
+		set.insert(valeurs.at(i)->morphoNum());
+	return set.toList();
 }
 
 /**
@@ -481,4 +499,17 @@ QList<int> Modele::morphos()
 QChar Modele::pos()
 {
     return _pos;
+    /*
+    if (estUn("uita") || estUn("lupus") || estUn("miles") || estUn("manus") ||
+        estUn("res") || estUn("perseus"))
+        return 'n';
+    if (estUn("doctus") || estUn("fortis")) return 'a';
+    if (estUn("amo") || estUn("imitor")) return 'v';
+    return 'd';
+    */
+}
+
+QString Modele::vg(QString c)
+{
+	return _lemcore->vg(c);
 }
