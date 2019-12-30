@@ -933,9 +933,8 @@ void MainWindow::echec()
             forme.append(c);
             flux >> c;
         }
-        while (!flux.atEnd()
-               && (c.isLetter()
-                   || c.category()==QChar::Mark_NonSpacing));
+		while (!flux.atEnd()
+			   && (c.isLetter() || c.category()==QChar::Mark_NonSpacing));
         // la forme est compète. Lemmatisation
         ml = lemCore->lemmatiseM(forme, true);
         // appliquer les règles aval
@@ -1004,6 +1003,14 @@ void MainWindow::echecPrec()
     }
 }
 
+void MainWindow::ecrisLignes(QString ch, QStringList ll)
+{
+	QFile file(ch);
+    file.open(QFile::WriteOnly);
+    QTextStream(&file) << ll.join('\n');
+    file.close();
+}
+
 void MainWindow::editIrr(const QModelIndex &m)
 {
     QString lin = qvariant_cast<QString>(m.data());
@@ -1044,10 +1051,7 @@ void MainWindow::editModule(QString k, QString l, QString f)
         }
     }
     if (!fait) lignes.append(l);
-    QFile file(f);
-    file.open(QFile::WriteOnly);
-    QTextStream(&file) << lignes.join('\n');
-    file.close();
+	ecrisLignes(f, lignes);
 }
 
 void MainWindow::edLem(QString l)
@@ -1883,21 +1887,19 @@ void MainWindow::siVx()
 // suppression d'une ligne dans un fichier
 void MainWindow::suppr(QString l, QString f)
 {
+	l = l.trimmed();
     QStringList lignes = lisLignes(f);
     QRegExp sep("\\W");
     int i = 0;
     while (i<lignes.count())
     {
-        if (lignes.at(i) == l)
+        if (lignes.at(i).trimmed() == l)
         {
             lignes.removeAt(i);
         }
         else ++i;
     }
-    QFile file(f);
-    file.open(QFile::WriteOnly);
-    QTextStream(&file) << lignes.join('\n');
-    file.close();
+	ecrisLignes(f, lignes);
 }
 
 void MainWindow::supprIrr()

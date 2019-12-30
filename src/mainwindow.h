@@ -357,6 +357,7 @@ class MainWindow : public QMainWindow
         void        debut();
         void        echec();
         void        echecPrec();
+		void		ecrisLignes(QString ch, QStringList ll);
         void        editIrr(const QModelIndex &m);
         void        editModule(QString k, QString l, QString f);
         void        edLem(QString l="");
