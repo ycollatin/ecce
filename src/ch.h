@@ -14,6 +14,7 @@ namespace Ch
     QString       atone(const QString a, bool bdc = false);
     QString       communes(QString g);
     void          deQuant(QString *c);
+	bool		  chaineMaj(QString s);
     QString       chemin(QString f, char t);
     QString const consonnes = "bcdfgjklmnpqrstvxz";
     void          genStrNum(const QString s, QString *ch, int *n);

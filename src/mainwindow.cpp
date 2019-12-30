@@ -933,9 +933,10 @@ void MainWindow::echec()
             forme.append(c);
             flux >> c;
         }
-		while (!flux.atEnd()
-			   && (c.isLetter() || c.category()==QChar::Mark_NonSpacing));
-        // la forme est compète. Lemmatisation
+        while (!flux.atEnd()
+               && (c.isLetter()
+                   || c.category()==QChar::Mark_NonSpacing));
+        // la forme est complète. Lemmatisation
         ml = lemCore->lemmatiseM(forme, true);
         // appliquer les règles aval
         QStringList lfti = lemCore->ti(forme);
