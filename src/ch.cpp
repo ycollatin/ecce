@@ -180,6 +180,16 @@ QString Ch::communes(QString g)
 }
 
 /**
+ * \fn bool Ch::chaineMaj(QString s)
+ * vrai si s est entièrement en majuscules
+ * 
+ */
+bool Ch::chaineMaj(QString s)
+{
+	return s.toUpper() == s;
+}
+
+/**
  * \fn Ch::deQuant(QString *c)
  * \brief utilisée en cas d'élision.
  * supprime la quantité de la voyelle finale de la chaine c

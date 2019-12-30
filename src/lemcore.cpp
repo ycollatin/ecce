@@ -924,6 +924,12 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
         }
         break;
     case 0:
+		// chaîne en majuscule
+		if (mm.empty() && Ch::chaineMaj(f)) {
+			MapLem mmaj = lemmatiseM(f.toLower(), false, 1, vgr);
+			if (!mmaj.empty()) 
+            foreach (Lemme *nl, mmaj.keys()) mm.insert(nl, mmaj.value(nl));
+		}
         // Pour les sauvages qui auraient ôté la majuscule initiale des noms propres.
         if (mm.empty() && f[0].isLower())
         { // À faire seulement si je n'ai pas de solution.
@@ -1395,9 +1401,9 @@ void LemCore::lisModule(QString m)
 {
 	if (m.endsWith("ignoré")) return;
 	if (!m.endsWith("/")) m.append("/");
-	lisModeles(_ajDir+"modeles.la");
-    lisFichierLexique(_ajDir+"lemmes.la", 0);
-    lisTraductions(_ajDir+"lemmes.fr");
+	lisModeles(m+"modeles.la");
+    lisFichierLexique(m+"lemmes.la", 0);
+    lisTraductions(m+"lemmes.fr");
 	lisVarGraph(m+"vargraph.la");
 }
 
