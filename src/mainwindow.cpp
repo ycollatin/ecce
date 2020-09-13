@@ -23,6 +23,7 @@
 
    FIXME
 
+   - Thomas, tout en maj., non reconnu
    - un lemme corrigé apparaît deux fois dans la liste sous la ligne de
      saisie lemmes
    - retours à la ligne ignorés dans le texte, au début
@@ -169,7 +170,6 @@ MainWindow::MainWindow()
     verticalLayout_3 = new QVBoxLayout(frame);
     verticalLayout_3->setSpacing(6);
     verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-    //editContexte = new QTextEdit(frame);
 	editContexte = new EditLatin(this);
     editContexte->setReadOnly(true);
     verticalLayout_3->addWidget(editContexte);
@@ -532,11 +532,12 @@ MainWindow::MainWindow()
     settings->endGroup();
     settings->beginGroup("lexique");
     module = settings->value("module", "").toString();
+    settings->endGroup();
+	if (module.isEmpty())
     if (!fichier.isEmpty())
     {
         ouvrir(fichier, posFC);
     }
-    settings->endGroup();
 
 
     // liste des lignes demandant des quantités
@@ -563,6 +564,15 @@ MainWindow::MainWindow()
     lemCore = 0;
     modele = 0;
     peupleListeModules();
+	/*
+	settings->endGroup();
+	if(item!=0)
+	{
+		listWidgetM->setCurrentItem(item);
+		majInfoM();
+	}
+	//elseqDebug()<<"item?";
+	*/
 }
 
 /*
@@ -858,6 +868,7 @@ void MainWindow::creerM()
     QString moduletmp = nm;
     nm.prepend(modDir);
     nm.append('/');
+	qDebug()<<"nm"<<nm;
     if (!QFile::exists(nm))
     {
         QDir dir;
@@ -1643,9 +1654,13 @@ void MainWindow::peupleListeModules()
         else new QListWidgetItem(lm.at(i), lwReserv);
     }
 	settings->endGroup();
-    if (item != 0) listWidgetM->setCurrentItem(item);
-    // info du module
-	majInfoM();
+	if (item != 0)
+	{
+    	// info du module
+		listWidgetM->setCurrentItem(item);
+		majInfoM();
+	}
+	//elseqDebug()<<"item?";
 }
 
 void MainWindow::porro(int pas)
