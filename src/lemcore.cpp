@@ -926,9 +926,19 @@ MapLem LemCore::lemmatiseM(QString f, bool debPhr, int etape, bool vgr)
     case 0:
 		// chaîne en majuscule
 		if (mm.empty() && Ch::chaineMaj(f)) {
-			MapLem mmaj = lemmatiseM(f.toLower(), false, 1, vgr);
+			QString fmin = f.toLower();
+			MapLem mmaj = lemmatiseM(fmin, false, 1, vgr);
 			if (!mmaj.empty()) 
-            foreach (Lemme *nl, mmaj.keys()) mm.insert(nl, mmaj.value(nl));
+			{
+				foreach (Lemme *nl, mmaj.keys()) mm.insert(nl, mmaj.value(nl));
+			}
+			else // possibilité d'un nom propre en majuscules
+			{
+				fmin[0] = fmin[0].toUpper();
+				mmaj = lemmatiseM(fmin, false, 1, vgr);
+				if (!mmaj.empty())
+					foreach (Lemme *nl, mmaj.keys()) mm.insert(nl, mmaj.value(nl));
+			}
 		}
         // Pour les sauvages qui auraient ôté la majuscule initiale des noms propres.
         if (mm.empty() && f[0].isLower())
