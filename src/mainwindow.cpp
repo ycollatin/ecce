@@ -533,12 +533,11 @@ MainWindow::MainWindow()
     settings->beginGroup("lexique");
     module = settings->value("module", "").toString();
     settings->endGroup();
-	if (module.isEmpty())
-    if (!fichier.isEmpty())
-    {
-        ouvrir(fichier, posFC);
-    }
-
+	//if (module.isEmpty())
+	if (!fichier.isEmpty())
+	{
+		ouvrir(fichier, posFC);
+	}
 
     // liste des lignes demandant des quantités
     lignes
@@ -564,15 +563,6 @@ MainWindow::MainWindow()
     lemCore = 0;
     modele = 0;
     peupleListeModules();
-	/*
-	settings->endGroup();
-	if(item!=0)
-	{
-		listWidgetM->setCurrentItem(item);
-		majInfoM();
-	}
-	//elseqDebug()<<"item?";
-	*/
 }
 
 /*
