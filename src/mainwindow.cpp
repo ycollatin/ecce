@@ -1587,7 +1587,8 @@ void MainWindow::peupleLexiques()
     }
 
     // variantes graphiques
-    lvarGraph = lemCore->lignesFichier(ajDir+"vargraph.la");
+    //lvarGraph = lemCore->lignesFichier(ajDir+"vargraph.la");
+    lvarGraph = lemCore->lignesFichier(resDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
     // cocher les cases correspondantes
     initCoches(lvarGraph);
