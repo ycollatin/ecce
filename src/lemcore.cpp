@@ -79,12 +79,14 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(pa
         lisMorphos(QFileInfo(nfl).suffix());
     }
 	_reglesVG.clear();
-    lisVarGraph(_resDir+"vargraph.la");
+    //lisVarGraph(_resDir+"vargraph.la");
     lisModeles(_resDir+"modeles.la");
-    for (int i=0;i<llex.count();++i)
-		lisModule(ajDir+llex.at(i));
+	// VarGraph : on ne lit que celles du module édité
+	lisVarGraph(ajDir+llex.at(0)+"/vargraph.la");
     lisLexique(1);  // lecture du lexique classique
     lisTraductions(true, false);
+    for (int i=0;i<llex.count();++i)
+		lisModule(ajDir+llex.at(i));
     for (int i=0;i<llex.count();++i)
 		lisIrreguliers(ajDir+llex.at(i)+"/irregs.la");
 	setExtension(true);
@@ -1414,7 +1416,7 @@ void LemCore::lisModule(QString m)
 	lisModeles(m+"modeles.la");
     lisFichierLexique(m+"lemmes.la", 0);
     lisTraductions(m+"lemmes.fr");
-	lisVarGraph(m+"vargraph.la");
+	//lisVarGraph(m+"vargraph.la");
 }
 
 /**
