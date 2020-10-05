@@ -47,6 +47,7 @@
 !    n1 : numéro du radical
 !    n2 : nombre de caractères à ôter de la forme canonique
 !    ch : chaîne à ajouter à la chaîne obtenue pour avoir le radical
+!         une chaîne vide s'écrit '0'
 !
 ! Deuxième possibilité :
 ! Le radical est identique à la forme canonique
@@ -60,6 +61,8 @@
 !
 ! des:<intervalle>:<numMorph>:<listeDes>
 !  <num> est le n° de radical
+!  <listeDes> est la liste des désinences correspondant à chaque n° de
+!             morpho de l'intervalle. '-' représente une désinence vide.
 !
 ! Si une désinence de même morpho s'ajoute à celle du modèle parent au lieu
 ! de l'écraser, on écrit
@@ -74,6 +77,16 @@
 ! Utilisation : ce qui précède une constante est répété devant chaque ';' de
 !   la constante
 !
+! SUFFIXES
+! suf:<intervalle>:<suffixe>
+! <intervalle> : liste des n° de morphologie des formes qui sont parfois
+!               suivies du suffixe <suffixe>
+!
+! sufd:<suffixe> : toutes les formes sont toujours suivies du suffixe <suffixe>
+!
+!
+!
+!
 $compar=ŏr;ŏr;ōrĕm;ōrĭs;ōrī;ōrĕ;ōrēs;ōrēs;ōrēs;ōrŭm;ōrĭbŭs;ōrĭbŭs
 $em=ĕm;ēs;ĕt;ēmŭs;ētĭs;ēnt
 $ens=ēns;ēns;ēntĕm;ēntĭs;ēntī;ēntĕ;ēntēs;ēntēs;ēntēs;ēntĭŭm,ēntŭm;ēntĭbŭs;ēntĭbŭs
@@ -83,6 +96,7 @@ $templum=ŭm;ŭm;ŭm;ī;ō;ō;ă;ă;ă;ōrŭm;īs;īs
 $se=sē,sēsē;sŭī;sĭbī;sē,sēsē
 $tu=ū;ē;ŭī;ĭbĭ;ē
 $uita=ă;ă;ăm;āe;āe;ā;āe;āe;ās;ārŭm;īs;īs
+$vbem=ĕm;ēs;ĕt;ēmŭs;ētĭs;ēnt
 
 modele:inv
 R:0:0,0
