@@ -178,9 +178,9 @@ MainWindow::MainWindow()
     labelLemme = new QLabel(frame);
     horizontalLayout->addWidget(labelLemme);
     lineEditLemme = new QLineEdit(frame);
-    horizontalLayout->addWidget(lineEditLemme);
+    horizontalLayout->addWidget(lineEditLemme, 1);
     labelVG = new QLabel(frame);
-    horizontalLayout->addWidget(labelVG);
+    horizontalLayout->addWidget(labelVG, 1);
     verticalLayout_3->addLayout(horizontalLayout);
     layoutScroll = new QHBoxLayout();
     labelScroll = new QLabel(frame);
@@ -1587,8 +1587,7 @@ void MainWindow::peupleLexiques()
     }
 
     // variantes graphiques
-    //lvarGraph = lemCore->lignesFichier(ajDir+"vargraph.la");
-    lvarGraph = lemCore->lignesFichier(resDir+"vargraph.la");
+    lvarGraph = lemCore->lignesFichier(ajDir+"vargraph.la");
     plainTextEditVariantes->setPlainText(lvarGraph.join('\n'));
     // cocher les cases correspondantes
     initCoches(lvarGraph);
