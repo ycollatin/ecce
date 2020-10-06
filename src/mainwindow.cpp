@@ -858,7 +858,6 @@ void MainWindow::creerM()
     QString moduletmp = nm;
     nm.prepend(modDir);
     nm.append('/');
-	qDebug()<<"nm"<<nm;
     if (!QFile::exists(nm))
     {
         QDir dir;
@@ -1650,7 +1649,6 @@ void MainWindow::peupleListeModules()
 		listWidgetM->setCurrentItem(item);
 		majInfoM();
 	}
-	//elseqDebug()<<"item?";
 }
 
 void MainWindow::porro(int pas)

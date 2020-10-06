@@ -69,6 +69,7 @@ class LemCore : public QObject
     void lisIrreguliers(QString dir);
     void lisFichierLexique(QString filepath, int orig=0);
     void lisLexique(int orig=0);
+	void lisLexique(QString ch, int orig=0);
     void lisExtension();
     void lisMorphos(QString lang);
     void lisTraductions(bool base, bool extension);

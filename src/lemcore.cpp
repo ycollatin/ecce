@@ -78,17 +78,14 @@ LemCore::LemCore(QObject *parent, QString resDir, QStringList llex) : QObject(pa
         QString nfl = ltr.at(i);
         lisMorphos(QFileInfo(nfl).suffix());
     }
-	_reglesVG.clear();
-    //lisVarGraph(_resDir+"vargraph.la");
-    lisModeles(_resDir+"modeles.la");
 	// VarGraph : on ne lit que celles du module édité
 	lisVarGraph(ajDir+llex.at(0)+"/vargraph.la");
+    lisModeles(_resDir+"modeles.la");
     lisLexique(1);  // lecture du lexique classique
     lisTraductions(true, false);
-    for (int i=0;i<llex.count();++i)
-		lisModule(ajDir+llex.at(i));
-    for (int i=0;i<llex.count();++i)
-		lisIrreguliers(ajDir+llex.at(i)+"/irregs.la");
+	lisModule(ajDir+llex.at(0));
+    for (int i=1;i<llex.count();++i)
+		lisLexique(ajDir+llex.at(i)+"/lemmes.la");
 	setExtension(true);
     lisTags(false);
 #ifdef VERIF_TRAD
@@ -1065,12 +1062,22 @@ void LemCore::lisFichierLexique(QString filepath, int orig)
 }
 
 /**
- * \fn void LemCore::lisLexique()
- * \brief Lecture du fichier de lemmes de base
+ * \fn void LemCore::lisLexique(int orig)
+ * \brief Lecture du fichier de lemmes 
+ *  orig == 1 : lemmes.la
  */
 void LemCore::lisLexique(int orig)
 {
     lisFichierLexique(_resDir + "lemmes.la", orig);
+}
+
+/**
+ * \fn void LemCore::lisLexique(QString ch)
+ * \brief Lecture du fichier de lemmes de base
+ */
+void LemCore::lisLexique(QString ch, int orig)
+{
+    lisFichierLexique(ch, orig);
 }
 
 /**
@@ -1413,10 +1420,10 @@ void LemCore::lisModule(QString m)
 {
 	if (m.endsWith("ignoré")) return;
 	if (!m.endsWith("/")) m.append("/");
+	lisVarGraph(m+"vargraph.la");
 	lisModeles(m+"modeles.la");
     lisFichierLexique(m+"lemmes.la", 0);
     lisTraductions(m+"lemmes.fr");
-	//lisVarGraph(m+"vargraph.la");
 }
 
 /**
