@@ -563,6 +563,15 @@ MainWindow::MainWindow()
     lemCore = 0;
     modele = 0;
     peupleListeModules();
+    QMessageBox dialogueM;
+    dialogueM.setText("Reprendre le module "+module+" ?");
+    dialogueM.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    int ret = dialogueM.exec();
+    show();
+    if (ret == QMessageBox::Yes)
+    {
+        reinit();
+    }
 }
 
 /*
