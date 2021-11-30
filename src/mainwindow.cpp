@@ -533,7 +533,6 @@ MainWindow::MainWindow()
     settings->beginGroup("lexique");
     module = settings->value("module", "").toString();
     settings->endGroup();
-	//if (module.isEmpty())
 	if (!fichier.isEmpty())
 	{
 		ouvrir(fichier, posFC);
@@ -563,14 +562,17 @@ MainWindow::MainWindow()
     lemCore = 0;
     modele = 0;
     peupleListeModules();
-    QMessageBox dialogueM;
-    dialogueM.setText("Reprendre le module "+module+" ?");
-    dialogueM.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    int ret = dialogueM.exec();
-    show();
-    if (ret == QMessageBox::Yes)
+    if (!module.isEmpty())
     {
-        reinit();
+        QMessageBox dialogueM;
+        dialogueM.setText("Reprendre le module "+module+" ?");
+        dialogueM.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        int ret = dialogueM.exec();
+        show();
+        if (ret == QMessageBox::Yes)
+        {
+            reinit();
+        }
     }
 }
 
